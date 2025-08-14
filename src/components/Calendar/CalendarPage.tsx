@@ -198,7 +198,7 @@ export default function CalendarPage() {
       </div>
 
       {/* カレンダー部分 */}
-      <div className="flex-1 overflow-hidden px-4 mt-4">
+      <div className="h-[70%] overflow-hidden px-4 mt-4">
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
@@ -221,7 +221,7 @@ export default function CalendarPage() {
 
             {/* カレンダーグリッド */}
             <div className="flex-1">
-              <div className="grid grid-cols-7 grid-rows-6 h-full gap-1 p-2">
+              <div className="grid grid-cols-7 grid-rows-6 h-full gap-1 p-1">
                 {days.map((day) => {
                   const dayEvents = getEventsForDay(day);
                   return (
@@ -248,7 +248,7 @@ export default function CalendarPage() {
       </div>
 
       {/* 予定情報表示エリア（下半分） */}
-      <div className="h-[40%] overflow-y-auto px-4 pb-4">
+      <div className="h-[20%] overflow-y-auto px-4 pb-4">
         <div className="glass-card p-4 fade-in">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-glass">今日の予定</h2>
