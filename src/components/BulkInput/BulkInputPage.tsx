@@ -21,7 +21,7 @@ export default function BulkInputPage() {
   const [form, setForm] = useState<BulkInputForm>({
     title: '',
     description: '',
-    familyMemberId: '',
+    familyMemberId: FAMILY_MEMBERS[0].id,
     type: 'other',
     time: '',
     isAllDay: true,
@@ -104,8 +104,8 @@ export default function BulkInputPage() {
                   onClick={() => setForm(prev => ({ ...prev, familyMemberId: member.id }))}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                     form.familyMemberId === member.id
-                      ? 'bg-white bg-opacity-15 backdrop-blur-sm border-white border-opacity-40 scale-105 shadow-lg'
-                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
+                      ? 'bg-white bg-opacity-25 backdrop-blur-md border-white border-opacity-60 scale-110 shadow-2xl ring-2 ring-white ring-opacity-30'
+                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
@@ -198,8 +198,8 @@ export default function BulkInputPage() {
                     onClick={() => toggleDay(index)}
                     className={`p-3 text-sm rounded-xl border-2 transition-all duration-300 ${
                       form.selectedDays.includes(index)
-                        ? 'bg-white bg-opacity-15 backdrop-blur-sm text-white border-white border-opacity-40 scale-105 shadow-lg'
-                        : 'bg-white bg-opacity-10 text-white border-white border-opacity-30 hover:bg-opacity-20'
+                        ? 'bg-white bg-opacity-25 backdrop-blur-md text-white border-white border-opacity-60 scale-110 shadow-2xl ring-1 ring-white ring-opacity-30'
+                        : 'bg-white bg-opacity-10 text-white border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
                     }`}
                   >
                     {day}

@@ -119,8 +119,8 @@ export default function TodoPage() {
                   onClick={() => setSelectedMember(member.id)}
                   className={`p-3 rounded-xl border-2 transition-all duration-300 ${
                     selectedMember === member.id
-                      ? 'bg-white bg-opacity-15 backdrop-blur-sm border-white border-opacity-40 scale-105 shadow-lg'
-                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
+                      ? 'bg-white bg-opacity-25 backdrop-blur-md border-white border-opacity-60 scale-110 shadow-2xl ring-2 ring-white ring-opacity-30'
+                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-1">
@@ -173,8 +173,8 @@ export default function TodoPage() {
               onClick={() => setFilter(item.key as 'all' | 'active' | 'completed')}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                 filter === item.key
-                  ? 'bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-20 text-white scale-105 shadow-lg'
-                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10'
+                  ? 'bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 text-white scale-110 shadow-2xl ring-1 ring-white ring-opacity-40'
+                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10 hover:scale-105'
               }`}
             >
               {item.label}

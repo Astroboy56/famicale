@@ -152,8 +152,8 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
                   disabled={isSubmitting}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                     form.familyMemberId === member.id
-                      ? 'bg-white bg-opacity-30 border-white border-opacity-60 scale-105'
-                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
+                      ? 'bg-white bg-opacity-30 backdrop-blur-md border-white border-opacity-70 scale-110 shadow-2xl ring-2 ring-white ring-opacity-40'
+                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
                   }`}
                 >
                   <div className="flex items-center space-x-2">

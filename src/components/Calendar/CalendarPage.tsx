@@ -163,7 +163,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setViewMode('month')}
               className={`glass-button p-2 ${
-                viewMode === 'month' ? 'bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-20 scale-105 shadow-lg' : ''
+                viewMode === 'month' ? 'bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 scale-110 shadow-2xl ring-1 ring-white ring-opacity-40' : ''
               }`}
             >
               <Grid3X3 size={20} className="text-white" />
@@ -171,7 +171,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setViewMode('week')}
               className={`glass-button p-2 ${
-                viewMode === 'week' ? 'bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-20 scale-105 shadow-lg' : ''
+                viewMode === 'week' ? 'bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 scale-110 shadow-2xl ring-1 ring-white ring-opacity-40' : ''
               }`}
             >
               <List size={20} className="text-white" />
