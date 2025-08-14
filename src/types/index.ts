@@ -6,7 +6,7 @@ export interface FamilyMember {
 }
 
 // 予定の種類
-export type EventType = 'work' | 'school' | 'hospital' | 'travel' | 'shift' | 'other';
+export type EventType = 'work' | 'school' | 'hospital' | 'travel' | 'other' | 'shift';
 
 // 予定
 export interface Event {
@@ -18,7 +18,6 @@ export interface Event {
   familyMemberId: string;
   type: EventType;
   isAllDay?: boolean;
-  color?: string; // シフト用の色
   createdAt: Date;
   updatedAt: Date;
 }
