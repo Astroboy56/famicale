@@ -1,3 +1,5 @@
+'use client';
+
 import ConnectionTest from '@/components/Firebase/ConnectionTest';
 
 export default function FirebaseTestPage() {

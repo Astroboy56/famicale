@@ -1,3 +1,5 @@
+'use client';
+
 import TodoPage from '@/components/Todo/TodoPage';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 

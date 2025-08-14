@@ -1,3 +1,5 @@
+'use client';
+
 import ListCalendarPage from '@/components/Calendar/ListCalendarPage';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 
