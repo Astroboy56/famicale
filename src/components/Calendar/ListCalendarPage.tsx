@@ -89,16 +89,16 @@ export default function ListCalendarPage() {
 
       {/* 家族メンバーヘッダー */}
       <div className="glass-card mx-4 mt-2 fade-in">
-        <div className="grid grid-cols-5 gap-2 p-3">
+        <div className="grid grid-cols-5 gap-2 p-2">
           {/* 日付列のヘッダー */}
-          <div className="glass-day p-3 flex items-center justify-center">
+          <div className="glass-day p-2 flex items-center justify-center">
             <span className="text-sm font-semibold text-white">日付</span>
           </div>
           {/* 家族メンバー列のヘッダー */}
           {FAMILY_MEMBERS.map((member) => (
             <div
               key={member.id}
-              className="glass-day p-3"
+              className="glass-day p-2"
             >
               <div className="flex flex-col items-center justify-center space-y-2">
                 <div
@@ -115,12 +115,12 @@ export default function ListCalendarPage() {
 
       {/* リストカレンダー（表形式） */}
       <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
-        <div className="glass-card p-3 space-y-2 fade-in">
+        <div className="glass-card p-2 space-y-1.5 fade-in">
           {days.map((day) => (
             <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
               !isSameMonth(day, currentDate) ? 'opacity-50' : ''
             }`}>
-              <div className="grid grid-cols-5 gap-3 min-h-[80px] p-3">
+              <div className="grid grid-cols-5 gap-3 min-h-[80px] p-2">
                 {/* 日付列 */}
                 <div className="flex items-center justify-center">
                   <div className="text-center">
@@ -154,7 +154,7 @@ export default function ListCalendarPage() {
                           memberEvents.map((event) => (
                             <div
                               key={event.id}
-                              className="glass-event text-xs p-2 hover:scale-105 transition-all duration-300"
+                              className="glass-event text-xs p-1.5 hover:scale-105 transition-all duration-300"
                               title={event.description || event.title}
                             >
                               <div className="flex items-center space-x-1">

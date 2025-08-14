@@ -198,7 +198,7 @@ export default function CalendarPage() {
       </div>
 
       {/* カレンダー部分 */}
-      <div className="h-[55%] overflow-hidden px-4 mt-4">
+      <div className="h-[65%] overflow-hidden px-4 mt-4">
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
