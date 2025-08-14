@@ -22,7 +22,7 @@ export default function BottomNavigation() {
   const router = useRouter();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 glass-nav safe-area-inset-bottom">
+    <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
       <div className="grid grid-cols-4 h-16">
         {navigationItems.map((item) => {
           const Icon = item.icon;
