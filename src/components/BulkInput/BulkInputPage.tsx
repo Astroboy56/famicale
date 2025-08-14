@@ -104,7 +104,7 @@ export default function BulkInputPage() {
                   onClick={() => setForm(prev => ({ ...prev, familyMemberId: member.id }))}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                     form.familyMemberId === member.id
-                      ? 'bg-white bg-opacity-30 border-white border-opacity-60 scale-105'
+                      ? 'bg-white bg-opacity-15 backdrop-blur-sm border-white border-opacity-40 scale-105 shadow-lg'
                       : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
                   }`}
                 >
@@ -198,7 +198,7 @@ export default function BulkInputPage() {
                     onClick={() => toggleDay(index)}
                     className={`p-3 text-sm rounded-xl border-2 transition-all duration-300 ${
                       form.selectedDays.includes(index)
-                        ? 'bg-white bg-opacity-30 text-white border-white border-opacity-60 scale-105'
+                        ? 'bg-white bg-opacity-15 backdrop-blur-sm text-white border-white border-opacity-40 scale-105 shadow-lg'
                         : 'bg-white bg-opacity-10 text-white border-white border-opacity-30 hover:bg-opacity-20'
                     }`}
                   >

@@ -32,10 +32,10 @@ export default function BottomNavigation() {
             <button
               key={item.id}
               onClick={() => router.push(item.path)}
-              className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 rounded-xl ${
                 isActive
-                  ? 'text-white bg-white bg-opacity-20 scale-105'
-                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10'
+                  ? 'text-white bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-20 scale-105 shadow-lg'
+                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-8'
               }`}
             >
               <Icon size={20} />

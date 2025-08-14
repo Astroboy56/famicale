@@ -119,7 +119,7 @@ export default function TodoPage() {
                   onClick={() => setSelectedMember(member.id)}
                   className={`p-3 rounded-xl border-2 transition-all duration-300 ${
                     selectedMember === member.id
-                      ? 'bg-white bg-opacity-30 border-white border-opacity-60 scale-105'
+                      ? 'bg-white bg-opacity-15 backdrop-blur-sm border-white border-opacity-40 scale-105 shadow-lg'
                       : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
                   }`}
                 >
@@ -173,7 +173,7 @@ export default function TodoPage() {
               onClick={() => setFilter(item.key as 'all' | 'active' | 'completed')}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                 filter === item.key
-                  ? 'bg-white bg-opacity-30 text-white scale-105'
+                  ? 'bg-white bg-opacity-15 backdrop-blur-sm border border-white border-opacity-20 text-white scale-105 shadow-lg'
                   : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10'
               }`}
             >
