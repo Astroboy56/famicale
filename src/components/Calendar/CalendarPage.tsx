@@ -198,7 +198,7 @@ export default function CalendarPage() {
       </div>
 
       {/* カレンダー部分 */}
-      <div className="h-[65%] overflow-hidden px-4 mt-4">
+      <div className="h-[55%] overflow-hidden px-4 mt-4">
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
@@ -210,7 +210,7 @@ export default function CalendarPage() {
               {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
                 <div
                   key={day}
-                  className={`py-2 text-center text-sm font-semibold ${
+                  className={`py-0.5 text-center text-sm font-semibold ${
                     index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-white'
                   }`}
                 >
@@ -221,7 +221,7 @@ export default function CalendarPage() {
 
             {/* カレンダーグリッド */}
             <div className="flex-1">
-              <div className="grid grid-cols-7 grid-rows-6 h-full gap-1 p-1">
+              <div className="grid grid-cols-7 grid-rows-6 h-full gap-1 p-2">
                 {days.map((day) => {
                   const dayEvents = getEventsForDay(day);
                   return (
@@ -248,8 +248,8 @@ export default function CalendarPage() {
       </div>
 
       {/* 予定情報表示エリア（下半分） */}
-      <div className="h-[25%] overflow-y-auto px-4 pb-4">
-        <div className="glass-card p-4 fade-in">
+      <div className="h-[30%] overflow-y-auto px-4 pb-4">
+        <div className="glass-card p-3 fade-in">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-glass">今日の予定</h2>
             <button
@@ -279,7 +279,7 @@ export default function CalendarPage() {
                     {todayEvents.map((event) => (
                       <div
                         key={event.id}
-                        className="glass-event p-4 hover:scale-[1.02] transition-all duration-300"
+                        className="glass-event p-3 hover:scale-[1.02] transition-all duration-300"
                       >
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-white">{event.title}</h3>
