@@ -70,7 +70,7 @@ export default function BulkInputPage() {
               type="text"
               value={form.title}
               onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
               placeholder="例：出勤、登校など"
               required
             />
@@ -84,7 +84,7 @@ export default function BulkInputPage() {
             <textarea
               value={form.description}
               onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm resize-none"
+              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md resize-none"
               rows={3}
               placeholder="詳細な内容があれば入力"
             />
@@ -128,7 +128,7 @@ export default function BulkInputPage() {
             <select
               value={form.type}
               onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as EventType }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
             >
               <option value="work" className="text-gray-800">仕事</option>
               <option value="school" className="text-gray-800">学校</option>
@@ -160,7 +160,7 @@ export default function BulkInputPage() {
                   type="time"
                   value={form.time}
                   onChange={(e) => setForm(prev => ({ ...prev, time: e.target.value }))}
-                  className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
                 />
               )}
             </div>
@@ -174,7 +174,7 @@ export default function BulkInputPage() {
             <select
               value={form.pattern}
               onChange={(e) => setForm(prev => ({ ...prev, pattern: e.target.value as 'daily' | 'weekdays' | 'weekly' | 'biweekly' | 'monthly' }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
             >
               <option value="daily" className="text-gray-800">毎日</option>
               <option value="weekdays" className="text-gray-800">平日のみ</option>
@@ -219,7 +219,7 @@ export default function BulkInputPage() {
                 type="date"
                 value={form.startDate}
                 onChange={(e) => setForm(prev => ({ ...prev, startDate: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
                 required
               />
             </div>
@@ -231,7 +231,7 @@ export default function BulkInputPage() {
                 type="date"
                 value={form.endDate}
                 onChange={(e) => setForm(prev => ({ ...prev, endDate: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
                 required
               />
             </div>

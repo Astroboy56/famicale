@@ -141,7 +141,7 @@ export default function TodoPage() {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-              className="flex-1 px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
+              className="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
               placeholder="TODOを入力（例：牛乳を買う、掃除機をかける）"
               disabled={isSubmitting}
             />
