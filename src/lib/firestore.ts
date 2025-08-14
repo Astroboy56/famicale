@@ -38,7 +38,7 @@ export const eventService = {
         Object.entries(event).filter(([_, value]) => value !== undefined)
       );
 
-      const docRef = await addDoc(collection(db, EVENTS_COLLECTION), {
+      const docRef = await addDoc(collection(db!, EVENTS_COLLECTION), {
         ...cleanEvent,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -52,12 +52,16 @@ export const eventService = {
 
   // 特定の月の予定を取得
   async getEventsByMonth(year: number, month: number) {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
     try {
       const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
       const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
       
       const q = query(
-        collection(db, EVENTS_COLLECTION),
+        collection(db!, EVENTS_COLLECTION),
         where('date', '>=', startDate),
         where('date', '<=', endDate),
         orderBy('date', 'asc')
@@ -85,13 +89,17 @@ export const eventService = {
 
   // 予定を更新
   async updateEvent(eventId: string, updates: Partial<Event>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
       // undefinedフィールドを除去
       const cleanUpdates = Object.fromEntries(
         Object.entries(updates).filter(([_, value]) => value !== undefined)
       );
 
-      const eventRef = doc(db, EVENTS_COLLECTION, eventId);
+      const eventRef = doc(db!, EVENTS_COLLECTION, eventId);
       await updateDoc(eventRef, {
         ...cleanUpdates,
         updatedAt: Timestamp.now(),
@@ -104,8 +112,12 @@ export const eventService = {
 
   // 予定を削除
   async deleteEvent(eventId: string) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
-      await deleteDoc(doc(db, EVENTS_COLLECTION, eventId));
+      await deleteDoc(doc(db!, EVENTS_COLLECTION, eventId));
     } catch (error) {
       console.error('予定の削除に失敗しました:', error);
       throw error;
@@ -114,11 +126,16 @@ export const eventService = {
 
   // リアルタイムで予定を監視
   subscribeToEvents(year: number, month: number, callback: (events: Event[]) => void) {
+    if (!isFirebaseInitialized()) {
+      callback([]);
+      return () => {};
+    }
+    
     const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
     const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
     
     const q = query(
-      collection(db, EVENTS_COLLECTION),
+      collection(db!, EVENTS_COLLECTION),
       where('date', '>=', startDate),
       where('date', '<=', endDate),
       orderBy('date', 'asc')
@@ -144,8 +161,12 @@ export const eventService = {
 export const todoService = {
   // TODOを追加
   async addTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
-      const docRef = await addDoc(collection(db, TODOS_COLLECTION), {
+      const docRef = await addDoc(collection(db!, TODOS_COLLECTION), {
         ...todo,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -159,9 +180,13 @@ export const todoService = {
 
   // 全てのTODOを取得
   async getAllTodos() {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
     try {
       const q = query(
-        collection(db, TODOS_COLLECTION),
+        collection(db!, TODOS_COLLECTION),
         orderBy('createdAt', 'desc')
       );
       
@@ -187,8 +212,12 @@ export const todoService = {
 
   // TODOを更新
   async updateTodo(todoId: string, updates: Partial<TodoItem>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
-      const todoRef = doc(db, TODOS_COLLECTION, todoId);
+      const todoRef = doc(db!, TODOS_COLLECTION, todoId);
       await updateDoc(todoRef, {
         ...updates,
         updatedAt: Timestamp.now(),
@@ -201,8 +230,12 @@ export const todoService = {
 
   // TODOを削除
   async deleteTodo(todoId: string) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
-      await deleteDoc(doc(db, TODOS_COLLECTION, todoId));
+      await deleteDoc(doc(db!, TODOS_COLLECTION, todoId));
     } catch (error) {
       console.error('TODOの削除に失敗しました:', error);
       throw error;
@@ -211,8 +244,12 @@ export const todoService = {
 
   // TODOの完了状態を切り替え
   async toggleTodoComplete(todoId: string, completed: boolean) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
-      const todoRef = doc(db, TODOS_COLLECTION, todoId);
+      const todoRef = doc(db!, TODOS_COLLECTION, todoId);
       await updateDoc(todoRef, {
         completed,
         updatedAt: Timestamp.now(),
@@ -225,8 +262,13 @@ export const todoService = {
 
   // リアルタイムでTODOを監視
   subscribeToTodos(callback: (todos: TodoItem[]) => void) {
+    if (!isFirebaseInitialized()) {
+      callback([]);
+      return () => {};
+    }
+    
     const q = query(
-      collection(db, TODOS_COLLECTION),
+      collection(db!, TODOS_COLLECTION),
       orderBy('createdAt', 'desc')
     );
 
@@ -250,9 +292,13 @@ export const todoService = {
 export const bulkService = {
   // 一括で予定を追加
   async addBulkEvents(events: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>[]) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
       const promises = events.map(event => 
-        addDoc(collection(db, EVENTS_COLLECTION), {
+        addDoc(collection(db!, EVENTS_COLLECTION), {
           ...event,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
@@ -270,9 +316,14 @@ export const bulkService = {
 
 // 接続テスト用の関数
 export const testFirebaseConnection = async () => {
+  if (!isFirebaseInitialized()) {
+    console.error('❌ Firebaseが初期化されていません');
+    return false;
+  }
+  
   try {
     // テスト用のドキュメントを作成して削除
-    const testCollection = collection(db, 'test');
+    const testCollection = collection(db!, 'test');
     const docRef = await addDoc(testCollection, {
       test: true,
       timestamp: Timestamp.now(),
