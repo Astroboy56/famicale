@@ -249,22 +249,22 @@ export default function ShiftPage() {
           </button>
         </div>
 
-        {/* コマンドボタングリッド */}
-        <div className="grid grid-cols-3 gap-3">
+                 {/* コマンドボタングリッド */}
+         <div className="grid grid-cols-6 gap-2">
           {shiftCommands.map((command) => (
             <button
               key={command.id}
               onClick={() => addShiftSequence(command)}
               disabled={!selectedDate}
-              className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+                             className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 min-h-[50px]"
               style={{
                 backgroundColor: command.bgColor,
                 color: command.color,
               }}
             >
-              <span className="text-xs font-semibold">
-                {command.name}
-              </span>
+                             <span className="text-[10px] font-semibold leading-tight">
+                 {command.name}
+               </span>
             </button>
           ))}
         </div>
