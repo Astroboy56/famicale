@@ -104,11 +104,11 @@ export default function TodoPage() {
       </header>
 
       {/* 新規追加フォーム */}
-      <div className="glass-card mx-4 mt-2 p-4 fade-in">
-        <div className="space-y-4">
+      <div className="glass-card mx-4 mt-2 p-3 fade-in">
+        <div className="space-y-3">
           {/* 作成者選択 */}
           <div>
-            <label className="block text-sm font-semibold text-white mb-3">
+            <label className="block text-sm font-semibold text-white mb-2">
               作成者
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -117,7 +117,7 @@ export default function TodoPage() {
                   key={member.id}
                   type="button"
                   onClick={() => setSelectedMember(member.id)}
-                  className={`p-3 glass-select-button transition-all duration-300 ${
+                  className={`p-2 glass-select-button transition-all duration-300 ${
                     selectedMember === member.id
                       ? 'selected'
                       : ''
@@ -141,14 +141,14 @@ export default function TodoPage() {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-              className="flex-1 px-4 py-3 glass-input text-white placeholder-white placeholder-opacity-60"
+              className="flex-1 px-3 py-2 glass-input text-white placeholder-white placeholder-opacity-60"
               placeholder="TODOを入力（例：牛乳を買う、掃除機をかける）"
               disabled={isSubmitting}
             />
             <button
               onClick={addTodo}
               disabled={!newTodo.trim() || isSubmitting}
-              className="glass-button p-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="glass-button p-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
@@ -161,7 +161,7 @@ export default function TodoPage() {
       </div>
 
       {/* フィルター */}
-      <div className="glass-card mx-4 mt-2 px-4 py-3 fade-in">
+      <div className="glass-card mx-4 mt-2 px-4 py-2 fade-in">
         <div className="flex justify-center space-x-4">
           {[
             { key: 'all', label: 'すべて' },
@@ -171,7 +171,7 @@ export default function TodoPage() {
             <button
               key={item.key}
               onClick={() => setFilter(item.key as 'all' | 'active' | 'completed')}
-              className={`px-4 py-2 glass-select-button text-sm font-semibold transition-all duration-300 ${
+              className={`px-3 py-1.5 glass-select-button text-sm font-semibold transition-all duration-300 ${
                 filter === item.key
                   ? 'selected text-white'
                   : 'text-white text-opacity-70 hover:text-white'
@@ -201,27 +201,27 @@ export default function TodoPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {filteredTodos.map((todo) => (
                 <div
                   key={todo.id}
-                  className="glass-day p-4 hover:scale-[1.02] transition-all duration-300"
+                  className="glass-day p-3 hover:scale-[1.02] transition-all duration-300"
                 >
                   <div className="flex items-center">
                     {/* チェックボックス */}
                     <button
                       onClick={() => toggleTodo(todo.id, todo.completed)}
-                      className={`flex-shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                      className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                         todo.completed
                           ? 'bg-green-500 border-green-400 text-white shadow-lg'
                           : 'border-white border-opacity-50 hover:border-green-400 hover:bg-green-400 hover:bg-opacity-20'
                       }`}
                     >
-                      {todo.completed && <Check size={16} />}
+                      {todo.completed && <Check size={14} />}
                     </button>
 
                     {/* TODOコンテンツ */}
-                    <div className="flex-1 ml-4">
+                    <div className="flex-1 ml-3">
                       <div className="flex items-center space-x-2">
                         <span
                           className={`text-sm font-semibold ${
@@ -231,11 +231,11 @@ export default function TodoPage() {
                           {todo.title}
                         </span>
                         {todo.priority === 'high' && (
-                          <AlertCircle size={16} className="text-red-400" />
+                          <AlertCircle size={14} className="text-red-400" />
                         )}
                       </div>
                       
-                      <div className="flex items-center mt-2 space-x-2">
+                      <div className="flex items-center mt-1 space-x-2">
                         <div
                           className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} border-2 border-white shadow-sm`}
                         />
@@ -248,9 +248,9 @@ export default function TodoPage() {
                     {/* 削除ボタン */}
                     <button
                       onClick={() => deleteTodo(todo.id)}
-                      className="flex-shrink-0 p-2 text-white text-opacity-60 hover:text-red-400 hover:bg-red-400 hover:bg-opacity-20 rounded-lg transition-all duration-300"
+                      className="flex-shrink-0 p-1.5 text-white text-opacity-60 hover:text-red-400 hover:bg-red-400 hover:bg-opacity-20 rounded-lg transition-all duration-300"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
