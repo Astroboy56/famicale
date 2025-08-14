@@ -15,6 +15,11 @@ import {
 import { db } from './firebase';
 import { Event, TodoItem } from '@/types';
 
+// Firebase初期化チェック
+const isFirebaseInitialized = () => {
+  return db !== null && db !== undefined;
+};
+
 // コレクション参照
 const EVENTS_COLLECTION = 'events';
 const TODOS_COLLECTION = 'todos';
@@ -23,6 +28,10 @@ const TODOS_COLLECTION = 'todos';
 export const eventService = {
   // 予定を追加
   async addEvent(event: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
     try {
       // undefinedフィールドを除去
       const cleanEvent = Object.fromEntries(

@@ -3,6 +3,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
+// Firebase設定の検証
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -12,16 +13,33 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Firebase初期化
-const app = initializeApp(firebaseConfig);
+// 環境変数の存在確認
+const isFirebaseConfigValid = () => {
+  return firebaseConfig.apiKey && 
+         firebaseConfig.authDomain && 
+         firebaseConfig.projectId && 
+         firebaseConfig.storageBucket && 
+         firebaseConfig.messagingSenderId && 
+         firebaseConfig.appId;
+};
 
-// Firestore初期化
-export const db = getFirestore(app);
+// Firebase初期化（環境変数が設定されている場合のみ）
+let app: any = null;
+let db: any = null;
+let auth: any = null;
+let analytics: any = null;
 
-// Auth初期化
-export const auth = getAuth(app);
+if (isFirebaseConfigValid()) {
+  try {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+    analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+  } catch (error) {
+    console.warn('Firebase initialization failed:', error);
+  }
+}
 
-// Analytics初期化（ブラウザ環境でのみ）
-export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
-
+// エクスポート
+export { db, auth, analytics };
 export default app;
