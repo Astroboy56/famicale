@@ -89,24 +89,24 @@ export default function ListCalendarPage() {
 
       {/* ヘッダー行 */}
       <div className="glass-card mx-4 mt-2 fade-in">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center p-4">
           {/* 日付ヘッダー */}
           <div className="flex items-center justify-center min-w-[60px]">
             <span className="text-sm font-semibold text-white">日付</span>
           </div>
+          {/* 縦線 */}
+          <div className="w-px h-6 bg-white bg-opacity-30 mx-4"></div>
           {/* 家族メンバーヘッダー */}
           <div className="flex items-center space-x-6">
-            {FAMILY_MEMBERS.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center space-x-2"
-              >
-                <div
-                  className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} border-2 border-white shadow-lg`}
-                />
+            {FAMILY_MEMBERS.map((member, index) => (
+              <div key={member.id} className="flex items-center">
                 <span className="text-sm font-semibold text-white">
                   {member.name}
                 </span>
+                {/* 最後のメンバー以外に縦線を追加 */}
+                {index < FAMILY_MEMBERS.length - 1 && (
+                  <div className="w-px h-6 bg-white bg-opacity-30 mx-3"></div>
+                )}
               </div>
             ))}
           </div>
@@ -117,73 +117,72 @@ export default function ListCalendarPage() {
       <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
         <div className="glass-card p-2 space-y-1.5 fade-in">
           {days.map((day) => (
-                         <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
+                                      <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
                !isSameMonth(day, currentDate) ? 'opacity-50' : ''
              }`}>
-                              <div className="flex items-center justify-between p-3">
-                  {/* 日付列 */}
-                  <div className="flex items-center justify-center min-w-[60px]">
-                    <div className="text-center">
-                      <div className={`text-sm font-bold ${
-                        !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
-                      }`}>
-                        {format(day, 'M/d', { locale: ja })}
-                      </div>
-                      <div className={`text-xs ${
-                        !isSameMonth(day, currentDate) ? 'text-white text-opacity-30' : 'text-white text-opacity-70'
-                      }`}>
-                        {format(day, '(E)', { locale: ja })}
-                      </div>
-                    </div>
-                  </div>
+                               <div className="flex items-center p-3">
+                   {/* 日付列 */}
+                   <div className="flex items-center justify-center min-w-[60px]">
+                     <div className="text-center">
+                       <div className={`text-sm font-bold ${
+                         !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
+                       }`}>
+                         {format(day, 'M/d', { locale: ja })}
+                       </div>
+                       <div className={`text-xs ${
+                         !isSameMonth(day, currentDate) ? 'text-white text-opacity-30' : 'text-white text-opacity-70'
+                       }`}>
+                         {format(day, '(E)', { locale: ja })}
+                       </div>
+                     </div>
+                   </div>
 
-                  {/* 各家族メンバーの予定列 */}
-                  <div className="flex items-center space-x-6">
-                    {FAMILY_MEMBERS.map((member) => {
-                      const memberEvents = getEventsForDayAndMember(day, member.id);
-                      return (
-                        <div
-                          key={member.id}
-                          className="flex items-center justify-center min-w-[80px]"
-                        >
-                          <div className="w-full space-y-1">
-                            {loading ? (
-                              <div className="text-xs text-white text-opacity-60 text-center py-2">
-                                <div className="animate-pulse">...</div>
-                              </div>
-                            ) : memberEvents.length > 0 ? (
-                              memberEvents.map((event) => (
-                                <div
-                                  key={event.id}
-                                  className="glass-event text-xs p-1.5 hover:scale-105 transition-all duration-300"
-                                  title={event.description || event.title}
-                                >
-                                  <div className="flex items-center space-x-1">
-                                    <div 
-                                      className={`w-2 h-2 rounded-full ${COLOR_MAP[member.color].bg} flex-shrink-0`}
-                                    />
-                                    <div className="font-medium truncate text-white">
-                                      {event.title}
-                                    </div>
-                                  </div>
-                                  {!event.isAllDay && event.time && (
-                                    <div className="text-xs text-white text-opacity-80 mt-1 ml-3">
-                                      {event.time}
-                                    </div>
-                                  )}
-                                </div>
-                              ))
-                            ) : (
-                              <div className="text-xs text-white text-opacity-40 text-center py-2">
-                                -
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                   {/* 縦線 */}
+                   <div className="w-px h-6 bg-white bg-opacity-30 mx-4"></div>
+
+                   {/* 各家族メンバーの予定列 */}
+                   <div className="flex items-center space-x-6">
+                     {FAMILY_MEMBERS.map((member, index) => {
+                       const memberEvents = getEventsForDayAndMember(day, member.id);
+                       return (
+                         <div key={member.id} className="flex items-center">
+                           <div className="min-w-[80px] space-y-1">
+                             {loading ? (
+                               <div className="text-xs text-white text-opacity-60 text-center py-2">
+                                 <div className="animate-pulse">...</div>
+                               </div>
+                             ) : memberEvents.length > 0 ? (
+                               memberEvents.map((event) => (
+                                 <div
+                                   key={event.id}
+                                   className="glass-event text-xs p-1.5 hover:scale-105 transition-all duration-300"
+                                   title={event.description || event.title}
+                                 >
+                                   <div className="font-medium truncate text-white">
+                                     {event.title}
+                                   </div>
+                                   {!event.isAllDay && event.time && (
+                                     <div className="text-xs text-white text-opacity-80 mt-1">
+                                       {event.time}
+                                     </div>
+                                   )}
+                                 </div>
+                               ))
+                             ) : (
+                               <div className="text-xs text-white text-opacity-40 text-center py-2">
+                                 -
+                               </div>
+                             )}
+                           </div>
+                           {/* 最後のメンバー以外に縦線を追加 */}
+                           {index < FAMILY_MEMBERS.length - 1 && (
+                             <div className="w-px h-6 bg-white bg-opacity-30 mx-3"></div>
+                           )}
+                         </div>
+                       );
+                     })}
+                   </div>
+                 </div>
             </div>
           ))}
         </div>
