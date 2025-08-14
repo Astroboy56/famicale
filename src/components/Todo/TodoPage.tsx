@@ -205,13 +205,13 @@ export default function TodoPage() {
               {filteredTodos.map((todo) => (
                 <div
                   key={todo.id}
-                  className="glass-day p-3 hover:scale-[1.02] transition-all duration-300"
+                  className="glass-day p-1 hover:scale-[1.02] transition-all duration-300"
                 >
                   <div className="flex items-center">
                     {/* チェックボックス */}
                     <button
                       onClick={() => toggleTodo(todo.id, todo.completed)}
-                      className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                      className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                         todo.completed
                           ? 'bg-green-500 border-green-400 text-white shadow-lg'
                           : 'border-white border-opacity-50 hover:border-green-400 hover:bg-green-400 hover:bg-opacity-20'
@@ -235,7 +235,7 @@ export default function TodoPage() {
                         )}
                       </div>
                       
-                      <div className="flex items-center mt-1 space-x-2">
+                      <div className="flex items-center mt-1 space-x-1">
                         <div
                           className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} border-2 border-white shadow-sm`}
                         />
