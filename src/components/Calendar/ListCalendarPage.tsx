@@ -89,23 +89,23 @@ export default function ListCalendarPage() {
 
       {/* ヘッダー行 */}
       <div className="glass-card mx-4 mt-2 fade-in">
-        <div className="flex items-center p-3">
+        <div className="flex items-center justify-between p-3">
           {/* 日付ヘッダー */}
           <div className="flex items-center justify-center min-w-[40px]">
             <span className="text-xs font-semibold text-white">日付</span>
           </div>
           {/* 縦線 */}
-          <div className="w-px h-4 bg-white bg-opacity-30 mx-2"></div>
+          <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
           {/* 家族メンバーヘッダー */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-between flex-1">
             {FAMILY_MEMBERS.map((member, index) => (
-              <div key={member.id} className="flex items-center">
+              <div key={member.id} className="flex items-center justify-center flex-1">
                 <span className="text-xs font-semibold text-white">
                   {member.name}
                 </span>
                 {/* 最後のメンバー以外に縦線を追加 */}
                 {index < FAMILY_MEMBERS.length - 1 && (
-                  <div className="w-px h-4 bg-white bg-opacity-30 mx-2"></div>
+                  <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
                 )}
               </div>
             ))}
@@ -120,7 +120,7 @@ export default function ListCalendarPage() {
                                                    <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
                !isSameMonth(day, currentDate) ? 'opacity-50' : ''
              }`}>
-                                                                 <div className="flex items-center p-2">
+                                                                 <div className="flex items-center justify-between p-2">
                      {/* 日付列 */}
                      <div className="flex items-center justify-center min-w-[40px]">
                        <div className="text-center">
@@ -138,11 +138,11 @@ export default function ListCalendarPage() {
                      </div>
 
                      {/* 各家族メンバーの予定列 */}
-                     <div className="flex items-center space-x-3 ml-2">
+                     <div className="flex items-center justify-between flex-1 ml-3">
                        {FAMILY_MEMBERS.map((member) => {
                          const memberEvents = getEventsForDayAndMember(day, member.id);
                          return (
-                           <div key={member.id} className="flex items-center">
+                           <div key={member.id} className="flex items-center justify-center flex-1">
                              <div className="min-w-[60px] space-y-0.5">
                                {loading ? (
                                  <div className="text-[10px] text-white text-opacity-60 text-center py-1">
