@@ -6,6 +6,7 @@ import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3 } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
+import BottomNavigation from '@/components/Layout/BottomNavigation';
 
 // シフトコマンドの型定義
 interface ShiftCommand {
@@ -308,8 +309,8 @@ export default function ShiftPage() {
         )}
       </div>
 
-      {/* ボトムナビゲーション用のスペース */}
-      <div className="h-20" />
-    </div>
-  );
-}
+             {/* ボトムナビゲーション */}
+       <BottomNavigation />
+     </div>
+   );
+ }
