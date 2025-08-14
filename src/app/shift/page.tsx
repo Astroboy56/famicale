@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3, X } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
@@ -30,7 +30,7 @@ export default function ShiftPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
-  const [shiftCommands, setShiftCommands] = useState<ShiftCommand[]>(DEFAULT_SHIFT_COMMANDS);
+  const [shiftCommands, setShiftCommands] = useState<ShiftCommand[]>([]);
   const [showCustomEdit, setShowCustomEdit] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
@@ -54,8 +54,36 @@ export default function ShiftPage() {
     }
   };
 
+  // ローカルストレージからシフトコマンドを読み込み
+  const loadShiftCommands = () => {
+    try {
+      const savedCommands = localStorage.getItem('shiftCommands');
+      if (savedCommands) {
+        const parsedCommands = JSON.parse(savedCommands);
+        setShiftCommands(parsedCommands);
+      } else {
+        // 初回はデフォルトコマンドを設定
+        setShiftCommands(DEFAULT_SHIFT_COMMANDS);
+        localStorage.setItem('shiftCommands', JSON.stringify(DEFAULT_SHIFT_COMMANDS));
+      }
+    } catch (error) {
+      console.error('シフトコマンドの読み込みに失敗しました:', error);
+      setShiftCommands(DEFAULT_SHIFT_COMMANDS);
+    }
+  };
+
+  // シフトコマンドをローカルストレージに保存
+  const saveShiftCommands = (commands: ShiftCommand[]) => {
+    try {
+      localStorage.setItem('shiftCommands', JSON.stringify(commands));
+    } catch (error) {
+      console.error('シフトコマンドの保存に失敗しました:', error);
+    }
+  };
+
   useEffect(() => {
     loadEvents();
+    loadShiftCommands();
   }, [currentDate]);
 
   // 特定の日付の予定を取得
@@ -123,6 +151,13 @@ export default function ShiftPage() {
     }
   };
 
+  // カスタムコマンドを削除
+  const removeCustomCommand = (commandId: string) => {
+    const updatedCommands = shiftCommands.filter(cmd => cmd.id !== commandId);
+    setShiftCommands(updatedCommands);
+    saveShiftCommands(updatedCommands);
+  };
+
   // カスタムコマンドを追加
   const addCustomCommand = (name: string) => {
     if (name.length > 4) {
@@ -141,7 +176,9 @@ export default function ShiftPage() {
       isCustom: true,
     };
 
-    setShiftCommands(prev => [...prev, newCommand]);
+    const updatedCommands = [...shiftCommands, newCommand];
+    setShiftCommands(updatedCommands);
+    saveShiftCommands(updatedCommands);
     setShowCustomEdit(false);
   };
 
@@ -232,8 +269,8 @@ export default function ShiftPage() {
         </div>
       </div>
 
-      {/* シフトコマンドボタン */}
-      <div className="glass-card mx-4 mt-4 p-4 fade-in">
+             {/* シフトコマンドボタン */}
+       <div className="glass-card mx-4 mt-4 mb-25 p-4 fade-in">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-white">
             {selectedDate 
@@ -249,25 +286,38 @@ export default function ShiftPage() {
           </button>
         </div>
 
-                 {/* コマンドボタングリッド */}
+                          {/* コマンドボタングリッド */}
          <div className="grid grid-cols-6 gap-2">
-          {shiftCommands.map((command) => (
-            <button
-              key={command.id}
-              onClick={() => addShiftSequence(command)}
-              disabled={!selectedDate}
-                             className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 min-h-[50px]"
-              style={{
-                backgroundColor: command.bgColor,
-                color: command.color,
-              }}
-            >
-                             <span className="text-[10px] font-semibold leading-tight">
-                 {command.name}
-               </span>
-            </button>
-          ))}
-        </div>
+           {shiftCommands.map((command) => (
+             <div key={command.id} className="relative group">
+               <button
+                 onClick={() => addShiftSequence(command)}
+                 disabled={!selectedDate}
+                 className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 min-h-[50px] w-full"
+                 style={{
+                   backgroundColor: command.bgColor,
+                   color: command.color,
+                 }}
+               >
+                 <span className="text-[10px] font-semibold leading-tight">
+                   {command.name}
+                 </span>
+               </button>
+               {/* カスタムコマンドの削除ボタン */}
+               {command.isCustom && (
+                 <button
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     removeCustomCommand(command.id);
+                   }}
+                   className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                 >
+                   <X size={12} className="text-white" />
+                 </button>
+               )}
+             </div>
+           ))}
+         </div>
 
         {/* カスタム編集モーダル */}
         {showCustomEdit && (
