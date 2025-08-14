@@ -78,6 +78,7 @@ export const EVENT_TYPE_ICONS: Record<EventType, string> = {
   hospital: 'heart-pulse',
   travel: 'plane',
   other: 'calendar',
+  shift: 'clock',
 };
 
 // カラーマップ
