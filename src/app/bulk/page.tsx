@@ -1,10 +1,10 @@
-import CalendarPage from '@/components/Calendar/CalendarPage';
+import BulkInputPage from '@/components/BulkInput/BulkInputPage';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 
-export default function Home() {
+export default function BulkPage() {
   return (
     <>
-      <CalendarPage />
+      <BulkInputPage />
       <BottomNavigation />
     </>
   );

@@ -1,10 +1,10 @@
-import CalendarPage from '@/components/Calendar/CalendarPage';
+import TodoPage from '@/components/Todo/TodoPage';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 
-export default function Home() {
+export default function TodoPageWrapper() {
   return (
     <>
-      <CalendarPage />
+      <TodoPage />
       <BottomNavigation />
     </>
   );

@@ -1,0 +1,47 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#3b82f6"/>
+  
+  <!-- Calendar base -->
+  <rect x="96" y="128" width="320" height="256" rx="16" fill="white"/>
+  
+  <!-- Calendar header -->
+  <rect x="96" y="128" width="320" height="64" rx="16" fill="#1d4ed8"/>
+  <rect x="96" y="176" width="320" height="16" fill="#1d4ed8"/>
+  
+  <!-- Calendar rings -->
+  <rect x="160" y="96" width="16" height="64" rx="8" fill="#6b7280"/>
+  <rect x="336" y="96" width="16" height="64" rx="8" fill="#6b7280"/>
+  
+  <!-- Calendar grid -->
+  <g fill="#e5e7eb">
+    <rect x="128" y="224" width="32" height="32" rx="4"/>
+    <rect x="176" y="224" width="32" height="32" rx="4"/>
+    <rect x="224" y="224" width="32" height="32" rx="4"/>
+    <rect x="272" y="224" width="32" height="32" rx="4"/>
+    <rect x="320" y="224" width="32" height="32" rx="4"/>
+    
+    <rect x="128" y="272" width="32" height="32" rx="4"/>
+    <rect x="176" y="272" width="32" height="32" rx="4"/>
+    <rect x="224" y="272" width="32" height="32" rx="4"/>
+    <rect x="272" y="272" width="32" height="32" rx="4"/>
+    <rect x="320" y="272" width="32" height="32" rx="4"/>
+    
+    <rect x="128" y="320" width="32" height="32" rx="4"/>
+    <rect x="176" y="320" width="32" height="32" rx="4"/>
+    <rect x="224" y="320" width="32" height="32" rx="4"/>
+    <rect x="272" y="320" width="32" height="32" rx="4"/>
+    <rect x="320" y="320" width="32" height="32" rx="4"/>
+  </g>
+  
+  <!-- Family indicator (4 dots) -->
+  <g fill="#ef4444">
+    <circle cx="144" cy="240" r="4"/>
+    <circle cx="192" cy="288" r="4"/>
+    <circle cx="240" cy="240" r="4"/>
+    <circle cx="288" cy="336" r="4"/>
+  </g>
+  
+  <!-- App name hint -->
+  <text x="256" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white">FamiCale</text>
+</svg>

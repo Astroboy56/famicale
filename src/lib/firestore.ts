@@ -1,0 +1,281 @@
+import { 
+  collection, 
+  doc, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  getDocs, 
+  getDoc,
+  query, 
+  where, 
+  orderBy,
+  onSnapshot,
+  Timestamp 
+} from 'firebase/firestore';
+import { db } from './firebase';
+import { Event, TodoItem } from '@/types';
+
+// コレクション参照
+const EVENTS_COLLECTION = 'events';
+const TODOS_COLLECTION = 'todos';
+
+// 予定関連の関数
+export const eventService = {
+  // 予定を追加
+  async addEvent(event: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>) {
+    try {
+      // undefinedフィールドを除去
+      const cleanEvent = Object.fromEntries(
+        Object.entries(event).filter(([_, value]) => value !== undefined)
+      );
+
+      const docRef = await addDoc(collection(db, EVENTS_COLLECTION), {
+        ...cleanEvent,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('予定の追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 特定の月の予定を取得
+  async getEventsByMonth(year: number, month: number) {
+    try {
+      const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+      const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+      
+      const q = query(
+        collection(db, EVENTS_COLLECTION),
+        where('date', '>=', startDate),
+        where('date', '<=', endDate),
+        orderBy('date', 'asc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const events: Event[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        events.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as Event);
+      });
+      
+      return events;
+    } catch (error) {
+      console.error('予定の取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 予定を更新
+  async updateEvent(eventId: string, updates: Partial<Event>) {
+    try {
+      // undefinedフィールドを除去
+      const cleanUpdates = Object.fromEntries(
+        Object.entries(updates).filter(([_, value]) => value !== undefined)
+      );
+
+      const eventRef = doc(db, EVENTS_COLLECTION, eventId);
+      await updateDoc(eventRef, {
+        ...cleanUpdates,
+        updatedAt: Timestamp.now(),
+      });
+    } catch (error) {
+      console.error('予定の更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 予定を削除
+  async deleteEvent(eventId: string) {
+    try {
+      await deleteDoc(doc(db, EVENTS_COLLECTION, eventId));
+    } catch (error) {
+      console.error('予定の削除に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // リアルタイムで予定を監視
+  subscribeToEvents(year: number, month: number, callback: (events: Event[]) => void) {
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+    const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+    
+    const q = query(
+      collection(db, EVENTS_COLLECTION),
+      where('date', '>=', startDate),
+      where('date', '<=', endDate),
+      orderBy('date', 'asc')
+    );
+
+    return onSnapshot(q, (querySnapshot) => {
+      const events: Event[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        events.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as Event);
+      });
+      callback(events);
+    });
+  },
+};
+
+// TODO関連の関数
+export const todoService = {
+  // TODOを追加
+  async addTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'>) {
+    try {
+      const docRef = await addDoc(collection(db, TODOS_COLLECTION), {
+        ...todo,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('TODOの追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 全てのTODOを取得
+  async getAllTodos() {
+    try {
+      const q = query(
+        collection(db, TODOS_COLLECTION),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const todos: TodoItem[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        todos.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as TodoItem);
+      });
+      
+      return todos;
+    } catch (error) {
+      console.error('TODOの取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // TODOを更新
+  async updateTodo(todoId: string, updates: Partial<TodoItem>) {
+    try {
+      const todoRef = doc(db, TODOS_COLLECTION, todoId);
+      await updateDoc(todoRef, {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      });
+    } catch (error) {
+      console.error('TODOの更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // TODOを削除
+  async deleteTodo(todoId: string) {
+    try {
+      await deleteDoc(doc(db, TODOS_COLLECTION, todoId));
+    } catch (error) {
+      console.error('TODOの削除に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // TODOの完了状態を切り替え
+  async toggleTodoComplete(todoId: string, completed: boolean) {
+    try {
+      const todoRef = doc(db, TODOS_COLLECTION, todoId);
+      await updateDoc(todoRef, {
+        completed,
+        updatedAt: Timestamp.now(),
+      });
+    } catch (error) {
+      console.error('TODOの状態更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // リアルタイムでTODOを監視
+  subscribeToTodos(callback: (todos: TodoItem[]) => void) {
+    const q = query(
+      collection(db, TODOS_COLLECTION),
+      orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, (querySnapshot) => {
+      const todos: TodoItem[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        todos.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as TodoItem);
+      });
+      callback(todos);
+    });
+  },
+};
+
+// 一括入力用の関数
+export const bulkService = {
+  // 一括で予定を追加
+  async addBulkEvents(events: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>[]) {
+    try {
+      const promises = events.map(event => 
+        addDoc(collection(db, EVENTS_COLLECTION), {
+          ...event,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        })
+      );
+      
+      const results = await Promise.all(promises);
+      return results.map(doc => doc.id);
+    } catch (error) {
+      console.error('一括予定追加に失敗しました:', error);
+      throw error;
+    }
+  },
+};
+
+// 接続テスト用の関数
+export const testFirebaseConnection = async () => {
+  try {
+    // テスト用のドキュメントを作成して削除
+    const testCollection = collection(db, 'test');
+    const docRef = await addDoc(testCollection, {
+      test: true,
+      timestamp: Timestamp.now(),
+    });
+    
+    // 作成したテストドキュメントを削除
+    await deleteDoc(docRef);
+    
+    console.log('✅ Firebase接続テスト成功');
+    return true;
+  } catch (error) {
+    console.error('❌ Firebase接続テスト失敗:', error);
+    return false;
+  }
+};
