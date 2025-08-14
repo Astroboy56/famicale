@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
@@ -14,7 +14,10 @@ export default function ListCalendarPage() {
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  // カレンダー表示用に、月の最初の週の開始から最後の週の終了まで取得
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 日曜日開始
+  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   // 予定データの読み込み
   const loadEvents = async () => {
@@ -114,15 +117,21 @@ export default function ListCalendarPage() {
       <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
         <div className="glass-card p-3 space-y-2 fade-in">
           {days.map((day) => (
-            <div key={day.toISOString()} className="glass-day hover:scale-[1.01] transition-all duration-300">
+            <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
+              !isSameMonth(day, currentDate) ? 'opacity-50' : ''
+            }`}>
               <div className="grid grid-cols-5 gap-3 min-h-[80px] p-3">
                 {/* 日付列 */}
                 <div className="flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-sm font-bold text-white">
+                    <div className={`text-sm font-bold ${
+                      !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
+                    }`}>
                       {format(day, 'M/d', { locale: ja })}
                     </div>
-                    <div className="text-xs text-white text-opacity-70">
+                    <div className={`text-xs ${
+                      !isSameMonth(day, currentDate) ? 'text-white text-opacity-30' : 'text-white text-opacity-70'
+                    }`}>
                       {format(day, '(E)', { locale: ja })}
                     </div>
                   </div>

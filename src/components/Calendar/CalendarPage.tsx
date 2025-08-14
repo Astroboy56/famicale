@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Grid3X3, List, Plus } from 'lucide-react';
 import {
@@ -31,7 +31,10 @@ export default function CalendarPage() {
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  // カレンダー表示用に、月の最初の週の開始から最後の週の終了まで取得
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 日曜日開始
+  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   // 予定データの読み込み
   const loadEvents = async () => {
@@ -218,7 +221,7 @@ export default function CalendarPage() {
 
             {/* カレンダーグリッド */}
             <div className="flex-1">
-              <div className="grid grid-cols-7 h-full gap-1 p-2">
+              <div className="grid grid-cols-7 grid-rows-6 h-full gap-1 p-2">
                 {days.map((day) => {
                   const dayEvents = getEventsForDay(day);
                   return (

@@ -34,7 +34,7 @@ export function DroppableDay({
     <div
       ref={setNodeRef}
       onClick={() => onClick(day)}
-      className={`glass-day p-3 min-h-[90px] cursor-pointer ${
+      className={`glass-day p-2 min-h-[70px] cursor-pointer ${
         !isSameMonth(day, currentDate) ? 'opacity-50' : ''
       } ${isToday(day) ? 'today' : ''} ${
         isOver ? 'glass-area ring-2 ring-white ring-opacity-50 scale-105' : ''
