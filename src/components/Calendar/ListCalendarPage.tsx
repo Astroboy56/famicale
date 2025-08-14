@@ -87,9 +87,14 @@ export default function ListCalendarPage() {
         </div>
       </header>
 
-      {/* 家族メンバーヘッダー */}
+      {/* ヘッダー行 */}
       <div className="glass-card mx-4 mt-2 fade-in">
-        <div className="flex items-center justify-center space-x-6 p-4">
+        <div className="flex items-center space-x-6 p-4">
+          {/* 日付ヘッダー */}
+          <div className="flex items-center justify-center min-w-[60px]">
+            <span className="text-sm font-semibold text-white">日付</span>
+          </div>
+          {/* 家族メンバーヘッダー */}
           {FAMILY_MEMBERS.map((member) => (
             <div
               key={member.id}
