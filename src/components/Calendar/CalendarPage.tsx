@@ -198,7 +198,7 @@ export default function CalendarPage() {
       </div>
 
       {/* カレンダー部分 */}
-      <div className="h-[70%] overflow-hidden px-4 mt-4">
+      <div className="h-[65%] overflow-hidden px-4 mt-4">
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
@@ -210,7 +210,7 @@ export default function CalendarPage() {
               {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
                 <div
                   key={day}
-                  className={`py-3 text-center text-sm font-semibold ${
+                  className={`py-2 text-center text-sm font-semibold ${
                     index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-white'
                   }`}
                 >
@@ -248,7 +248,7 @@ export default function CalendarPage() {
       </div>
 
       {/* 予定情報表示エリア（下半分） */}
-      <div className="h-[20%] overflow-y-auto px-4 pb-4">
+      <div className="h-[25%] overflow-y-auto px-4 pb-4">
         <div className="glass-card p-4 fade-in">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-glass">今日の予定</h2>
