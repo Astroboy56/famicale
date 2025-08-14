@@ -34,21 +34,21 @@ export function DroppableDay({
     <div
       ref={setNodeRef}
       onClick={() => onClick(day)}
-      className={`border-r border-b border-gray-100 p-2 min-h-[80px] cursor-pointer transition-all duration-200 ${
-        !isSameMonth(day, currentDate) ? 'bg-gray-50' : ''
-      } ${isToday(day) ? 'bg-blue-50' : ''} ${
-        isOver ? 'bg-green-100 ring-2 ring-green-300' : 'hover:bg-gray-50'
+      className={`glass-day p-3 min-h-[90px] cursor-pointer ${
+        !isSameMonth(day, currentDate) ? 'opacity-50' : ''
+      } ${isToday(day) ? 'today' : ''} ${
+        isOver ? 'bg-white bg-opacity-30 ring-2 ring-white ring-opacity-50 scale-105' : ''
       }`}
     >
-      <div className={`text-sm ${
-        !isSameMonth(day, currentDate) ? 'text-gray-400' : 
-        isToday(day) ? 'text-blue-600 font-semibold' : 'text-gray-900'
+      <div className={`text-sm font-medium ${
+        !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 
+        isToday(day) ? 'text-white font-bold' : 'text-white'
       }`}>
         {format(day, 'd')}
       </div>
       
       {/* 予定表示 */}
-      <div className="mt-1 space-y-1">
+      <div className="mt-2 space-y-1">
         {events.slice(0, 2).map((event) => (
           <DraggableEvent
             key={event.id}
@@ -56,7 +56,7 @@ export function DroppableDay({
           />
         ))}
         {events.length > 2 && (
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-white text-opacity-70 bg-white bg-opacity-20 px-1 py-0.5 rounded text-center">
             +{events.length - 2}件
           </div>
         )}
@@ -64,3 +64,4 @@ export function DroppableDay({
     </div>
   );
 }
+

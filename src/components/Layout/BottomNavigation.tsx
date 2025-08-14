@@ -22,7 +22,7 @@ export default function BottomNavigation() {
   const router = useRouter();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 glass-nav safe-area-inset-bottom">
       <div className="grid grid-cols-4 h-16">
         {navigationItems.map((item) => {
           const Icon = item.icon;
@@ -32,10 +32,10 @@ export default function BottomNavigation() {
             <button
               key={item.id}
               onClick={() => router.push(item.path)}
-              className={`flex flex-col items-center justify-center space-y-1 transition-colors ${
+              className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 ${
                 isActive
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-white bg-white bg-opacity-20 scale-105'
+                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10'
               }`}
             >
               <Icon size={20} />
@@ -47,3 +47,4 @@ export default function BottomNavigation() {
     </nav>
   );
 }
+

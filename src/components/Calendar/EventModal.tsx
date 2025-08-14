@@ -75,25 +75,25 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="glass-modal w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
         {/* ヘッダー */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold">予定を追加</h2>
+        <div className="flex items-center justify-between p-6 border-b border-white border-opacity-20">
+          <h2 className="text-xl font-bold text-glass">予定を追加</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="glass-button p-2"
             disabled={isSubmitting}
           >
-            <X size={20} />
+            <X size={20} className="text-white" />
           </button>
         </div>
 
         {/* 選択日表示 */}
-        <div className="px-4 py-2 bg-blue-50 border-b border-gray-200">
-          <div className="flex items-center text-blue-700">
+        <div className="px-6 py-4 bg-white bg-opacity-10 border-b border-white border-opacity-20">
+          <div className="flex items-center text-white">
             <Calendar size={16} className="mr-2" />
-            <span className="text-sm">
+            <span className="text-sm font-medium">
               {new Date(selectedDate + 'T00:00:00').toLocaleDateString('ja-JP', {
                 year: 'numeric',
                 month: 'long',
@@ -105,17 +105,17 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
         </div>
 
         {/* フォーム */}
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* 予定タイトル */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-white mb-3">
               予定タイトル *
             </label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
               placeholder="例：歯医者、会議、お出かけなど"
               required
               disabled={isSubmitting}
@@ -124,14 +124,14 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
 
           {/* メモ */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-white mb-3">
               メモ
             </label>
             <textarea
               value={form.description}
               onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows={2}
+              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm resize-none"
+              rows={3}
               placeholder="詳細な内容があれば入力"
               disabled={isSubmitting}
             />
@@ -139,28 +139,28 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
 
           {/* 家族メンバー選択 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <User size={16} className="inline mr-1" />
+            <label className="block text-sm font-semibold text-white mb-3">
+              <User size={16} className="inline mr-2 text-white" />
               家族メンバー
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {FAMILY_MEMBERS.map((member) => (
                 <button
                   key={member.id}
                   type="button"
                   onClick={() => setForm(prev => ({ ...prev, familyMemberId: member.id }))}
                   disabled={isSubmitting}
-                  className={`p-3 rounded-lg border-2 transition-colors ${
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                     form.familyMemberId === member.id
-                      ? `${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].border} ${COLOR_MAP[member.color].text}`
-                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                      ? 'bg-white bg-opacity-30 border-white border-opacity-60 scale-105'
+                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
                     <div
-                      className={`w-3 h-3 rounded-full ${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].border} border`}
+                      className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} border-2 border-white shadow-lg`}
                     />
-                    <span className="text-sm font-medium">{member.name}</span>
+                    <span className="text-sm font-semibold text-white">{member.name}</span>
                   </div>
                 </button>
               ))}
@@ -169,40 +169,40 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
 
           {/* 予定種類 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Tag size={16} className="inline mr-1" />
+            <label className="block text-sm font-semibold text-white mb-3">
+              <Tag size={16} className="inline mr-2 text-white" />
               予定種類
             </label>
             <select
               value={form.type}
               onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as EventType }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
               disabled={isSubmitting}
             >
-              <option value="work">仕事</option>
-              <option value="school">学校</option>
-              <option value="hospital">病院</option>
-              <option value="travel">旅行</option>
-              <option value="other">その他</option>
+              <option value="work" className="text-gray-800">仕事</option>
+              <option value="school" className="text-gray-800">学校</option>
+              <option value="hospital" className="text-gray-800">病院</option>
+              <option value="travel" className="text-gray-800">旅行</option>
+              <option value="other" className="text-gray-800">その他</option>
             </select>
           </div>
 
           {/* 時間設定 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock size={16} className="inline mr-1" />
+            <label className="block text-sm font-semibold text-white mb-3">
+              <Clock size={16} className="inline mr-2 text-white" />
               時間設定
             </label>
-            <div className="space-y-3">
-              <label className="flex items-center">
+            <div className="space-y-4">
+              <label className="flex items-center p-3 bg-white bg-opacity-10 rounded-xl cursor-pointer hover:bg-opacity-20 transition-all">
                 <input
                   type="checkbox"
                   checked={form.isAllDay}
                   onChange={(e) => setForm(prev => ({ ...prev, isAllDay: e.target.checked }))}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-white text-blue-400 focus:ring-white focus:ring-opacity-50 bg-transparent"
                   disabled={isSubmitting}
                 />
-                <span className="ml-2 text-sm text-gray-700">終日</span>
+                <span className="ml-3 text-sm font-medium text-white">終日</span>
               </label>
               
               {!form.isAllDay && (
@@ -210,7 +210,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
                   type="time"
                   value={form.time}
                   onChange={(e) => setForm(prev => ({ ...prev, time: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
                   disabled={isSubmitting}
                 />
               )}
@@ -218,11 +218,11 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
           </div>
 
           {/* 送信ボタン */}
-          <div className="flex space-x-3 pt-4">
+          <div className="flex space-x-4 pt-6">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-3 px-6 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white font-medium hover:bg-opacity-30 transition-all duration-300"
               disabled={isSubmitting}
             >
               キャンセル
@@ -230,11 +230,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
             <button
               type="submit"
               disabled={!form.title.trim() || isSubmitting}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                selectedMember 
-                  ? `${COLOR_MAP[selectedMember.color].bg} ${COLOR_MAP[selectedMember.color].text} hover:opacity-80`
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+              className="flex-1 py-3 px-6 bg-white bg-opacity-30 border border-white border-opacity-50 rounded-xl text-white font-semibold hover:bg-opacity-40 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? '追加中...' : '予定を追加'}
             </button>

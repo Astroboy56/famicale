@@ -103,3 +103,4 @@ export const COLOR_MAP: Record<string, { bg: string; text: string; border: strin
     border: 'border-pink-300',
   },
 };
+

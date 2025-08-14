@@ -23,7 +23,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#3b82f6",
+  themeColor: "#667eea",
 };
 
 export default function RootLayout({
@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="ja" data-scroll-behavior="smooth">
       <body
-        className={`${notoSansJP.variable} font-sans antialiased bg-gray-50 text-gray-900 min-h-screen`}
+        className={`${notoSansJP.variable} font-sans antialiased text-white min-h-screen`}
       >
         <div className="flex flex-col min-h-screen">
           {children}

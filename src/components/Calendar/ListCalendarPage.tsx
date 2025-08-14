@@ -55,53 +55,53 @@ export default function ListCalendarPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3">
+      <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigateMonth('prev')}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="glass-button p-2"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={20} className="text-white" />
             </button>
-            <h1 className="text-lg font-semibold">
+            <h1 className="text-lg font-semibold text-glass">
               {format(currentDate, 'yyyy年M月', { locale: ja })}
             </h1>
             <button
               onClick={() => navigateMonth('next')}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="glass-button p-2"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={20} className="text-white" />
             </button>
           </div>
           
           <div className="flex items-center">
-            <Calendar size={20} className="text-gray-600" />
-            <span className="ml-2 text-sm font-medium text-gray-600">リストビュー</span>
+            <Calendar size={20} className="text-white" />
+            <span className="ml-2 text-sm font-medium text-white">リストビュー</span>
           </div>
         </div>
       </header>
 
       {/* 家族メンバーヘッダー */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="grid grid-cols-5 gap-0">
+      <div className="glass-card mx-4 mt-2 fade-in">
+        <div className="grid grid-cols-5 gap-2 p-3">
           {/* 日付列のヘッダー */}
-          <div className="bg-gray-50 border-r border-gray-200 px-3 py-3">
-            <span className="text-sm font-semibold text-gray-700">日付</span>
+          <div className="glass-day p-3 flex items-center justify-center">
+            <span className="text-sm font-semibold text-white">日付</span>
           </div>
           {/* 家族メンバー列のヘッダー */}
           {FAMILY_MEMBERS.map((member) => (
             <div
               key={member.id}
-              className={`${COLOR_MAP[member.color].bg} border-r border-gray-200 px-2 py-3 last:border-r-0`}
+              className="glass-day p-3"
             >
-              <div className="flex flex-col items-center justify-center space-y-1">
+              <div className="flex flex-col items-center justify-center space-y-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].border} border`}
+                  className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} border-2 border-white shadow-lg`}
                 />
-                <span className={`text-xs font-medium ${COLOR_MAP[member.color].text} whitespace-nowrap`}>
+                <span className="text-xs font-semibold text-white whitespace-nowrap">
                   {member.name}
                 </span>
               </div>
@@ -111,18 +111,18 @@ export default function ListCalendarPage() {
       </div>
 
       {/* リストカレンダー（表形式） */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="bg-white">
+      <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
+        <div className="glass-card p-3 space-y-2 fade-in">
           {days.map((day) => (
-            <div key={day.toISOString()} className="border-b border-gray-100">
-              <div className="grid grid-cols-5 gap-0 min-h-[80px]">
+            <div key={day.toISOString()} className="glass-day hover:scale-[1.01] transition-all duration-300">
+              <div className="grid grid-cols-5 gap-3 min-h-[80px] p-3">
                 {/* 日付列 */}
-                <div className="bg-gray-50 border-r border-gray-200 px-3 py-3 flex items-center">
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900">
+                <div className="flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-sm font-bold text-white">
                       {format(day, 'M/d', { locale: ja })}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-white text-opacity-70">
                       {format(day, '(E)', { locale: ja })}
                     </div>
                   </div>
@@ -134,32 +134,37 @@ export default function ListCalendarPage() {
                   return (
                     <div
                       key={member.id}
-                      className="border-r border-gray-200 px-2 py-3 last:border-r-0"
+                      className="flex items-center justify-center"
                     >
-                      <div className="space-y-1">
+                      <div className="w-full space-y-1">
                         {loading ? (
-                          <div className="text-xs text-gray-400 text-center py-2">
-                            ...
+                          <div className="text-xs text-white text-opacity-60 text-center py-2">
+                            <div className="animate-pulse">...</div>
                           </div>
                         ) : memberEvents.length > 0 ? (
                           memberEvents.map((event) => (
                             <div
                               key={event.id}
-                              className={`text-xs p-2 rounded ${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].text} border ${COLOR_MAP[member.color].border}`}
+                              className="glass-event text-xs p-2 hover:scale-105 transition-all duration-300"
                               title={event.description || event.title}
                             >
-                              <div className="font-medium truncate">
-                                {event.title}
+                              <div className="flex items-center space-x-1">
+                                <div 
+                                  className={`w-2 h-2 rounded-full ${COLOR_MAP[member.color].bg} flex-shrink-0`}
+                                />
+                                <div className="font-medium truncate text-white">
+                                  {event.title}
+                                </div>
                               </div>
                               {!event.isAllDay && event.time && (
-                                <div className="text-xs opacity-75 mt-1">
+                                <div className="text-xs text-white text-opacity-80 mt-1 ml-3">
                                   {event.time}
                                 </div>
                               )}
                             </div>
                           ))
                         ) : (
-                          <div className="text-xs text-gray-300 text-center py-2">
+                          <div className="text-xs text-white text-opacity-40 text-center py-2">
                             -
                           </div>
                         )}
@@ -174,7 +179,7 @@ export default function ListCalendarPage() {
       </div>
 
       {/* ボトムナビゲーション用のスペース */}
-      <div className="h-16 bg-transparent" />
+      <div className="h-20" />
     </div>
   );
 }

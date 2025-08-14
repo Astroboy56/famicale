@@ -42,14 +42,18 @@ export function DraggableEvent({ event }: DraggableEventProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`text-xs p-1 rounded truncate cursor-grab active:cursor-grabbing ${
-        COLOR_MAP[getMemberColor(event.familyMemberId)].bg
-      } ${COLOR_MAP[getMemberColor(event.familyMemberId)].text} ${
-        isDragging ? 'opacity-50 shadow-lg z-50' : ''
-      } touch-manipulation`}
+      className={`glass-event text-xs px-2 py-1 cursor-grab active:cursor-grabbing ${
+        isDragging ? 'opacity-50 shadow-2xl z-50 scale-110' : 'hover:scale-105'
+      } touch-manipulation transition-all duration-300`}
       title={`${event.title} - ${getMemberName(event.familyMemberId)}`}
     >
-      {event.title}
+      <div className="flex items-center space-x-1">
+        <div 
+          className={`w-2 h-2 rounded-full ${COLOR_MAP[getMemberColor(event.familyMemberId)].bg} flex-shrink-0`}
+        />
+        <span className="truncate text-white font-medium">{event.title}</span>
+      </div>
     </div>
   );
 }
+

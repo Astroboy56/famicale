@@ -94,21 +94,21 @@ export default function TodoPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3">
+      <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
         <div className="flex items-center">
-          <CheckSquare size={20} className="text-green-600 mr-2" />
-          <h1 className="text-lg font-semibold">TODO共有</h1>
+          <CheckSquare size={20} className="text-white mr-3" />
+          <h1 className="text-lg font-semibold text-glass">TODO共有</h1>
         </div>
       </header>
 
       {/* 新規追加フォーム */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <div className="space-y-3">
+      <div className="glass-card mx-4 mt-2 p-4 fade-in">
+        <div className="space-y-4">
           {/* 作成者選択 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-white mb-3">
               作成者
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -117,17 +117,17 @@ export default function TodoPage() {
                   key={member.id}
                   type="button"
                   onClick={() => setSelectedMember(member.id)}
-                  className={`p-2 rounded-lg border transition-colors ${
+                  className={`p-3 rounded-xl border-2 transition-all duration-300 ${
                     selectedMember === member.id
-                      ? `${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].border} ${COLOR_MAP[member.color].text}`
-                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                      ? 'bg-white bg-opacity-30 border-white border-opacity-60 scale-105'
+                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20'
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-1">
                     <div
-                      className={`w-3 h-3 rounded-full ${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].border} border`}
+                      className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} border-2 border-white shadow-lg`}
                     />
-                    <span className="text-xs font-medium">{member.name}</span>
+                    <span className="text-xs font-semibold text-white">{member.name}</span>
                   </div>
                 </button>
               ))}
@@ -135,25 +135,25 @@ export default function TodoPage() {
           </div>
 
           {/* TODO入力 */}
-          <div className="flex space-x-2">
+          <div className="flex space-x-3">
             <input
               type="text"
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-sm"
               placeholder="TODOを入力（例：牛乳を買う、掃除機をかける）"
               disabled={isSubmitting}
             />
             <button
               onClick={addTodo}
               disabled={!newTodo.trim() || isSubmitting}
-              className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="glass-button p-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
               ) : (
-                <Plus size={20} />
+                <Plus size={20} className="text-white" />
               )}
             </button>
           </div>
@@ -161,8 +161,8 @@ export default function TodoPage() {
       </div>
 
       {/* フィルター */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
-        <div className="flex space-x-4">
+      <div className="glass-card mx-4 mt-2 px-4 py-3 fade-in">
+        <div className="flex justify-center space-x-4">
           {[
             { key: 'all', label: 'すべて' },
             { key: 'active', label: '未完了' },
@@ -171,10 +171,10 @@ export default function TodoPage() {
             <button
               key={item.key}
               onClick={() => setFilter(item.key as 'all' | 'active' | 'completed')}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                 filter === item.key
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white bg-opacity-30 text-white scale-105'
+                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10'
               }`}
             >
               {item.label}
@@ -184,73 +184,75 @@ export default function TodoPage() {
       </div>
 
       {/* TODO一覧 */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="bg-white">
+      <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
+        <div className="glass-card p-4 fade-in">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mb-4" />
-              <p className="text-gray-500">読み込み中...</p>
+              <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mb-4" />
+              <p className="text-white text-opacity-80">読み込み中...</p>
             </div>
           ) : filteredTodos.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <CheckSquare size={48} className="text-gray-300 mb-4" />
-              <p className="text-gray-500 text-center">
+              <CheckSquare size={48} className="text-white text-opacity-40 mb-4" />
+              <p className="text-white text-opacity-70 text-center">
                 {filter === 'all' ? 'TODOがありません' : 
                  filter === 'active' ? '未完了のTODOがありません' : 
                  '完了済みのTODOがありません'}
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="space-y-2">
               {filteredTodos.map((todo) => (
                 <div
                   key={todo.id}
-                  className="flex items-center p-4 hover:bg-gray-50 transition-colors"
+                  className="glass-day p-4 hover:scale-[1.02] transition-all duration-300"
                 >
-                  {/* チェックボックス */}
-                  <button
-                    onClick={() => toggleTodo(todo.id, todo.completed)}
-                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      todo.completed
-                        ? 'bg-green-500 border-green-500 text-white'
-                        : 'border-gray-300 hover:border-green-400'
-                    }`}
-                  >
-                    {todo.completed && <Check size={16} />}
-                  </button>
+                  <div className="flex items-center">
+                    {/* チェックボックス */}
+                    <button
+                      onClick={() => toggleTodo(todo.id, todo.completed)}
+                      className={`flex-shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                        todo.completed
+                          ? 'bg-green-500 border-green-400 text-white shadow-lg'
+                          : 'border-white border-opacity-50 hover:border-green-400 hover:bg-green-400 hover:bg-opacity-20'
+                      }`}
+                    >
+                      {todo.completed && <Check size={16} />}
+                    </button>
 
-                  {/* TODOコンテンツ */}
-                  <div className="flex-1 ml-3">
-                    <div className="flex items-center space-x-2">
-                      <span
-                        className={`text-sm font-medium ${
-                          todo.completed ? 'line-through text-gray-400' : 'text-gray-900'
-                        }`}
-                      >
-                        {todo.title}
-                      </span>
-                      {todo.priority === 'high' && (
-                        <AlertCircle size={16} className="text-red-500" />
-                      )}
+                    {/* TODOコンテンツ */}
+                    <div className="flex-1 ml-4">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`text-sm font-semibold ${
+                            todo.completed ? 'line-through text-white text-opacity-50' : 'text-white'
+                          }`}
+                        >
+                          {todo.title}
+                        </span>
+                        {todo.priority === 'high' && (
+                          <AlertCircle size={16} className="text-red-400" />
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center mt-2 space-x-2">
+                        <div
+                          className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} border-2 border-white shadow-sm`}
+                        />
+                        <span className="text-xs text-white text-opacity-70">
+                          {getMemberName(todo.createdBy)} • {todo.createdAt.toLocaleDateString('ja-JP')}
+                        </span>
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center mt-1 space-x-2">
-                      <div
-                        className={`w-2 h-2 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} ${COLOR_MAP[getMemberColor(todo.createdBy)].border} border`}
-                      />
-                      <span className="text-xs text-gray-500">
-                        {getMemberName(todo.createdBy)} • {todo.createdAt.toLocaleDateString('ja-JP')}
-                      </span>
-                    </div>
+
+                    {/* 削除ボタン */}
+                    <button
+                      onClick={() => deleteTodo(todo.id)}
+                      className="flex-shrink-0 p-2 text-white text-opacity-60 hover:text-red-400 hover:bg-red-400 hover:bg-opacity-20 rounded-lg transition-all duration-300"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-
-                  {/* 削除ボタン */}
-                  <button
-                    onClick={() => deleteTodo(todo.id)}
-                    className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
                 </div>
               ))}
             </div>
@@ -259,7 +261,7 @@ export default function TodoPage() {
       </div>
 
       {/* ボトムナビゲーション用のスペース */}
-      <div className="h-16 bg-transparent" />
+      <div className="h-20" />
     </div>
   );
 }
