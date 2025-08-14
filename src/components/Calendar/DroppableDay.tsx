@@ -37,7 +37,7 @@ export function DroppableDay({
       className={`glass-day p-3 min-h-[90px] cursor-pointer ${
         !isSameMonth(day, currentDate) ? 'opacity-50' : ''
       } ${isToday(day) ? 'today' : ''} ${
-        isOver ? 'bg-white bg-opacity-30 ring-2 ring-white ring-opacity-50 scale-105' : ''
+        isOver ? 'glass-area ring-2 ring-white ring-opacity-50 scale-105' : ''
       }`}
     >
       <div className={`text-sm font-medium ${
@@ -56,7 +56,7 @@ export function DroppableDay({
           />
         ))}
         {events.length > 2 && (
-          <div className="text-xs text-white text-opacity-70 bg-white bg-opacity-20 px-1 py-0.5 rounded text-center">
+          <div className="text-xs text-white text-opacity-70 glass-area px-1 py-0.5 rounded text-center">
             +{events.length - 2}件
           </div>
         )}

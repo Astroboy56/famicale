@@ -163,7 +163,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setViewMode('month')}
               className={`glass-button p-2 ${
-                viewMode === 'month' ? 'bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 scale-110 shadow-2xl ring-1 ring-white ring-opacity-40' : ''
+                viewMode === 'month' ? 'selected' : ''
               }`}
             >
               <Grid3X3 size={20} className="text-white" />
@@ -171,7 +171,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setViewMode('week')}
               className={`glass-button p-2 ${
-                viewMode === 'week' ? 'bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 scale-110 shadow-2xl ring-1 ring-white ring-opacity-40' : ''
+                viewMode === 'week' ? 'selected' : ''
               }`}
             >
               <List size={20} className="text-white" />
@@ -280,7 +280,7 @@ export default function CalendarPage() {
                       >
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-white">{event.title}</h3>
-                          <span className="text-xs text-white text-opacity-80 px-2 py-1 rounded-full bg-white bg-opacity-20">
+                          <span className="text-xs text-white text-opacity-80 px-2 py-1 rounded-full glass-area">
                             {getMemberName(event.familyMemberId)}
                           </span>
                         </div>
@@ -288,7 +288,7 @@ export default function CalendarPage() {
                           <p className="text-sm text-white text-opacity-90 mt-2">{event.description}</p>
                         )}
                         {!event.isAllDay && event.time && (
-                          <div className="text-xs text-white text-opacity-80 mt-2 bg-white bg-opacity-10 px-2 py-1 rounded inline-block">
+                          <div className="text-xs text-white text-opacity-80 mt-2 glass-area px-2 py-1 rounded inline-block">
                             {event.time}
                           </div>
                         )}

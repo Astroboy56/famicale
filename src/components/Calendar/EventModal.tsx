@@ -90,7 +90,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
         </div>
 
         {/* 選択日表示 */}
-        <div className="px-6 py-4 bg-white bg-opacity-10 border-b border-white border-opacity-20">
+        <div className="px-6 py-4 glass-area border-b border-white border-opacity-20">
           <div className="flex items-center text-white">
             <Calendar size={16} className="mr-2" />
             <span className="text-sm font-medium">
@@ -115,7 +115,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
               type="text"
               value={form.title}
               onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+              className="w-full px-4 py-3 glass-input text-white placeholder-white placeholder-opacity-60"
               placeholder="例：歯医者、会議、お出かけなど"
               required
               disabled={isSubmitting}
@@ -130,7 +130,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
             <textarea
               value={form.description}
               onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md resize-none"
+              className="w-full px-4 py-3 glass-input text-white placeholder-white placeholder-opacity-60 resize-none"
               rows={3}
               placeholder="詳細な内容があれば入力"
               disabled={isSubmitting}
@@ -150,10 +150,10 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
                   type="button"
                   onClick={() => setForm(prev => ({ ...prev, familyMemberId: member.id }))}
                   disabled={isSubmitting}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                  className={`p-4 glass-select-button transition-all duration-300 ${
                     form.familyMemberId === member.id
-                      ? 'bg-white bg-opacity-30 backdrop-blur-md border-white border-opacity-70 scale-110 shadow-2xl ring-2 ring-white ring-opacity-40'
-                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
+                      ? 'selected'
+                      : ''
                   }`}
                 >
                   <div className="flex items-center space-x-2">
@@ -176,7 +176,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
             <select
               value={form.type}
               onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as EventType }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+              className="w-full px-4 py-3 glass-input text-white"
               disabled={isSubmitting}
             >
               <option value="work" className="text-gray-800">仕事</option>
@@ -194,7 +194,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
               時間設定
             </label>
             <div className="space-y-4">
-              <label className="flex items-center p-3 bg-white bg-opacity-10 rounded-xl cursor-pointer hover:bg-opacity-20 transition-all">
+              <label className="flex items-center p-3 glass-checkbox-area cursor-pointer transition-all">
                 <input
                   type="checkbox"
                   checked={form.isAllDay}
@@ -210,7 +210,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
                   type="time"
                   value={form.time}
                   onChange={(e) => setForm(prev => ({ ...prev, time: e.target.value }))}
-                  className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+                  className="w-full px-4 py-3 glass-input text-white"
                   disabled={isSubmitting}
                 />
               )}
@@ -222,7 +222,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-6 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white font-medium hover:bg-opacity-30 transition-all duration-300"
+              className="flex-1 py-3 px-6 glass-button text-white font-medium"
               disabled={isSubmitting}
             >
               キャンセル
@@ -230,7 +230,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
             <button
               type="submit"
               disabled={!form.title.trim() || isSubmitting}
-              className="flex-1 py-3 px-6 bg-white bg-opacity-30 border border-white border-opacity-50 rounded-xl text-white font-semibold hover:bg-opacity-40 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="flex-1 py-3 px-6 glass-button text-white font-semibold hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? '追加中...' : '予定を追加'}
             </button>

@@ -117,10 +117,10 @@ export default function TodoPage() {
                   key={member.id}
                   type="button"
                   onClick={() => setSelectedMember(member.id)}
-                  className={`p-3 rounded-xl border-2 transition-all duration-300 ${
+                  className={`p-3 glass-select-button transition-all duration-300 ${
                     selectedMember === member.id
-                      ? 'bg-white bg-opacity-25 backdrop-blur-md border-white border-opacity-60 scale-110 shadow-2xl ring-2 ring-white ring-opacity-30'
-                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
+                      ? 'selected'
+                      : ''
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-1">
@@ -141,7 +141,7 @@ export default function TodoPage() {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-              className="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+              className="flex-1 px-4 py-3 glass-input text-white placeholder-white placeholder-opacity-60"
               placeholder="TODOを入力（例：牛乳を買う、掃除機をかける）"
               disabled={isSubmitting}
             />
@@ -171,10 +171,10 @@ export default function TodoPage() {
             <button
               key={item.key}
               onClick={() => setFilter(item.key as 'all' | 'active' | 'completed')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+              className={`px-4 py-2 glass-select-button text-sm font-semibold transition-all duration-300 ${
                 filter === item.key
-                  ? 'bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 text-white scale-110 shadow-2xl ring-1 ring-white ring-opacity-40'
-                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10 hover:scale-105'
+                  ? 'selected text-white'
+                  : 'text-white text-opacity-70 hover:text-white'
               }`}
             >
               {item.label}

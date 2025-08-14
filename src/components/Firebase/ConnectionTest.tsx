@@ -28,7 +28,7 @@ export default function ConnectionTest() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 glass-card rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Firebase接続テスト</h2>
       
       <div className="space-y-4">

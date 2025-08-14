@@ -32,10 +32,10 @@ export default function BottomNavigation() {
             <button
               key={item.id}
               onClick={() => router.push(item.path)}
-              className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 rounded-xl mx-1 ${
+              className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 rounded-xl mx-1 glass-select-button ${
                 isActive
-                  ? 'text-white bg-white bg-opacity-25 backdrop-blur-md border border-white border-opacity-50 scale-110 shadow-2xl ring-1 ring-white ring-opacity-40'
-                  : 'text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-10 hover:scale-105'
+                  ? 'selected text-white'
+                  : 'text-white text-opacity-70 hover:text-white'
               }`}
             >
               <Icon size={20} />

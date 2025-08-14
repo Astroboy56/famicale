@@ -70,7 +70,7 @@ export default function BulkInputPage() {
               type="text"
               value={form.title}
               onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+              className="w-full px-4 py-3 glass-input text-white placeholder-white placeholder-opacity-60"
               placeholder="例：出勤、登校など"
               required
             />
@@ -84,7 +84,7 @@ export default function BulkInputPage() {
             <textarea
               value={form.description}
               onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white placeholder-white placeholder-opacity-60 focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md resize-none"
+              className="w-full px-4 py-3 glass-input text-white placeholder-white placeholder-opacity-60 resize-none"
               rows={3}
               placeholder="詳細な内容があれば入力"
             />
@@ -102,10 +102,10 @@ export default function BulkInputPage() {
                   key={member.id}
                   type="button"
                   onClick={() => setForm(prev => ({ ...prev, familyMemberId: member.id }))}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                  className={`p-4 glass-select-button transition-all duration-300 ${
                     form.familyMemberId === member.id
-                      ? 'bg-white bg-opacity-25 backdrop-blur-md border-white border-opacity-60 scale-110 shadow-2xl ring-2 ring-white ring-opacity-30'
-                      : 'bg-white bg-opacity-10 border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
+                      ? 'selected'
+                      : ''
                   }`}
                 >
                   <div className="flex items-center space-x-2">
@@ -128,7 +128,7 @@ export default function BulkInputPage() {
             <select
               value={form.type}
               onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as EventType }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+              className="w-full px-4 py-3 glass-input text-white"
             >
               <option value="work" className="text-gray-800">仕事</option>
               <option value="school" className="text-gray-800">学校</option>
@@ -145,7 +145,7 @@ export default function BulkInputPage() {
               時間設定
             </label>
             <div className="space-y-4">
-              <label className="flex items-center p-3 bg-white bg-opacity-10 rounded-xl cursor-pointer hover:bg-opacity-20 transition-all">
+              <label className="flex items-center p-3 glass-checkbox-area cursor-pointer transition-all">
                 <input
                   type="checkbox"
                   checked={form.isAllDay}
@@ -160,7 +160,7 @@ export default function BulkInputPage() {
                   type="time"
                   value={form.time}
                   onChange={(e) => setForm(prev => ({ ...prev, time: e.target.value }))}
-                  className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+                  className="w-full px-4 py-3 glass-input text-white"
                 />
               )}
             </div>
@@ -174,7 +174,7 @@ export default function BulkInputPage() {
             <select
               value={form.pattern}
               onChange={(e) => setForm(prev => ({ ...prev, pattern: e.target.value as 'daily' | 'weekdays' | 'weekly' | 'biweekly' | 'monthly' }))}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+              className="w-full px-4 py-3 glass-input text-white"
             >
               <option value="daily" className="text-gray-800">毎日</option>
               <option value="weekdays" className="text-gray-800">平日のみ</option>
@@ -196,10 +196,10 @@ export default function BulkInputPage() {
                     key={index}
                     type="button"
                     onClick={() => toggleDay(index)}
-                    className={`p-3 text-sm rounded-xl border-2 transition-all duration-300 ${
+                    className={`p-3 text-sm glass-select-button transition-all duration-300 ${
                       form.selectedDays.includes(index)
-                        ? 'bg-white bg-opacity-25 backdrop-blur-md text-white border-white border-opacity-60 scale-110 shadow-2xl ring-1 ring-white ring-opacity-30'
-                        : 'bg-white bg-opacity-10 text-white border-white border-opacity-30 hover:bg-opacity-20 hover:scale-105'
+                        ? 'selected text-white'
+                        : 'text-white'
                     }`}
                   >
                     {day}
@@ -215,11 +215,11 @@ export default function BulkInputPage() {
               <label className="block text-sm font-semibold text-white mb-3">
                 開始日 *
               </label>
-              <input
-                type="date"
-                value={form.startDate}
-                onChange={(e) => setForm(prev => ({ ...prev, startDate: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+                              <input
+                  type="date"
+                  value={form.startDate}
+                  onChange={(e) => setForm(prev => ({ ...prev, startDate: e.target.value }))}
+                  className="w-full px-4 py-3 glass-input text-white"
                 required
               />
             </div>
@@ -227,11 +227,11 @@ export default function BulkInputPage() {
               <label className="block text-sm font-semibold text-white mb-3">
                 終了日 *
               </label>
-              <input
-                type="date"
-                value={form.endDate}
-                onChange={(e) => setForm(prev => ({ ...prev, endDate: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-40 rounded-xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-white focus:border-opacity-50 backdrop-blur-md"
+                              <input
+                  type="date"
+                  value={form.endDate}
+                  onChange={(e) => setForm(prev => ({ ...prev, endDate: e.target.value }))}
+                  className="w-full px-4 py-3 glass-input text-white"
                 required
               />
             </div>
