@@ -17,6 +17,13 @@ interface ShiftCommand {
   isCustom: boolean;
 }
 
+// 仮登録シフトの型定義
+interface PendingShift {
+  id: string;
+  date: string;
+  command: ShiftCommand;
+}
+
 // デフォルトのシフトコマンド
 const DEFAULT_SHIFT_COMMANDS: ShiftCommand[] = [
   { id: 'day', name: '日勤', color: '#ffffff', bgColor: '#ff8c00', isCustom: false },
@@ -32,6 +39,8 @@ export default function ShiftPage() {
   const [loading, setLoading] = useState(false);
   const [shiftCommands, setShiftCommands] = useState<ShiftCommand[]>([]);
   const [showCustomEdit, setShowCustomEdit] = useState(false);
+  const [pendingShifts, setPendingShifts] = useState<PendingShift[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -106,67 +115,90 @@ export default function ShiftPage() {
     });
   };
 
-  // シフトを1件登録
-  const addShiftSequence = async (command: ShiftCommand) => {
-    console.log('=== シフト登録開始 ===');
-    console.log('Command:', command);
-    console.log('SelectedDate:', selectedDate);
-    
+  // シフトを仮登録（バッチ登録用）
+  const addPendingShift = (command: ShiftCommand) => {
     if (!selectedDate) {
-      console.log('選択された日付がありません');
       alert('日付を選択してください');
       return;
     }
 
-    try {
-      console.log('最新のイベントデータを取得中...');
-      // 最新のイベントデータを取得
-      await loadEvents();
-      console.log('現在のイベント数:', events.length);
-      
-      const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      console.log('登録対象日:', dateStr);
-      
-      // 既存の予定をチェック（シフトタイプのイベントがあるかチェック）
-      const existingEvents = getEventsForDay(selectedDate);
-      const hasShift = existingEvents.some(event => event.type === 'shift');
-
-      console.log(`Date: ${dateStr}, HasShift: ${hasShift}, Events:`, existingEvents);
-
-      if (hasShift) {
-        // 既にシフトが登録されている場合は停止
-        console.log(`既にシフトが登録されています: ${dateStr}`);
-        alert(`${format(selectedDate, 'M月d日')}には既にシフトが登録されています`);
-        return;
-      }
-
-      console.log(`シフトを登録中: ${dateStr} - ${command.name}`);
-      
-      // シフトを登録
-      const eventId = await eventService.addEvent({
-        title: command.name,
-        description: `シフト: ${command.name}`,
-        date: dateStr,
-        familyMemberId: 'erika', // えりか専用
-        isAllDay: true,
-        type: 'shift',
-      });
-
-      console.log(`登録完了: ${eventId}`);
-
-      console.log('登録完了後に最新データを再取得中...');
-      // 登録完了後に最新データを再取得
-      await loadEvents();
-      console.log('最終イベント数:', events.length);
-      
-      console.log(`登録完了: ${command.name}を${format(selectedDate, 'M月d日')}に登録しました`);
-      alert(`${command.name}を${format(selectedDate, 'M月d日')}に登録しました`);
-    } catch (error) {
-      console.error('シフトの登録に失敗しました:', error);
-      alert('シフトの登録に失敗しました');
-    }
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
     
-    console.log('=== シフト登録終了 ===');
+    // 既存のシフト（実際のデータと仮登録データ）をチェック
+    const existingEvents = getEventsForDay(selectedDate);
+    const hasExistingShift = existingEvents.some(event => event.type === 'shift');
+    const hasPendingShift = pendingShifts.some(shift => shift.date === dateStr);
+
+    if (hasExistingShift || hasPendingShift) {
+      alert(`${format(selectedDate, 'M月d日')}には既にシフトが登録されています`);
+      return;
+    }
+
+    // 仮登録に追加
+    const newPendingShift: PendingShift = {
+      id: `pending-${Date.now()}`,
+      date: dateStr,
+      command: command,
+    };
+
+    setPendingShifts(prev => [...prev, newPendingShift]);
+    console.log(`仮登録: ${command.name}を${format(selectedDate, 'M月d日')}に追加`);
+  };
+
+  // 仮登録シフトを削除
+  const removePendingShift = (dateStr: string) => {
+    setPendingShifts(prev => prev.filter(shift => shift.date !== dateStr));
+  };
+
+  // 全ての仮登録シフトを保存
+  const saveAllPendingShifts = async () => {
+    if (pendingShifts.length === 0) {
+      alert('保存するシフトがありません');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // 全ての仮登録シフトを一括で保存
+      const savePromises = pendingShifts.map(shift => 
+        eventService.addEvent({
+          title: shift.command.name,
+          description: `シフト: ${shift.command.name}`,
+          date: shift.date,
+          familyMemberId: 'erika', // えりか専用
+          isAllDay: true,
+          type: 'shift',
+        })
+      );
+
+      await Promise.all(savePromises);
+      
+      // 仮登録をクリア
+      setPendingShifts([]);
+      
+      // 最新データを再取得
+      await loadEvents();
+      
+      alert(`${pendingShifts.length}件のシフトを保存しました`);
+    } catch (error) {
+      console.error('シフトの保存に失敗しました:', error);
+      alert('シフトの保存に失敗しました');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // 仮登録を全てキャンセル
+  const cancelAllPendingShifts = () => {
+    if (pendingShifts.length === 0) {
+      alert('キャンセルするシフトがありません');
+      return;
+    }
+
+    if (confirm('全ての仮登録シフトをキャンセルしますか？')) {
+      setPendingShifts([]);
+      alert('仮登録をキャンセルしました');
+    }
   };
 
   // カスタムコマンドを削除
@@ -268,6 +300,7 @@ export default function ShiftPage() {
                     
                     {/* シフト表示 */}
                     <div className="mt-1 space-y-1">
+                      {/* 実際のシフト */}
                       {dayEvents
                         .filter(event => event.type === 'shift')
                         .map((event) => (
@@ -279,6 +312,21 @@ export default function ShiftPage() {
                             }}
                           >
                             {event.title}
+                          </div>
+                        ))}
+                      
+                      {/* 仮登録シフト */}
+                      {pendingShifts
+                        .filter(shift => shift.date === format(day, 'yyyy-MM-dd'))
+                        .map((shift) => (
+                          <div
+                            key={shift.id}
+                            className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate border-2 border-dashed border-white border-opacity-50"
+                            style={{
+                              backgroundColor: shift.command.bgColor
+                            }}
+                          >
+                            {shift.command.name}
                           </div>
                         ))}
                     </div>
@@ -314,7 +362,7 @@ export default function ShiftPage() {
                                <button
                   onClick={() => {
                     console.log('ボタンクリック:', command.name);
-                    addShiftSequence(command);
+                    addPendingShift(command);
                   }}
                   disabled={!selectedDate}
                   className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 min-h-[50px] w-full"
@@ -342,6 +390,25 @@ export default function ShiftPage() {
              </div>
            ))}
          </div>
+
+        {/* 保存・キャンセルボタン */}
+        {pendingShifts.length > 0 && (
+          <div className="mt-4 flex space-x-3">
+            <button
+              onClick={cancelAllPendingShifts}
+              className="flex-1 glass-button py-3 text-white font-medium border border-red-300 border-opacity-30 hover:border-red-200 hover:border-opacity-50 transition-all duration-300"
+            >
+              キャンセル ({pendingShifts.length}件)
+            </button>
+            <button
+              onClick={saveAllPendingShifts}
+              disabled={isSaving}
+              className="flex-1 glass-button py-3 text-white font-semibold border border-green-300 border-opacity-30 hover:border-green-200 hover:border-opacity-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? '保存中...' : `保存 (${pendingShifts.length}件)`}
+            </button>
+          </div>
+        )}
 
         {/* カスタム編集モーダル */}
         {showCustomEdit && (
