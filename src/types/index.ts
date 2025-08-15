@@ -84,22 +84,22 @@ export const EVENT_TYPE_ICONS: Record<EventType, string> = {
 // カラーマップ
 export const COLOR_MAP: Record<string, { bg: string; text: string; border: string }> = {
   blue: {
-    bg: 'bg-blue-500',
+    bg: 'bg-blue-200',
     text: 'text-blue-900',
     border: 'border-blue-300',
   },
   red: {
-    bg: 'bg-red-500',
+    bg: 'bg-red-200',
     text: 'text-red-900',
     border: 'border-red-300',
   },
   green: {
-    bg: 'bg-green-500',
+    bg: 'bg-green-200',
     text: 'text-green-900',
     border: 'border-green-300',
   },
   pink: {
-    bg: 'bg-pink-500',
+    bg: 'bg-pink-200',
     text: 'text-pink-900',
     border: 'border-pink-300',
   },
