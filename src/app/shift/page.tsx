@@ -110,19 +110,15 @@ export default function ShiftPage() {
 
     try {
       let currentDate = new Date(selectedDate);
+      let registeredCount = 0;
       
       // 連続でシフトを登録（最大30日分）
       for (let i = 0; i < 30; i++) {
         const dateStr = format(currentDate, 'yyyy-MM-dd');
         
-        // 既存の予定をチェック
+        // 既存の予定をチェック（シフトタイプのイベントがあるかチェック）
         const existingEvents = getEventsForDay(currentDate);
-        const hasShift = existingEvents.some(event => 
-          event.title.includes('日勤') || 
-          event.title.includes('準夜') || 
-          event.title.includes('深夜') || 
-          event.title.includes('休み')
-        );
+        const hasShift = existingEvents.some(event => event.type === 'shift');
 
         if (hasShift) {
           // 既にシフトが登録されている場合は停止
@@ -139,12 +135,17 @@ export default function ShiftPage() {
           type: 'shift',
         });
 
+        registeredCount++;
         // 次の日に移動
         currentDate = addDays(currentDate, 1);
       }
 
       await loadEvents();
-      alert(`${command.name}のシフトを連続登録しました`);
+      if (registeredCount > 0) {
+        alert(`${command.name}のシフトを${registeredCount}日分登録しました`);
+      } else {
+        alert('登録可能な日がありませんでした');
+      }
     } catch (error) {
       console.error('シフトの登録に失敗しました:', error);
       alert('シフトの登録に失敗しました');
