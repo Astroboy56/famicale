@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3, X } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
@@ -143,6 +143,10 @@ export default function ShiftPage() {
 
     setPendingShifts(prev => [...prev, newPendingShift]);
     console.log(`仮登録: ${command.name}を${format(selectedDate, 'M月d日')}に追加`);
+    
+    // 次の日に移動
+    const nextDay = addDays(selectedDate, 1);
+    setSelectedDate(nextDay);
   };
 
   // 仮登録シフトを削除
