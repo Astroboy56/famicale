@@ -231,7 +231,7 @@ export default function ShiftPage() {
       </header>
 
       {/* 月カレンダー */}
-      <div className="flex-1 overflow-y-auto px-4 mt-4 mb-8">
+      <div className="flex-1 overflow-y-auto px-4 mt-4">
         <div className="glass-card p-3 fade-in">
           {/* 曜日ヘッダー */}
           <div className="grid grid-cols-7 gap-1 mb-2">

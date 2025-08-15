@@ -4,11 +4,11 @@ import { useDraggable } from '@dnd-kit/core';
 import { Event } from '@/types';
 import { FAMILY_MEMBERS, COLOR_MAP } from '@/types';
 
-interface DraggableEventProps {
+interface CalendarEventDotProps {
   event: Event;
 }
 
-export function DraggableEvent({ event }: DraggableEventProps) {
+export function CalendarEventDot({ event }: CalendarEventDotProps) {
   const {
     attributes,
     listeners,
@@ -42,18 +42,14 @@ export function DraggableEvent({ event }: DraggableEventProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`glass-event text-xs px-2 py-1 cursor-grab active:cursor-grabbing ${
+      className={`cursor-grab active:cursor-grabbing ${
         isDragging ? 'opacity-50 shadow-2xl z-50 scale-110' : 'hover:scale-105'
       } touch-manipulation transition-all duration-300`}
       title={`${event.title} - ${getMemberName(event.familyMemberId)}`}
     >
-      <div className="flex items-center space-x-1">
-        <div 
-          className={`w-2 h-2 rounded-full ${COLOR_MAP[getMemberColor(event.familyMemberId)].bg} flex-shrink-0`}
-        />
-        <span className="truncate text-white font-medium">{event.title}</span>
-      </div>
+      <div 
+        className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(event.familyMemberId)].bg} shadow-sm`}
+      />
     </div>
   );
 }
-

@@ -152,12 +152,17 @@ export default function ListCalendarPage() {
                                  memberEvents.map((event) => (
                                    <div
                                      key={event.id}
-                                     className="glass-event p-1 hover:scale-105 transition-all duration-300"
+                                     className="glass-event text-[10px] p-1 hover:scale-105 transition-all duration-300"
                                      title={event.description || event.title}
                                    >
-                                     <div 
-                                       className={`w-3 h-3 rounded-full ${COLOR_MAP[member.color].bg} flex-shrink-0`}
-                                     />
+                                     <div className="font-medium truncate text-white">
+                                       {event.title}
+                                     </div>
+                                     {!event.isAllDay && event.time && (
+                                       <div className="text-[8px] text-white text-opacity-80 mt-0.5">
+                                         {event.time}
+                                       </div>
+                                     )}
                                    </div>
                                  ))
                                ) : (
