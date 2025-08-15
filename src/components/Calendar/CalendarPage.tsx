@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Plus, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings, List } from 'lucide-react';
 import {
   DndContext,
   DragEndEvent,
@@ -19,6 +20,7 @@ import { DraggableEvent } from './DraggableEvent';
 import SettingsModal from '@/components/Settings/SettingsModal';
 
 export default function CalendarPage() {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -247,18 +249,27 @@ export default function CalendarPage() {
                 '今日の予定'
               )}
             </h2>
-            <button
-              onClick={() => {
-                const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
-                setSelectedDate(targetDate);
-                setSelectedDayEvents(events.filter(e => e.date === targetDate));
-                setIsModalOpen(true);
-              }}
-              className="glass-button flex items-center space-x-2 px-4 py-2 text-sm"
-            >
-              <Plus size={16} className="text-white" />
-              <span className="text-white font-medium">追加</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => {
+                  const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
+                  setSelectedDate(targetDate);
+                  setSelectedDayEvents(events.filter(e => e.date === targetDate));
+                  setIsModalOpen(true);
+                }}
+                className="glass-button flex items-center space-x-2 px-4 py-2 text-sm"
+              >
+                <Plus size={16} className="text-white" />
+                <span className="text-white font-medium">追加</span>
+              </button>
+              <button
+                onClick={() => router.push('/bulk')}
+                className="glass-button flex items-center space-x-2 px-4 py-2 text-sm"
+              >
+                <List size={16} className="text-white" />
+                <span className="text-white font-medium">一括入力</span>
+              </button>
+            </div>
           </div>
           
           {loading ? (

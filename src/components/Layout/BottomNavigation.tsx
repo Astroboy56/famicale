@@ -13,7 +13,6 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   { id: 'calendar', name: 'カレンダー', icon: Calendar, path: '/' },
   { id: 'list', name: 'リスト', icon: List, path: '/list' },
-  { id: 'bulk', name: '一括入力', icon: Plus, path: '/bulk' },
   { id: 'shift', name: 'シフト', icon: Clock, path: '/shift' },
   { id: 'todo', name: 'TODO', icon: CheckSquare, path: '/todo' },
 ];
@@ -24,7 +23,7 @@ export default function BottomNavigation() {
 
   return (
     <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
-      <div className="grid grid-cols-5 h-16">
+      <div className="grid grid-cols-4 h-16">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
