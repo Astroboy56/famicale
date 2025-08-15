@@ -325,7 +325,7 @@ export default function ShiftPage() {
                         .map((shift) => (
                           <div
                             key={shift.id}
-                            className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate border-2 border-dashed border-white border-opacity-50"
+                            className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate opacity-60"
                             style={{
                               backgroundColor: shift.command.bgColor
                             }}
