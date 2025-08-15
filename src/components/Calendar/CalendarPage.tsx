@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Grid3X3, List, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import {
   DndContext,
   DragEndEvent,
@@ -17,11 +17,8 @@ import EventModal from './EventModal';
 import { DroppableDay } from './DroppableDay';
 import { DraggableEvent } from './DraggableEvent';
 
-type ViewMode = 'month' | 'week';
-
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [events, setEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -162,24 +159,7 @@ export default function CalendarPage() {
             </button>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setViewMode('month')}
-              className={`glass-button p-2 ${
-                viewMode === 'month' ? 'selected' : ''
-              }`}
-            >
-              <Grid3X3 size={20} className="text-white" />
-            </button>
-            <button
-              onClick={() => setViewMode('week')}
-              className={`glass-button p-2 ${
-                viewMode === 'week' ? 'selected' : ''
-              }`}
-            >
-              <List size={20} className="text-white" />
-            </button>
-          </div>
+
         </div>
       </header>
 
