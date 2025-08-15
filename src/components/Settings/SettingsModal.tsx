@@ -67,39 +67,44 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       />
       
       {/* モーダル */}
-      <div className={`fixed bottom-0 left-0 right-0 z-50 transform transition-transform duration-300 ease-out ${
-        isOpen ? 'translate-y-0' : 'translate-y-full'
+      <div className={`fixed top-0 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
-        <div className="glass-modal rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto">
+        <div className="glass-modal h-full w-full p-6 overflow-y-auto">
           {/* ヘッダー */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-white border-opacity-20">
             <div className="flex items-center space-x-3">
               <Settings size={24} className="text-white" />
               <h2 className="text-xl font-semibold text-white">設定</h2>
             </div>
             <button
               onClick={onClose}
-              className="glass-button p-2 rounded-full"
+              className="glass-button p-2 rounded-full hover:scale-110 transition-transform duration-200"
             >
               <X size={20} className="text-white" />
             </button>
           </div>
 
           {/* 設定項目 */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* カレンダー予定削除 */}
-            <div className="glass-card p-4 rounded-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-white font-medium mb-1">カレンダー予定</h3>
-                  <p className="text-white text-opacity-70 text-sm">
-                    全てのカレンダー予定を削除します
-                  </p>
+            <div className="glass-card p-5 rounded-2xl hover:scale-[1.02] transition-transform duration-200">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-red-500 bg-opacity-20 flex items-center justify-center">
+                    <Trash2 size={20} className="text-red-300" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold">カレンダー予定</h3>
+                    <p className="text-white text-opacity-70 text-sm">
+                      全てのカレンダー予定を削除します
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={handleDeleteAllEvents}
                   disabled={isDeletingEvents}
-                  className="glass-button px-4 py-2 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  className="w-full glass-button py-3 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:scale-[1.02] transition-transform duration-200"
                 >
                   <Trash2 size={16} />
                   <span>{isDeletingEvents ? '削除中...' : '削除'}</span>
@@ -108,18 +113,23 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
 
             {/* TODOリスト削除 */}
-            <div className="glass-card p-4 rounded-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-white font-medium mb-1">TODOリスト</h3>
-                  <p className="text-white text-opacity-70 text-sm">
-                    全てのTODOリストを削除します
-                  </p>
+            <div className="glass-card p-5 rounded-2xl hover:scale-[1.02] transition-transform duration-200">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-orange-500 bg-opacity-20 flex items-center justify-center">
+                    <Trash2 size={20} className="text-orange-300" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold">TODOリスト</h3>
+                    <p className="text-white text-opacity-70 text-sm">
+                      全てのTODOリストを削除します
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={handleDeleteAllTodos}
                   disabled={isDeletingTodos}
-                  className="glass-button px-4 py-2 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  className="w-full glass-button py-3 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:scale-[1.02] transition-transform duration-200"
                 >
                   <Trash2 size={16} />
                   <span>{isDeletingTodos ? '削除中...' : '削除'}</span>
@@ -128,16 +138,16 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
 
             {/* 今後の開発予定 */}
-            <div className="glass-card p-4 rounded-xl opacity-50">
-              <div className="flex items-center justify-between">
+            <div className="glass-card p-5 rounded-2xl opacity-50">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gray-500 bg-opacity-20 flex items-center justify-center">
+                  <Settings size={20} className="text-gray-300" />
+                </div>
                 <div>
-                  <h3 className="text-white font-medium mb-1">その他の設定</h3>
+                  <h3 className="text-white font-semibold">その他の設定</h3>
                   <p className="text-white text-opacity-70 text-sm">
                     後日開発予定
                   </p>
-                </div>
-                <div className="text-white text-opacity-50 text-sm">
-                  開発中
                 </div>
               </div>
             </div>
@@ -145,8 +155,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           {/* メッセージ表示 */}
           {message && (
-            <div className="mt-4 p-3 bg-blue-500 bg-opacity-20 rounded-xl">
-              <p className="text-white text-center text-sm">{message}</p>
+            <div className="mt-6 p-4 bg-blue-500 bg-opacity-20 rounded-2xl border border-blue-400 border-opacity-30">
+              <p className="text-white text-center text-sm font-medium">{message}</p>
             </div>
           )}
         </div>
