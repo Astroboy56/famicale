@@ -238,7 +238,7 @@ export default function CalendarPage() {
       </div>
 
       {/* 予定情報表示エリア（下半分） */}
-      <div className="h-[30%] overflow-y-auto px-4 pb-4">
+      <div className="h-[30%] overflow-y-auto px-4 pb-4 mt-2">
         <div className="glass-card p-3 fade-in">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-glass">今日の予定</h2>

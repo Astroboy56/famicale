@@ -231,7 +231,7 @@ export default function ShiftPage() {
       </header>
 
       {/* 月カレンダー */}
-      <div className="flex-1 overflow-y-auto px-4 mt-4">
+      <div className="flex-1 overflow-y-auto px-4 mt-4 mb-8">
         <div className="glass-card p-3 fade-in">
           {/* 曜日ヘッダー */}
           <div className="grid grid-cols-7 gap-1 mb-2">
@@ -320,7 +320,7 @@ export default function ShiftPage() {
                     color: command.color,
                   }}
                 >
-                 <span className="text-[10px] font-semibold leading-tight">
+                 <span className="text-[16x] font-semibold leading-tight">
                    {command.name}
                  </span>
                </button>
