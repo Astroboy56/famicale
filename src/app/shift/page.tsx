@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3, X } from 'lucide-react';
@@ -40,7 +40,7 @@ export default function ShiftPage() {
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   // 予定データの読み込み
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     setLoading(true);
     try {
       const year = currentDate.getFullYear();
@@ -52,7 +52,7 @@ export default function ShiftPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentDate]);
 
   // ローカルストレージからシフトコマンドを読み込み
   const loadShiftCommands = () => {
@@ -84,7 +84,7 @@ export default function ShiftPage() {
   useEffect(() => {
     loadEvents();
     loadShiftCommands();
-  }, [currentDate]);
+  }, [currentDate, loadEvents]);
 
   // 特定の日付の予定を取得
   const getEventsForDay = (day: Date) => {
@@ -109,6 +109,9 @@ export default function ShiftPage() {
     if (!selectedDate) return;
 
     try {
+      // 最新のイベントデータを取得
+      await loadEvents();
+      
       let currentDate = new Date(selectedDate);
       let registeredCount = 0;
       
@@ -120,8 +123,11 @@ export default function ShiftPage() {
         const existingEvents = getEventsForDay(currentDate);
         const hasShift = existingEvents.some(event => event.type === 'shift');
 
+        console.log(`Date: ${dateStr}, HasShift: ${hasShift}, Events:`, existingEvents);
+
         if (hasShift) {
           // 既にシフトが登録されている場合は停止
+          console.log(`Stopping at ${dateStr} - shift already exists`);
           break;
         }
 
@@ -140,7 +146,9 @@ export default function ShiftPage() {
         currentDate = addDays(currentDate, 1);
       }
 
+      // 登録完了後に最新データを再取得
       await loadEvents();
+      
       if (registeredCount > 0) {
         alert(`${command.name}のシフトを${registeredCount}日分登録しました`);
       } else {
