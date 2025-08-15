@@ -314,6 +314,26 @@ export const bulkService = {
   },
 };
 
+// イベントを全削除
+export const deleteAllEvents = async (): Promise<void> => {
+  if (!isFirebaseInitialized()) {
+    throw new Error('Firebase is not initialized');
+  }
+
+  try {
+    const eventsRef = collection(db!, 'events');
+    const querySnapshot = await getDocs(eventsRef);
+    
+    const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+    
+    console.log(`Deleted ${querySnapshot.docs.length} events`);
+  } catch (error) {
+    console.error('Error deleting all events:', error);
+    throw error;
+  }
+};
+
 // 接続テスト用の関数
 export const testFirebaseConnection = async () => {
   if (!isFirebaseInitialized()) {
