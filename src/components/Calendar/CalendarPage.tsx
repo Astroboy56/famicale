@@ -184,7 +184,7 @@ export default function CalendarPage() {
       </div>
 
       {/* カレンダー部分 */}
-      <div className="h-[65%] overflow-hidden px-4 mt-4">
+      <div className="h-[60%] overflow-hidden px-4 mt-4">
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
@@ -234,17 +234,17 @@ export default function CalendarPage() {
       </div>
 
       {/* 予定情報表示エリア（下半分） */}
-      <div className="h-[30%] overflow-y-auto px-4 pb-4 mt-2">
-        <div className="glass-card p-3 fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-glass">
+      <div className="h-[20%] overflow-y-auto px-4 pb-20 mt-2">
+        <div className="glass-card p-2 fade-in">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm font-semibold text-glass">
               {selectedDate ? (
                 format(new Date(selectedDate + 'T00:00:00'), 'M月d日(E)', { locale: ja }) + 'の予定'
               ) : (
                 '今日の予定'
               )}
             </h2>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <button
                 onClick={() => {
                   const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
@@ -252,23 +252,23 @@ export default function CalendarPage() {
                   setSelectedDayEvents(events.filter(e => e.date === targetDate));
                   setIsModalOpen(true);
                 }}
-                className="glass-button flex items-center space-x-2 px-4 py-2 text-sm"
+                className="glass-button flex items-center space-x-2 px-3 py-2 text-xs"
               >
-                <Plus size={16} className="text-white" />
+                <Plus size={14} className="text-white" />
                 <span className="text-white font-medium">追加</span>
               </button>
               <button
                 onClick={() => router.push('/bulk')}
-                className="glass-button flex items-center space-x-2 px-4 py-2 text-sm"
+                className="glass-button flex items-center space-x-2 px-3 py-2 text-xs"
               >
-                <List size={16} className="text-white" />
+                <List size={14} className="text-white" />
                 <span className="text-white font-medium">一括入力</span>
               </button>
             </div>
           </div>
           
           {loading ? (
-            <div className="text-center text-white py-8">
+            <div className="text-center text-white py-4">
               <div className="animate-pulse">読み込み中...</div>
             </div>
           ) : (
@@ -277,11 +277,11 @@ export default function CalendarPage() {
                 const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
                 const targetEvents = events.filter(e => e.date === targetDate);
                 return targetEvents.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {targetEvents.map((event) => (
                       <div
                         key={event.id}
-                        className="glass-event p-3 hover:scale-[1.02] transition-all duration-300"
+                        className="glass-event p-2 hover:scale-[1.02] transition-all duration-300"
                       >
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-white">{event.title}</h3>
@@ -290,10 +290,10 @@ export default function CalendarPage() {
                           </span>
                         </div>
                         {event.description && (
-                          <p className="text-sm text-white text-opacity-90 mt-2">{event.description}</p>
+                          <p className="text-sm text-white text-opacity-90 mt-1">{event.description}</p>
                         )}
                         {!event.isAllDay && event.time && (
-                          <div className="text-xs text-white text-opacity-80 mt-2 glass-area px-2 py-1 rounded inline-block">
+                          <div className="text-xs text-white text-opacity-80 mt-1 glass-area px-2 py-1 rounded inline-block">
                             {event.time}
                           </div>
                         )}
@@ -301,7 +301,7 @@ export default function CalendarPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center text-white py-8">
+                  <div className="text-center text-white py-4">
                     <div className="text-opacity-70">
                       {selectedDate ? '予定なし' : '今日の予定はありません'}
                     </div>
