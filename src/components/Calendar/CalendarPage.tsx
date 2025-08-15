@@ -78,7 +78,6 @@ export default function CalendarPage() {
     const dateStr = format(day, 'yyyy-MM-dd');
     setSelectedDate(dateStr);
     setSelectedDayEvents(getEventsForDay(day));
-    setIsModalOpen(true);
   };
 
   // 予定追加後のコールバック
@@ -241,12 +240,18 @@ export default function CalendarPage() {
       <div className="h-[30%] overflow-y-auto px-4 pb-4 mt-2">
         <div className="glass-card p-3 fade-in">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-glass">今日の予定</h2>
+            <h2 className="text-lg font-semibold text-glass">
+              {selectedDate ? (
+                format(new Date(selectedDate + 'T00:00:00'), 'M月d日(E)', { locale: ja }) + 'の予定'
+              ) : (
+                '今日の予定'
+              )}
+            </h2>
             <button
               onClick={() => {
-                const today = format(new Date(), 'yyyy-MM-dd');
-                setSelectedDate(today);
-                setSelectedDayEvents(events.filter(e => e.date === today));
+                const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
+                setSelectedDate(targetDate);
+                setSelectedDayEvents(events.filter(e => e.date === targetDate));
                 setIsModalOpen(true);
               }}
               className="glass-button flex items-center space-x-2 px-4 py-2 text-sm"
@@ -263,10 +268,11 @@ export default function CalendarPage() {
           ) : (
             <>
               {(() => {
-                const todayEvents = events.filter(e => e.date === format(new Date(), 'yyyy-MM-dd'));
-                return todayEvents.length > 0 ? (
+                const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
+                const targetEvents = events.filter(e => e.date === targetDate);
+                return targetEvents.length > 0 ? (
                   <div className="space-y-3">
-                    {todayEvents.map((event) => (
+                    {targetEvents.map((event) => (
                       <div
                         key={event.id}
                         className="glass-event p-3 hover:scale-[1.02] transition-all duration-300"
@@ -290,7 +296,9 @@ export default function CalendarPage() {
                   </div>
                 ) : (
                   <div className="text-center text-white py-8">
-                    <div className="text-opacity-70">今日の予定はありません</div>
+                    <div className="text-opacity-70">
+                      {selectedDate ? '予定なし' : '今日の予定はありません'}
+                    </div>
                   </div>
                 );
               })()}

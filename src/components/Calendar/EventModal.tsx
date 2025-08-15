@@ -75,7 +75,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-400 via-green-500 to-teal-600 bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-400 via-teal-500 to-green-500 bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="glass-modal w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-6 border-b border-white border-opacity-20">
