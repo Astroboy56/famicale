@@ -157,9 +157,9 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
                   }`}
                 >
                   <div className="flex items-center space-x-2">
-                    <div
-                      className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} border-2 border-white shadow-lg`}
-                    />
+                                  <div
+                className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} shadow-lg`}
+              />
                     <span className="text-sm font-semibold text-white">{member.name}</span>
                   </div>
                 </button>

@@ -124,9 +124,9 @@ export default function TodoPage() {
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-1">
-                    <div
-                      className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} border-2 border-white shadow-lg`}
-                    />
+                                  <div
+                className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} shadow-lg`}
+              />
                     <span className="text-xs font-semibold text-white">{member.name}</span>
                   </div>
                 </button>
@@ -142,7 +142,7 @@ export default function TodoPage() {
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
               className="flex-1 px-3 py-2 glass-input text-white placeholder-white placeholder-opacity-60"
-              placeholder="TODOを入力（例：牛乳を買う、掃除機をかける）"
+              placeholder="TODOを入力 （ 例：卵を買うなど ）"
               disabled={isSubmitting}
             />
             <button
@@ -237,7 +237,7 @@ export default function TodoPage() {
                       
                       <div className="flex items-center mt-1 space-x-1">
                         <div
-                          className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} border-2 border-white shadow-sm`}
+                          className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} shadow-sm`}
                         />
                         <span className="text-xs text-white text-opacity-70">
                           {getMemberName(todo.createdBy)} • {todo.createdAt.toLocaleDateString('ja-JP')}

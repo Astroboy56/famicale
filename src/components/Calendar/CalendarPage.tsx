@@ -179,7 +179,7 @@ export default function CalendarPage() {
           {FAMILY_MEMBERS.map((member) => (
             <div key={member.id} className="flex items-center space-x-2">
               <div
-                className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} ${COLOR_MAP[member.color].border} border-2 shadow-lg`}
+                className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} shadow-lg`}
               />
               <span className="text-sm font-medium text-glass">{member.name}</span>
             </div>
