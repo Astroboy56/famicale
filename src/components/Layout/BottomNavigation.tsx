@@ -1,13 +1,14 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { Calendar, List, Plus, CheckSquare, Clock } from 'lucide-react';
+import { Calendar, List, Plus, CheckSquare, Clock, Settings } from 'lucide-react';
 
 interface NavigationItem {
   id: string;
   name: string;
   icon: typeof Calendar;
   path: string;
+  onClick?: () => void;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -15,6 +16,10 @@ const navigationItems: NavigationItem[] = [
   { id: 'list', name: 'リスト', icon: List, path: '/list' },
   { id: 'shift', name: 'シフト', icon: Clock, path: '/shift' },
   { id: 'todo', name: 'TODO', icon: CheckSquare, path: '/todo' },
+  { id: 'settings', name: '設定', icon: Settings, path: '/settings', onClick: () => {
+    // 設定モーダルを開く処理は親コンポーネントで管理
+    // ここでは設定ページに遷移
+  }},
 ];
 
 export default function BottomNavigation() {
@@ -23,7 +28,7 @@ export default function BottomNavigation() {
 
   return (
     <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
-      <div className="grid grid-cols-4 h-16">
+      <div className="grid grid-cols-5 h-16">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
@@ -31,7 +36,13 @@ export default function BottomNavigation() {
           return (
             <button
               key={item.id}
-              onClick={() => router.push(item.path)}
+              onClick={() => {
+                if (item.onClick) {
+                  item.onClick();
+                } else {
+                  router.push(item.path);
+                }
+              }}
               className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 rounded-xl mx-1 glass-select-button ${
                 isActive
                   ? 'selected text-white'
