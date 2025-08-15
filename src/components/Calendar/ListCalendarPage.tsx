@@ -59,8 +59,103 @@ export default function ListCalendarPage() {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* ヘッダー */}
-      <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
+      {/* リストビュー（上部） */}
+      <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
+        {/* ヘッダー行 */}
+        <div className="glass-card mb-2 fade-in">
+          <div className="flex items-center p-3">
+            {/* 日付ヘッダー */}
+            <div className="flex items-center justify-center min-w-[40px]">
+              <span className="text-xs font-semibold text-white">日付</span>
+            </div>
+            {/* 縦線 */}
+            <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
+            {/* 家族メンバーヘッダー */}
+            <div className="flex items-center space-x-3 flex-1">
+              {FAMILY_MEMBERS.map((member, index) => (
+                <div key={member.id} className="flex items-center justify-center flex-1">
+                  <span className="text-xs font-semibold text-white">
+                    {member.name}
+                  </span>
+                  {/* 最後のメンバー以外に縦線を追加 */}
+                  {index < FAMILY_MEMBERS.length - 1 && (
+                    <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* リストカレンダー（表形式） */}
+        <div className="glass-card p-2 space-y-1 fade-in">
+          {days.map((day) => (
+            <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
+              !isSameMonth(day, currentDate) ? 'opacity-50' : ''
+            }`}>
+              <div className="flex items-center p-2">
+                {/* 日付列 */}
+                <div className="flex items-center justify-center min-w-[40px]">
+                  <div className="text-center">
+                    <div className={`text-xs font-bold ${
+                      !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
+                    }`}>
+                      {format(day, 'M/d', { locale: ja })}
+                    </div>
+                    <div className={`text-[10px] ${
+                      !isSameMonth(day, currentDate) ? 'text-white text-opacity-30' : 'text-white text-opacity-70'
+                    }`}>
+                      {format(day, '(E)', { locale: ja })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 各家族メンバーの予定列 */}
+                <div className="flex items-center space-x-3 flex-1 ml-3">
+                  {FAMILY_MEMBERS.map((member) => {
+                    const memberEvents = getEventsForDayAndMember(day, member.id);
+                    return (
+                      <div key={member.id} className="flex items-center justify-center flex-1">
+                        <div className="min-w-[60px] space-y-0.5">
+                          {loading ? (
+                            <div className="text-[10px] text-white text-opacity-60 text-center py-1">
+                              <div className="animate-pulse">...</div>
+                            </div>
+                          ) : memberEvents.length > 0 ? (
+                            memberEvents.map((event) => (
+                              <div
+                                key={event.id}
+                                className="glass-event text-[10px] p-1 hover:scale-105 transition-all duration-300"
+                                title={event.description || event.title}
+                              >
+                                <div className="font-medium truncate text-white">
+                                  {event.title}
+                                </div>
+                                {!event.isAllDay && event.time && (
+                                  <div className="text-[8px] text-white text-opacity-80 mt-0.5">
+                                    {event.time}
+                                  </div>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-[10px] text-white text-opacity-40 text-center py-1">
+                              -
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Month Navigation Bar（下部） */}
+      <header className="glass-card mx-4 mb-4 px-4 py-3 fade-in">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -86,100 +181,6 @@ export default function ListCalendarPage() {
           </div>
         </div>
       </header>
-
-      {/* ヘッダー行 */}
-      <div className="glass-card mx-4 mt-2 fade-in">
-        <div className="flex items-center p-3">
-          {/* 日付ヘッダー */}
-          <div className="flex items-center justify-center min-w-[40px]">
-            <span className="text-xs font-semibold text-white">日付</span>
-          </div>
-          {/* 縦線 */}
-          <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
-          {/* 家族メンバーヘッダー */}
-          <div className="flex items-center space-x-3 flex-1">
-            {FAMILY_MEMBERS.map((member, index) => (
-              <div key={member.id} className="flex items-center justify-center flex-1">
-                <span className="text-xs font-semibold text-white">
-                  {member.name}
-                </span>
-                {/* 最後のメンバー以外に縦線を追加 */}
-                {index < FAMILY_MEMBERS.length - 1 && (
-                  <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-             {/* リストカレンダー（表形式） */}
-       <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
-         <div className="glass-card p-2 space-y-1 fade-in">
-          {days.map((day) => (
-                                                   <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
-               !isSameMonth(day, currentDate) ? 'opacity-50' : ''
-             }`}>
-                                                                 <div className="flex items-center p-2">
-                     {/* 日付列 */}
-                     <div className="flex items-center justify-center min-w-[40px]">
-                       <div className="text-center">
-                         <div className={`text-xs font-bold ${
-                           !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
-                         }`}>
-                           {format(day, 'M/d', { locale: ja })}
-                         </div>
-                         <div className={`text-[10px] ${
-                           !isSameMonth(day, currentDate) ? 'text-white text-opacity-30' : 'text-white text-opacity-70'
-                         }`}>
-                           {format(day, '(E)', { locale: ja })}
-                         </div>
-                       </div>
-                     </div>
-
-                     {/* 各家族メンバーの予定列 */}
-                     <div className="flex items-center space-x-3 flex-1 ml-3">
-                       {FAMILY_MEMBERS.map((member) => {
-                         const memberEvents = getEventsForDayAndMember(day, member.id);
-                         return (
-                           <div key={member.id} className="flex items-center justify-center flex-1">
-                             <div className="min-w-[60px] space-y-0.5">
-                               {loading ? (
-                                 <div className="text-[10px] text-white text-opacity-60 text-center py-1">
-                                   <div className="animate-pulse">...</div>
-                                 </div>
-                               ) : memberEvents.length > 0 ? (
-                                 memberEvents.map((event) => (
-                                   <div
-                                     key={event.id}
-                                     className="glass-event text-[10px] p-1 hover:scale-105 transition-all duration-300"
-                                     title={event.description || event.title}
-                                   >
-                                     <div className="font-medium truncate text-white">
-                                       {event.title}
-                                     </div>
-                                     {!event.isAllDay && event.time && (
-                                       <div className="text-[8px] text-white text-opacity-80 mt-0.5">
-                                         {event.time}
-                                       </div>
-                                     )}
-                                   </div>
-                                 ))
-                               ) : (
-                                 <div className="text-[10px] text-white text-opacity-40 text-center py-1">
-                                   -
-                                 </div>
-                               )}
-                             </div>
-                           </div>
-                         );
-                       })}
-                     </div>
-                   </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ボトムナビゲーション用のスペース */}
       <div className="h-20" />
