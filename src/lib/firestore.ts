@@ -334,6 +334,26 @@ export const deleteAllEvents = async (): Promise<void> => {
   }
 };
 
+// TODOを全削除
+export const deleteAllTodos = async (): Promise<void> => {
+  if (!isFirebaseInitialized()) {
+    throw new Error('Firebase is not initialized');
+  }
+
+  try {
+    const todosRef = collection(db!, 'todos');
+    const querySnapshot = await getDocs(todosRef);
+    
+    const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+    
+    console.log(`Deleted ${querySnapshot.docs.length} todos`);
+  } catch (error) {
+    console.error('Error deleting all todos:', error);
+    throw error;
+  }
+};
+
 // 接続テスト用の関数
 export const testFirebaseConnection = async () => {
   if (!isFirebaseInitialized()) {
