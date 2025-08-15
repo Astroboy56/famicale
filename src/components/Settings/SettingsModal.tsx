@@ -63,7 +63,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       {/* オーバーレイ */}
       <div 
         className={`fixed inset-0 z-40 transition-all duration-500 ease-out ${
-          isOpen ? 'bg-black bg-opacity-50 backdrop-blur-sm' : 'bg-transparent'
+          isOpen ? 'bg-gradient-to-br from-green-400 via-blue-500 to-teal-600 bg-opacity-80 backdrop-blur-sm' : 'bg-transparent'
         }`}
         onClick={onClose}
       />
@@ -72,7 +72,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       <div className={`fixed bottom-0 left-0 right-0 z-50 transform transition-all duration-500 ease-out ${
         isOpen ? 'translate-y-0' : 'translate-y-full'
       }`}>
-        <div className="glass-modal rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto backdrop-blur-xl">
+        <div className="glass-modal rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto backdrop-blur-xl bg-white bg-opacity-10 border border-white border-opacity-20">
           {/* ヘッダー */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -90,7 +90,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           {/* 設定項目 */}
           <div className="space-y-4">
             {/* カレンダー予定削除 */}
-            <div className="glass-card p-4 rounded-xl backdrop-blur-md border border-white border-opacity-20 hover:border-opacity-30 transition-all duration-300">
+            <div className="glass-card p-4 rounded-xl backdrop-blur-md border border-green-300 border-opacity-30 hover:border-green-200 hover:border-opacity-50 transition-all duration-300 bg-green-500 bg-opacity-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-white font-medium mb-1">カレンダー予定</h3>
@@ -110,7 +110,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
 
             {/* TODOリスト削除 */}
-            <div className="glass-card p-4 rounded-xl backdrop-blur-md border border-white border-opacity-20 hover:border-opacity-30 transition-all duration-300">
+            <div className="glass-card p-4 rounded-xl backdrop-blur-md border border-blue-300 border-opacity-30 hover:border-blue-200 hover:border-opacity-50 transition-all duration-300 bg-blue-500 bg-opacity-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-white font-medium mb-1">TODOリスト</h3>
@@ -130,7 +130,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
 
             {/* 今後の開発予定 */}
-            <div className="glass-card p-4 rounded-xl opacity-50 backdrop-blur-md border border-white border-opacity-10">
+            <div className="glass-card p-4 rounded-xl opacity-50 backdrop-blur-md border border-teal-300 border-opacity-20 bg-teal-500 bg-opacity-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-white font-medium mb-1">その他の設定</h3>
@@ -147,7 +147,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           {/* メッセージ表示 */}
           {message && (
-            <div className="mt-4 p-3 glass-card rounded-xl backdrop-blur-md border border-blue-400 border-opacity-30 animate-pulse">
+            <div className="mt-4 p-3 glass-card rounded-xl backdrop-blur-md border border-green-400 border-opacity-40 animate-pulse bg-green-500 bg-opacity-10">
               <p className="text-white text-center text-sm font-medium">{message}</p>
             </div>
           )}
