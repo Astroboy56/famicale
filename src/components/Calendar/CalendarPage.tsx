@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Plus, Settings, List } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings, List, Calendar } from 'lucide-react';
 import {
   DndContext,
   DragEndEvent,
@@ -143,14 +143,19 @@ export default function CalendarPage() {
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
-                  <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigateMonth('prev')}
-                className="glass-button p-2"
-              >
-                <ChevronLeft size={20} className="text-white" />
-              </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Calendar size={20} className="text-white" />
+            <span className="ml-2 text-sm font-medium text-white">カレンダー</span>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigateMonth('prev')}
+              className="glass-button p-2"
+            >
+              <ChevronLeft size={20} className="text-white" />
+            </button>
             <h1 className="text-lg font-semibold text-glass">
               {format(currentDate, 'yyyy年M月', { locale: ja })}
             </h1>
