@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, addDays } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3, X } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
@@ -106,7 +106,7 @@ export default function ShiftPage() {
     });
   };
 
-  // シフトを連続登録
+  // シフトを1件登録
   const addShiftSequence = async (command: ShiftCommand) => {
     console.log('=== シフト登録開始 ===');
     console.log('Command:', command);
@@ -114,6 +114,7 @@ export default function ShiftPage() {
     
     if (!selectedDate) {
       console.log('選択された日付がありません');
+      alert('日付を選択してください');
       return;
     }
 
@@ -123,58 +124,43 @@ export default function ShiftPage() {
       await loadEvents();
       console.log('現在のイベント数:', events.length);
       
-      let currentDate = new Date(selectedDate);
-      let registeredCount = 0;
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      console.log('登録対象日:', dateStr);
       
-      console.log('開始日:', format(currentDate, 'yyyy-MM-dd'));
-      
-      // 連続でシフトを登録（最大30日分）
-      for (let i = 0; i < 30; i++) {
-        const dateStr = format(currentDate, 'yyyy-MM-dd');
-        
-        // 既存の予定をチェック（シフトタイプのイベントがあるかチェック）
-        const existingEvents = getEventsForDay(currentDate);
-        const hasShift = existingEvents.some(event => event.type === 'shift');
+      // 既存の予定をチェック（シフトタイプのイベントがあるかチェック）
+      const existingEvents = getEventsForDay(selectedDate);
+      const hasShift = existingEvents.some(event => event.type === 'shift');
 
-        console.log(`[${i}] Date: ${dateStr}, HasShift: ${hasShift}, Events:`, existingEvents);
+      console.log(`Date: ${dateStr}, HasShift: ${hasShift}, Events:`, existingEvents);
 
-        if (hasShift) {
-          // 既にシフトが登録されている場合は停止
-          console.log(`Stopping at ${dateStr} - shift already exists`);
-          break;
-        }
-
-        console.log(`[${i}] シフトを登録中: ${dateStr} - ${command.name}`);
-        
-        // シフトを登録
-        const eventId = await eventService.addEvent({
-          title: command.name,
-          description: `シフト: ${command.name}`,
-          date: dateStr,
-          familyMemberId: FAMILY_MEMBERS[0].id, // デフォルトで最初のメンバー
-          isAllDay: true,
-          type: 'shift',
-        });
-
-        console.log(`[${i}] 登録完了: ${eventId}`);
-        registeredCount++;
-        
-        // 次の日に移動
-        currentDate = addDays(currentDate, 1);
+      if (hasShift) {
+        // 既にシフトが登録されている場合は停止
+        console.log(`既にシフトが登録されています: ${dateStr}`);
+        alert(`${format(selectedDate, 'M月d日')}には既にシフトが登録されています`);
+        return;
       }
+
+      console.log(`シフトを登録中: ${dateStr} - ${command.name}`);
+      
+      // シフトを登録
+      const eventId = await eventService.addEvent({
+        title: command.name,
+        description: `シフト: ${command.name}`,
+        date: dateStr,
+        familyMemberId: FAMILY_MEMBERS[0].id, // デフォルトで最初のメンバー
+        isAllDay: true,
+        type: 'shift',
+      });
+
+      console.log(`登録完了: ${eventId}`);
 
       console.log('登録完了後に最新データを再取得中...');
       // 登録完了後に最新データを再取得
       await loadEvents();
       console.log('最終イベント数:', events.length);
       
-      if (registeredCount > 0) {
-        console.log(`登録完了: ${registeredCount}日分`);
-        alert(`${command.name}のシフトを${registeredCount}日分登録しました`);
-      } else {
-        console.log('登録可能な日がありませんでした');
-        alert('登録可能な日がありませんでした');
-      }
+      console.log(`登録完了: ${command.name}を${format(selectedDate, 'M月d日')}に登録しました`);
+      alert(`${command.name}を${format(selectedDate, 'M月d日')}に登録しました`);
     } catch (error) {
       console.error('シフトの登録に失敗しました:', error);
       alert('シフトの登録に失敗しました');
@@ -304,12 +290,12 @@ export default function ShiftPage() {
              {/* シフトコマンドボタン */}
        <div className="glass-card mx-4 mt-4 mb-25 p-4 fade-in">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-white">
-            {selectedDate 
-              ? `${format(selectedDate, 'M月d日(E)', { locale: ja })}から連続登録`
-              : '日付を選択してください'
-            }
-          </h2>
+                     <h2 className="text-sm font-semibold text-white">
+             {selectedDate 
+               ? `${format(selectedDate, 'M月d日(E)', { locale: ja })}に登録`
+               : '日付を選択してください'
+             }
+           </h2>
           <button
             onClick={() => setShowCustomEdit(!showCustomEdit)}
             className="glass-button p-2"
