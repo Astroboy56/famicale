@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings } from 'lucide-react';
 import {
   DndContext,
   DragEndEvent,
@@ -16,6 +16,7 @@ import { eventService } from '@/lib/firestore';
 import EventModal from './EventModal';
 import { DroppableDay } from './DroppableDay';
 import { DraggableEvent } from './DraggableEvent';
+import SettingsModal from '@/components/Settings/SettingsModal';
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -25,6 +26,7 @@ export default function CalendarPage() {
   const [selectedDayEvents, setSelectedDayEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -159,7 +161,15 @@ export default function CalendarPage() {
             </button>
           </div>
           
-
+          {/* 設定ボタン */}
+          <div className="flex items-center">
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="glass-button p-2 rounded-full"
+            >
+              <Settings size={20} className="text-white" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -298,6 +308,12 @@ export default function CalendarPage() {
         onClose={() => setIsModalOpen(false)}
         selectedDate={selectedDate}
         onEventAdded={handleEventAdded}
+      />
+
+      {/* 設定モーダル */}
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
       />
     </div>
   );

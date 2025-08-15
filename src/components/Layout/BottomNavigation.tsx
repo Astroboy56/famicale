@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Calendar, List, Plus, CheckSquare, Clock, Settings } from 'lucide-react';
-import SettingsModal from '@/components/Settings/SettingsModal';
+import { Calendar, List, Plus, CheckSquare, Clock } from 'lucide-react';
 
 interface NavigationItem {
   id: string;
@@ -23,48 +21,31 @@ const navigationItems: NavigationItem[] = [
 export default function BottomNavigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
-    <>
-      <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
-        <div className="grid grid-cols-5 h-16">
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.path;
-            
-            return (
-              <button
-                key={item.id}
-                onClick={() => router.push(item.path)}
-                className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 rounded-xl mx-1 glass-select-button ${
-                  isActive
-                    ? 'selected text-white'
-                    : 'text-white text-opacity-70 hover:text-white'
-                }`}
-              >
-                <Icon size={20} />
-                <span className="text-xs font-medium">{item.name}</span>
-              </button>
-            );
-          })}
-        </div>
-        
-        {/* 設定ボタン */}
-        <button
-          onClick={() => setIsSettingsOpen(true)}
-          className="absolute -top-12 right-4 glass-button p-3 rounded-full shadow-lg"
-        >
-          <Settings size={20} className="text-white" />
-        </button>
-      </nav>
-
-      {/* 設定モーダル */}
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-      />
-    </>
+    <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
+      <div className="grid grid-cols-5 h-16">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.path;
+          
+          return (
+            <button
+              key={item.id}
+              onClick={() => router.push(item.path)}
+              className={`flex flex-col items-center justify-center space-y-1 transition-all duration-300 rounded-xl mx-1 glass-select-button ${
+                isActive
+                  ? 'selected text-white'
+                  : 'text-white text-opacity-70 hover:text-white'
+              }`}
+            >
+              <Icon size={20} />
+              <span className="text-xs font-medium">{item.name}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 
