@@ -62,6 +62,11 @@ export default function ListCalendarPage() {
       {/* ヘッダー */}
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
         <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Calendar size={20} className="text-white" />
+            <span className="ml-2 text-sm font-medium text-white">リストビュー</span>
+          </div>
+          
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigateMonth('prev')}
@@ -78,11 +83,6 @@ export default function ListCalendarPage() {
             >
               <ChevronRight size={20} className="text-white" />
             </button>
-          </div>
-          
-          <div className="flex items-center">
-            <span className="mr-2 text-sm font-medium text-white">リストビュー</span>
-            <Calendar size={20} className="text-white" />
           </div>
         </div>
       </header>
