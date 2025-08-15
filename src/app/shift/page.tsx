@@ -205,6 +205,14 @@ export default function ShiftPage() {
       {/* ヘッダー */}
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
         <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Calendar size={20} className="text-white" />
+            <div className="ml-2">
+              <div className="text-sm font-medium text-white">シフト入力</div>
+              <div className="text-xs text-white text-opacity-70">※えりか専用</div>
+            </div>
+          </div>
+          
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigateMonth('prev')}
@@ -221,14 +229,6 @@ export default function ShiftPage() {
             >
               <ChevronRight size={20} className="text-white" />
             </button>
-          </div>
-          
-          <div className="flex items-center">
-            <Calendar size={20} className="text-white" />
-            <div className="ml-2">
-              <div className="text-sm font-medium text-white">シフト入力</div>
-              <div className="text-xs text-white text-opacity-70">※えりか専用</div>
-            </div>
           </div>
         </div>
       </header>
