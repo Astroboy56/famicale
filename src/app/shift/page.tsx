@@ -147,7 +147,7 @@ export default function ShiftPage() {
         title: command.name,
         description: `シフト: ${command.name}`,
         date: dateStr,
-        familyMemberId: FAMILY_MEMBERS[0].id, // デフォルトで最初のメンバー
+        familyMemberId: 'erika', // えりか専用
         isAllDay: true,
         type: 'shift',
       });
