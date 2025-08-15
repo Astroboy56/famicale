@@ -16,10 +16,7 @@ const navigationItems: NavigationItem[] = [
   { id: 'list', name: 'リスト', icon: List, path: '/list' },
   { id: 'shift', name: 'シフト', icon: Clock, path: '/shift' },
   { id: 'todo', name: 'TODO', icon: CheckSquare, path: '/todo' },
-  { id: 'settings', name: '設定', icon: Settings, path: '/settings', onClick: () => {
-    // 設定モーダルを開く処理は親コンポーネントで管理
-    // ここでは設定ページに遷移
-  }},
+  { id: 'settings', name: '設定', icon: Settings, path: '/settings' },
 ];
 
 export default function BottomNavigation() {
