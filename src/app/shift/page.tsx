@@ -89,7 +89,9 @@ export default function ShiftPage() {
   // 特定の日付の予定を取得
   const getEventsForDay = (day: Date) => {
     const dateStr = format(day, 'yyyy-MM-dd');
-    return events.filter(event => event.date === dateStr);
+    const dayEvents = events.filter(event => event.date === dateStr);
+    console.log(`getEventsForDay(${dateStr}):`, dayEvents);
+    return dayEvents;
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -106,14 +108,25 @@ export default function ShiftPage() {
 
   // シフトを連続登録
   const addShiftSequence = async (command: ShiftCommand) => {
-    if (!selectedDate) return;
+    console.log('=== シフト登録開始 ===');
+    console.log('Command:', command);
+    console.log('SelectedDate:', selectedDate);
+    
+    if (!selectedDate) {
+      console.log('選択された日付がありません');
+      return;
+    }
 
     try {
+      console.log('最新のイベントデータを取得中...');
       // 最新のイベントデータを取得
       await loadEvents();
+      console.log('現在のイベント数:', events.length);
       
       let currentDate = new Date(selectedDate);
       let registeredCount = 0;
+      
+      console.log('開始日:', format(currentDate, 'yyyy-MM-dd'));
       
       // 連続でシフトを登録（最大30日分）
       for (let i = 0; i < 30; i++) {
@@ -123,7 +136,7 @@ export default function ShiftPage() {
         const existingEvents = getEventsForDay(currentDate);
         const hasShift = existingEvents.some(event => event.type === 'shift');
 
-        console.log(`Date: ${dateStr}, HasShift: ${hasShift}, Events:`, existingEvents);
+        console.log(`[${i}] Date: ${dateStr}, HasShift: ${hasShift}, Events:`, existingEvents);
 
         if (hasShift) {
           // 既にシフトが登録されている場合は停止
@@ -131,8 +144,10 @@ export default function ShiftPage() {
           break;
         }
 
+        console.log(`[${i}] シフトを登録中: ${dateStr} - ${command.name}`);
+        
         // シフトを登録
-        await eventService.addEvent({
+        const eventId = await eventService.addEvent({
           title: command.name,
           description: `シフト: ${command.name}`,
           date: dateStr,
@@ -141,23 +156,31 @@ export default function ShiftPage() {
           type: 'shift',
         });
 
+        console.log(`[${i}] 登録完了: ${eventId}`);
         registeredCount++;
+        
         // 次の日に移動
         currentDate = addDays(currentDate, 1);
       }
 
+      console.log('登録完了後に最新データを再取得中...');
       // 登録完了後に最新データを再取得
       await loadEvents();
+      console.log('最終イベント数:', events.length);
       
       if (registeredCount > 0) {
+        console.log(`登録完了: ${registeredCount}日分`);
         alert(`${command.name}のシフトを${registeredCount}日分登録しました`);
       } else {
+        console.log('登録可能な日がありませんでした');
         alert('登録可能な日がありませんでした');
       }
     } catch (error) {
       console.error('シフトの登録に失敗しました:', error);
       alert('シフトの登録に失敗しました');
     }
+    
+    console.log('=== シフト登録終了 ===');
   };
 
   // カスタムコマンドを削除
@@ -299,15 +322,18 @@ export default function ShiftPage() {
          <div className="grid grid-cols-6 gap-2">
            {shiftCommands.map((command) => (
              <div key={command.id} className="relative group">
-               <button
-                 onClick={() => addShiftSequence(command)}
-                 disabled={!selectedDate}
-                 className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 min-h-[50px] w-full"
-                 style={{
-                   backgroundColor: command.bgColor,
-                   color: command.color,
-                 }}
-               >
+                               <button
+                  onClick={() => {
+                    console.log('ボタンクリック:', command.name);
+                    addShiftSequence(command);
+                  }}
+                  disabled={!selectedDate}
+                  className="aspect-square glass-button transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 min-h-[50px] w-full"
+                  style={{
+                    backgroundColor: command.bgColor,
+                    color: command.color,
+                  }}
+                >
                  <span className="text-[10px] font-semibold leading-tight">
                    {command.name}
                  </span>
