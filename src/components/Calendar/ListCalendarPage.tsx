@@ -45,7 +45,13 @@ export default function ListCalendarPage() {
   // 特定の日付と家族メンバーの予定を取得
   const getEventsForDayAndMember = (day: Date, memberId: string) => {
     const dateStr = format(day, 'yyyy-MM-dd');
-    return events.filter(event => event.date === dateStr && event.familyMemberId === memberId);
+    return events.filter(event => {
+      // シフト入力の「休み」イベントはリストページでも非表示
+      if (event.type === 'shift' && event.title === '休み') {
+        return false;
+      }
+      return event.date === dateStr && event.familyMemberId === memberId;
+    });
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
