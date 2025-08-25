@@ -50,14 +50,12 @@ export default function ShiftPage() {
 
   // リアルタイムで予定データを監視
   useEffect(() => {
-    setLoading(true);
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
     
     // リアルタイムリスナーを設定
     const unsubscribe = eventService.subscribeToEvents(year, month, (fetchedEvents) => {
       setEvents(fetchedEvents);
-      setLoading(false);
     });
 
     // クリーンアップ関数
@@ -68,7 +66,6 @@ export default function ShiftPage() {
 
   // 予定データの読み込み（フォールバック用）
   const loadEvents = useCallback(async () => {
-    setLoading(true);
     try {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
@@ -76,8 +73,6 @@ export default function ShiftPage() {
       setEvents(fetchedEvents);
     } catch (error) {
       console.error('予定の読み込みに失敗しました:', error);
-    } finally {
-      setLoading(false);
     }
   }, [currentDate]);
 

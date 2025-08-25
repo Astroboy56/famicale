@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+
 import { X, Calendar, Clock, User, Tag, Trash2 } from 'lucide-react';
-import { FAMILY_MEMBERS, COLOR_MAP, EVENT_TYPE_ICONS, EventType, Event } from '@/types';
+import { FAMILY_MEMBERS, COLOR_MAP, EventType, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 
 interface EventModalProps {
@@ -128,7 +128,7 @@ export default function EventModal({
     }
   };
 
-  const selectedMember = FAMILY_MEMBERS.find(m => m.id === form.familyMemberId);
+
   const isEditMode = !!editingEvent;
 
   if (!isOpen) return null;

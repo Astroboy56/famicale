@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Plus, Settings, List, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, List, Calendar } from 'lucide-react';
 import {
   DndContext,
   DragEndEvent,
@@ -25,20 +25,20 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedDayEvents, setSelectedDayEvents] = useState<Event[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   // カレンダー日付をメモ化
-  const { monthStart, monthEnd, calendarStart, calendarEnd, days } = useMemo(() => {
+  const { days } = useMemo(() => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(currentDate);
     const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
     const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-    return { monthStart, monthEnd, calendarStart, calendarEnd, days };
+    return { days };
   }, [currentDate]);
 
   // リアルタイムで予定データを監視
@@ -102,8 +102,7 @@ export default function CalendarPage() {
   const handleDayClick = useCallback((day: Date) => {
     const dateStr = format(day, 'yyyy-MM-dd');
     setSelectedDate(dateStr);
-    setSelectedDayEvents(getEventsForDay(day));
-  }, [getEventsForDay]);
+  }, []);
 
   // 予定追加後のコールバック
   const handleEventAdded = useCallback(() => {
@@ -163,10 +162,7 @@ export default function CalendarPage() {
     return FAMILY_MEMBERS.find(m => m.id === memberId)?.name || '';
   };
 
-  // 家族メンバーの色を取得
-  const getMemberColor = (memberId: string) => {
-    return FAMILY_MEMBERS.find(m => m.id === memberId)?.color || 'blue';
-  };
+
 
   return (
     <div className="flex flex-col h-screen">
@@ -278,13 +274,6 @@ export default function CalendarPage() {
                 onClick={() => {
                   const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
                   setSelectedDate(targetDate);
-                  setSelectedDayEvents(events.filter(e => {
-                    // シフト入力の「休み」イベントは非表示
-                    if (e.type === 'shift' && e.title === '休み') {
-                      return false;
-                    }
-                    return e.date === targetDate;
-                  }));
                   setIsModalOpen(true);
                 }}
                 className="glass-button flex items-center space-x-2 px-3 py-2 text-xs"

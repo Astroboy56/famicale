@@ -3,7 +3,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import { format, isSameMonth, isToday } from 'date-fns';
 import { Event } from '@/types';
-import { DraggableEvent } from './DraggableEvent';
+
 import { CalendarEventDot } from './CalendarEventDot';
 
 interface DroppableDayProps {
@@ -22,7 +22,6 @@ export function DroppableDay({
   isDraggedOver = false
 }: DroppableDayProps) {
   const {
-    isOver,
     setNodeRef,
   } = useDroppable({
     id: format(day, 'yyyy-MM-dd'),
@@ -37,9 +36,7 @@ export function DroppableDay({
       onClick={() => onClick(day)}
       className={`glass-day p-1 min-h-[65px] cursor-pointer ${
         !isSameMonth(day, currentDate) ? 'opacity-50' : ''
-      } ${isToday(day) ? 'today' : ''} ${
-        isOver ? 'glass-area ring-2 ring-white ring-opacity-50 scale-105' : ''
-      }`}
+      } ${isToday(day) ? 'today' : ''}`}
     >
       <div className={`text-sm font-medium ${
         !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 

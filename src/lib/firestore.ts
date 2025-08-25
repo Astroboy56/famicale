@@ -42,7 +42,7 @@ export const eventService = {
     try {
       // undefinedフィールドを除去
       const cleanEvent = Object.fromEntries(
-        Object.entries(event).filter(([_, value]) => value !== undefined)
+        Object.entries(event).filter(([, value]) => value !== undefined)
       );
 
       console.log('Firestoreに保存するデータ:', cleanEvent);
@@ -107,7 +107,7 @@ export const eventService = {
     try {
       // undefinedフィールドを除去
       const cleanUpdates = Object.fromEntries(
-        Object.entries(updates).filter(([_, value]) => value !== undefined)
+        Object.entries(updates).filter(([, value]) => value !== undefined)
       );
 
       const eventRef = doc(db!, EVENTS_COLLECTION, eventId);

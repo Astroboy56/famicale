@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
-import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
+import { FAMILY_MEMBERS, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 import EventModal from './EventModal';
 
@@ -16,13 +16,13 @@ export default function ListCalendarPage() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   // カレンダー日付をメモ化
-  const { monthStart, monthEnd, calendarStart, calendarEnd, days } = useMemo(() => {
+  const { days } = useMemo(() => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(currentDate);
     const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
     const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-    return { monthStart, monthEnd, calendarStart, calendarEnd, days };
+    return { days };
   }, [currentDate]);
 
   // リアルタイムで予定データを監視

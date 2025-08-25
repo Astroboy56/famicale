@@ -28,12 +28,7 @@ interface PoiChild {
   totalPoints: number;
 }
 
-// デフォルトの頑張るリスト
-const DEFAULT_TASKS: PoiTask[] = [
-  { id: 'study', name: '勉強', points: 10, isDefault: true },
-  { id: 'exercise', name: '筋トレ', points: 15, isDefault: true },
-  { id: 'help', name: 'お手伝い', points: 5, isDefault: true },
-];
+
 
 // 子供の情報
 const CHILDREN: PoiChild[] = [

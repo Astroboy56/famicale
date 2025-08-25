@@ -16,13 +16,13 @@ export default function CalendarSelectorModal({ isOpen, onClose, onDateSelect }:
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
 
   // カレンダー日付をメモ化
-  const { monthStart, monthEnd, calendarStart, calendarEnd, days } = useMemo(() => {
+  const { days } = useMemo(() => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(currentDate);
     const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
     const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-    return { monthStart, monthEnd, calendarStart, calendarEnd, days };
+    return { days };
   }, [currentDate]);
 
   const navigateMonth = (direction: 'prev' | 'next') => {
