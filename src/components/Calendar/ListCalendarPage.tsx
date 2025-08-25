@@ -167,11 +167,11 @@ export default function ListCalendarPage() {
                          return (
                            <div key={member.id} className="flex items-center justify-center flex-1">
                              <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${
-                               member.id === 'atomu' ? 'bg-blue-500 bg-opacity-5' :
-                               member.id === 'erika' ? 'bg-red-500 bg-opacity-5' :
-                               member.id === 'kosumo' ? 'bg-green-500 bg-opacity-5' :
-                               member.id === 'alice' ? 'bg-pink-500 bg-opacity-5' :
-                               'bg-gray-500 bg-opacity-5'
+                               member.id === 'atomu' ? 'bg-blue-500 bg-opacity-50' :
+                               member.id === 'erika' ? 'bg-red-500 bg-opacity-50' :
+                               member.id === 'kosumo' ? 'bg-green-500 bg-opacity-50' :
+                               member.id === 'alice' ? 'bg-pink-500 bg-opacity-50' :
+                               'bg-gray-500 bg-opacity-50'
                              }`}>
                                {loading ? (
                                  <div className="text-[10px] text-white text-opacity-60 text-center py-1">
