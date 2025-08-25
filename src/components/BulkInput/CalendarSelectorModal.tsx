@@ -62,7 +62,7 @@ export default function CalendarSelectorModal({ isOpen, onClose, onDateSelect }:
     <>
       {/* オーバーレイ */}
       <div 
-        className="fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-sm"
+        className="fixed inset-0 z-40 backdrop-blur-sm"
         onClick={handleCancel}
       />
       
