@@ -141,19 +141,19 @@ export default function TodoPage() {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-              className="flex-1 px-3 py-2 glass-input text-white placeholder-white placeholder-opacity-60"
-              placeholder="TODOを入力 （ 例：卵を買うなど ）"
+              className="flex-1 min-w-0 px-3 py-2 glass-input text-white placeholder-white placeholder-opacity-60"
+              placeholder="TODOを入力"
               disabled={isSubmitting}
             />
             <button
               onClick={addTodo}
               disabled={!newTodo.trim() || isSubmitting}
-              className="glass-button p-2 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="glass-button p-2 flex-shrink-0 w-10 h-10 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
               ) : (
-                <Plus size={20} className="text-white" />
+                <Plus size={18} className="text-white" />
               )}
             </button>
           </div>
