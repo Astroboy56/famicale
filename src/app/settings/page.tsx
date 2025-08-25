@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, Trash2, CheckSquare } from 'lucide-react';
+import { ArrowLeft, Trash2, CheckSquare, Palette } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
+import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 
 export default function SettingsPage() {
@@ -11,6 +12,8 @@ export default function SettingsPage() {
   const [isDeletingEvents, setIsDeletingEvents] = useState(false);
   const [isDeletingTodos, setIsDeletingTodos] = useState(false);
   const [message, setMessage] = useState('');
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const handleDeleteAllEvents = async () => {
     if (!confirm('本当に全てのカレンダー予定を削除しますか？この操作は取り消せません。')) {
@@ -107,6 +110,64 @@ export default function SettingsPage() {
             {message && (
               <div className="mt-4 p-3 border border-green-400 border-opacity-40 animate-pulse bg-green-500 bg-opacity-10 rounded-lg">
                 <p className="text-white text-sm text-center">{message}</p>
+              </div>
+            )}
+          </div>
+
+          {/* 画面テーマ設定 */}
+          <div className="glass-card p-4 fade-in">
+            <h2 className="text-lg font-semibold text-white mb-4">画面テーマ</h2>
+            
+            {/* テーマ選択ボタン */}
+            <div className="mb-4">
+              <button
+                onClick={() => setShowThemeSelector(!showThemeSelector)}
+                className="w-full flex items-center justify-between p-4 glass-button text-white font-medium border border-purple-300 border-opacity-30 hover:border-purple-200 hover:border-opacity-50 transition-all duration-300 bg-purple-500 bg-opacity-5"
+              >
+                <div className="flex items-center space-x-3">
+                  <Palette size={20} className="text-purple-300" />
+                  <span>背景色を選択</span>
+                </div>
+                <span className="text-white text-opacity-70 text-sm">
+                  {showThemeSelector ? '閉じる' : '選択'}
+                </span>
+              </button>
+            </div>
+
+            {/* テーマ選択エリア */}
+            {showThemeSelector && (
+              <div className="space-y-2">
+                {[
+                  { id: 'default' as ThemeMode, name: 'デフォルト', description: '現在の仕様' },
+                  { id: 'ocean' as ThemeMode, name: '海', description: '青色と水色っぽい色グラデーション' },
+                  { id: 'forest' as ThemeMode, name: '森', description: '緑と黄緑っぽい色のグラデーション' },
+                  { id: 'love' as ThemeMode, name: 'ラブ', description: 'ピンクと赤っぽい色のグラデーション' },
+                  { id: 'programmer' as ThemeMode, name: 'プログラマー', description: 'SEっぽい配色' }
+                ].map((themeOption) => (
+                  <button
+                    key={themeOption.id}
+                    onClick={() => {
+                      setTheme(themeOption.id);
+                      setMessage(`${themeOption.name}テーマに変更しました`);
+                      setTimeout(() => setMessage(''), 3000);
+                    }}
+                    className={`w-full p-3 rounded-lg text-left transition-all duration-200 ${
+                      theme === themeOption.id
+                        ? 'glass-button border-2 border-white border-opacity-50'
+                        : 'glass-card hover:bg-white hover:bg-opacity-10'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-white font-medium">{themeOption.name}</div>
+                        <div className="text-white text-opacity-70 text-sm">{themeOption.description}</div>
+                      </div>
+                      {theme === themeOption.id && (
+                        <div className="text-white text-opacity-80">✓</div>
+                      )}
+                    </div>
+                  </button>
+                ))}
               </div>
             )}
           </div>
