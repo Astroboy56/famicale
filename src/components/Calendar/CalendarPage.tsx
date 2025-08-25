@@ -29,6 +29,7 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(false);
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -85,6 +86,12 @@ export default function CalendarPage() {
   // 予定追加後のコールバック
   const handleEventAdded = () => {
     loadEvents(); // 予定を再読み込み
+  };
+
+  // 予定編集開始のコールバック
+  const handleEventEdit = (event: Event) => {
+    setEditingEvent(event);
+    setIsModalOpen(true);
   };
 
   // ドラッグ開始時の処理
@@ -217,6 +224,8 @@ export default function CalendarPage() {
                       currentDate={currentDate}
                       events={dayEvents}
                       onClick={handleDayClick}
+                      onEventUpdate={loadEvents}
+                      onEventEdit={handleEventEdit}
                     />
                   );
                 })}
@@ -316,12 +325,16 @@ export default function CalendarPage() {
       {/* ボトムナビゲーション用のスペース */}
       <div className="h-20" />
 
-      {/* 予定追加モーダル */}
+      {/* 予定追加・編集モーダル */}
       <EventModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingEvent(null);
+        }}
         selectedDate={selectedDate}
         onEventAdded={handleEventAdded}
+        editingEvent={editingEvent}
       />
 
       {/* 設定モーダル */}

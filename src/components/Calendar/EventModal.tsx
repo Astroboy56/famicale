@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, User, Tag } from 'lucide-react';
-import { FAMILY_MEMBERS, COLOR_MAP, EVENT_TYPE_ICONS, EventType } from '@/types';
+import { FAMILY_MEMBERS, COLOR_MAP, EVENT_TYPE_ICONS, EventType, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 
 interface EventModalProps {
@@ -10,6 +10,7 @@ interface EventModalProps {
   onClose: () => void;
   selectedDate: string; // YYYY-MM-DD形式
   onEventAdded?: () => void;
+  editingEvent?: Event | null; // 編集対象のイベント
 }
 
 interface EventForm {
@@ -21,7 +22,13 @@ interface EventForm {
   isAllDay: boolean;
 }
 
-export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded }: EventModalProps) {
+export default function EventModal({ 
+  isOpen, 
+  onClose, 
+  selectedDate, 
+  onEventAdded, 
+  editingEvent 
+}: EventModalProps) {
   const [form, setForm] = useState<EventForm>({
     title: '',
     description: '',
@@ -32,6 +39,30 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // 編集モードの場合、フォームに既存データを設定
+  useEffect(() => {
+    if (editingEvent) {
+      setForm({
+        title: editingEvent.title,
+        description: editingEvent.description || '',
+        familyMemberId: editingEvent.familyMemberId,
+        type: editingEvent.type,
+        time: editingEvent.time || '',
+        isAllDay: editingEvent.isAllDay ?? true,
+      });
+    } else {
+      // 新規追加モードの場合、フォームをリセット
+      setForm({
+        title: '',
+        description: '',
+        familyMemberId: FAMILY_MEMBERS[0].id,
+        type: 'other',
+        time: '',
+        isAllDay: true,
+      });
+    }
+  }, [editingEvent, isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return;
@@ -41,14 +72,20 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
       const eventData = {
         title: form.title.trim(),
         description: form.description.trim(),
-        date: selectedDate,
+        date: editingEvent ? editingEvent.date : selectedDate,
         familyMemberId: form.familyMemberId,
         type: form.type,
         isAllDay: form.isAllDay,
         ...(form.isAllDay ? {} : { time: form.time }),
       };
 
-      await eventService.addEvent(eventData);
+      if (editingEvent) {
+        // 編集モード
+        await eventService.updateEvent(editingEvent.id, eventData);
+      } else {
+        // 新規追加モード
+        await eventService.addEvent(eventData);
+      }
 
       // フォームをリセット
       setForm({
@@ -63,14 +100,15 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
       onEventAdded?.();
       onClose();
     } catch (error) {
-      console.error('予定の追加に失敗しました:', error);
-      alert('予定の追加に失敗しました。もう一度お試しください。');
+      console.error('予定の保存に失敗しました:', error);
+      alert('予定の保存に失敗しました。もう一度お試しください。');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const selectedMember = FAMILY_MEMBERS.find(m => m.id === form.familyMemberId);
+  const isEditMode = !!editingEvent;
 
   if (!isOpen) return null;
 
@@ -79,7 +117,9 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
       <div className="glass-modal w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-6 border-b border-white border-opacity-20">
-          <h2 className="text-xl font-bold text-glass">予定を追加</h2>
+          <h2 className="text-xl font-bold text-glass">
+            {isEditMode ? '予定を編集' : '予定を追加'}
+          </h2>
           <button
             onClick={onClose}
             className="glass-button p-2"
@@ -94,7 +134,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
           <div className="flex items-center text-white">
             <Calendar size={16} className="mr-2" />
             <span className="text-sm font-medium">
-              {new Date(selectedDate + 'T00:00:00').toLocaleDateString('ja-JP', {
+              {new Date((editingEvent ? editingEvent.date : selectedDate) + 'T00:00:00').toLocaleDateString('ja-JP', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -157,9 +197,9 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
                   }`}
                 >
                   <div className="flex items-center space-x-2">
-                                  <div
-                className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} shadow-lg`}
-              />
+                    <div
+                      className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} shadow-lg`}
+                    />
                     <span className="text-sm font-semibold text-white">{member.name}</span>
                   </div>
                 </button>
@@ -232,7 +272,7 @@ export default function EventModal({ isOpen, onClose, selectedDate, onEventAdded
               disabled={!form.title.trim() || isSubmitting}
               className="flex-1 py-3 px-6 glass-button text-white font-semibold hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {isSubmitting ? '追加中...' : '予定を追加'}
+              {isSubmitting ? (isEditMode ? '更新中...' : '追加中...') : (isEditMode ? '予定を更新' : '予定を追加')}
             </button>
           </div>
         </form>
