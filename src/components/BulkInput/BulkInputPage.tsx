@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Plus, Clock, User, Tag } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, EventType } from '@/types';
+import { eventService } from '@/lib/firestore';
+import { format, addDays, addWeeks, addMonths, isWeekend } from 'date-fns';
 
 interface BulkInputForm {
   title: string;
@@ -31,10 +33,110 @@ export default function BulkInputPage() {
     selectedDays: [],
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // ここで一括入力の処理を実装
-    console.log('一括入力:', form);
+    
+    if (!form.title.trim() || !form.startDate || !form.endDate) {
+      alert('必須項目を入力してください');
+      return;
+    }
+
+    if (new Date(form.startDate) > new Date(form.endDate)) {
+      alert('開始日は終了日より前の日付を選択してください');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const events = generateEvents();
+      console.log(`一括登録開始: ${events.length}件の予定を登録します`);
+
+      // 一括でイベントを登録
+      const promises = events.map(event => eventService.addEvent(event));
+      await Promise.all(promises);
+
+      alert(`${events.length}件の予定を一括登録しました`);
+      
+      // フォームをリセット
+      setForm({
+        title: '',
+        description: '',
+        familyMemberId: FAMILY_MEMBERS[0].id,
+        type: 'other',
+        time: '',
+        isAllDay: true,
+        pattern: 'daily',
+        startDate: '',
+        endDate: '',
+        selectedDays: [],
+      });
+    } catch (error) {
+      console.error('一括登録に失敗しました:', error);
+      alert('一括登録に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // イベント生成関数
+  const generateEvents = () => {
+    const events = [];
+    let currentDate = new Date(form.startDate);
+    const endDate = new Date(form.endDate);
+
+    while (currentDate <= endDate) {
+      let shouldAddEvent = false;
+
+      switch (form.pattern) {
+        case 'daily':
+          shouldAddEvent = true;
+          break;
+        case 'weekdays':
+          shouldAddEvent = !isWeekend(currentDate);
+          break;
+        case 'weekly':
+        case 'biweekly':
+          shouldAddEvent = form.selectedDays.includes(currentDate.getDay());
+          break;
+        case 'monthly':
+          shouldAddEvent = currentDate.getDate() === new Date(form.startDate).getDate();
+          break;
+      }
+
+      if (shouldAddEvent) {
+        events.push({
+          title: form.title,
+          description: form.description,
+          date: format(currentDate, 'yyyy-MM-dd'),
+          familyMemberId: form.familyMemberId,
+          type: form.type,
+          time: form.isAllDay ? undefined : form.time,
+          isAllDay: form.isAllDay,
+        });
+      }
+
+      // 次の日付を計算
+      switch (form.pattern) {
+        case 'daily':
+        case 'weekdays':
+          currentDate = addDays(currentDate, 1);
+          break;
+        case 'weekly':
+          currentDate = addWeeks(currentDate, 1);
+          break;
+        case 'biweekly':
+          currentDate = addWeeks(currentDate, 2);
+          break;
+        case 'monthly':
+          currentDate = addMonths(currentDate, 1);
+          break;
+      }
+    }
+
+    return events;
   };
 
   const toggleDay = (day: number) => {
@@ -210,16 +312,16 @@ export default function BulkInputPage() {
           )}
 
           {/* 期間設定 */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-white mb-3">
                 開始日 *
               </label>
-                              <input
-                  type="date"
-                  value={form.startDate}
-                  onChange={(e) => setForm(prev => ({ ...prev, startDate: e.target.value }))}
-                  className="w-full px-4 py-3 glass-input text-white"
+              <input
+                type="date"
+                value={form.startDate}
+                onChange={(e) => setForm(prev => ({ ...prev, startDate: e.target.value }))}
+                className="w-full px-4 py-3 glass-input text-white"
                 required
               />
             </div>
@@ -227,11 +329,11 @@ export default function BulkInputPage() {
               <label className="block text-sm font-semibold text-white mb-3">
                 終了日 *
               </label>
-                              <input
-                  type="date"
-                  value={form.endDate}
-                  onChange={(e) => setForm(prev => ({ ...prev, endDate: e.target.value }))}
-                  className="w-full px-4 py-3 glass-input text-white"
+              <input
+                type="date"
+                value={form.endDate}
+                onChange={(e) => setForm(prev => ({ ...prev, endDate: e.target.value }))}
+                className="w-full px-4 py-3 glass-input text-white"
                 required
               />
             </div>
@@ -240,9 +342,10 @@ export default function BulkInputPage() {
           {/* 登録ボタン */}
           <button
             type="submit"
-            className="w-full glass-button py-4 px-6 font-semibold text-lg hover:scale-105 transition-all duration-300"
+            disabled={isSubmitting}
+            className="w-full glass-button py-4 px-6 font-semibold text-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            一括登録する
+            {isSubmitting ? '登録中...' : '一括登録する'}
           </button>
         </form>
       </div>
