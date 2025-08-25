@@ -44,7 +44,7 @@ body {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
   color: white;
   font-weight: 500;
 }
@@ -79,7 +79,7 @@ body {
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
   color: white;
 }
 
@@ -204,7 +204,7 @@ button, [role="button"] {
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 12px;
   color: white;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .glass-input:focus {
@@ -224,7 +224,7 @@ button, [role="button"] {
   -webkit-backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.25);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .glass-select-button:hover {
@@ -254,7 +254,7 @@ button, [role="button"] {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .glass-checkbox-area:hover {

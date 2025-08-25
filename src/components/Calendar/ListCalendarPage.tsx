@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
@@ -15,15 +15,18 @@ export default function ListCalendarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  // カレンダー表示用に、月の最初の週の開始から最後の週の終了まで取得
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 日曜日開始
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
-  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+  // カレンダー日付をメモ化
+  const { monthStart, monthEnd, calendarStart, calendarEnd, days } = useMemo(() => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
+    const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+    const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+    return { monthStart, monthEnd, calendarStart, calendarEnd, days };
+  }, [currentDate]);
 
   // 予定データの読み込み
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     setLoading(true);
     try {
       const year = currentDate.getFullYear();
@@ -35,7 +38,7 @@ export default function ListCalendarPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentDate]);
 
   // 月が変わったときに予定を再読み込み
   useEffect(() => {
@@ -43,7 +46,7 @@ export default function ListCalendarPage() {
   }, [currentDate]);
 
   // 特定の日付と家族メンバーの予定を取得
-  const getEventsForDayAndMember = (day: Date, memberId: string) => {
+  const getEventsForDayAndMember = useCallback((day: Date, memberId: string) => {
     const dateStr = format(day, 'yyyy-MM-dd');
     return events.filter(event => {
       // シフト入力の「休み」イベントはリストページでも非表示
@@ -52,9 +55,9 @@ export default function ListCalendarPage() {
       }
       return event.date === dateStr && event.familyMemberId === memberId;
     });
-  };
+  }, [events]);
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
+  const navigateMonth = useCallback((direction: 'prev' | 'next') => {
     setCurrentDate(prev => {
       const newDate = new Date(prev);
       if (direction === 'prev') {
@@ -64,18 +67,18 @@ export default function ListCalendarPage() {
       }
       return newDate;
     });
-  };
+  }, []);
 
   // 予定編集開始のコールバック
-  const handleEventEdit = (event: Event) => {
+  const handleEventEdit = useCallback((event: Event) => {
     setEditingEvent(event);
     setIsModalOpen(true);
-  };
+  }, []);
 
   // 予定追加・編集後のコールバック
-  const handleEventAdded = () => {
+  const handleEventAdded = useCallback(() => {
     loadEvents(); // 予定を再読み込み
-  };
+  }, [loadEvents]);
 
   return (
     <div className="flex flex-col h-screen">
