@@ -12,8 +12,6 @@ interface DroppableDayProps {
   events: Event[];
   onClick: (day: Date) => void;
   isDraggedOver?: boolean;
-  onEventUpdate?: () => void;
-  onEventEdit?: (event: Event) => void;
 }
 
 export function DroppableDay({ 
@@ -21,9 +19,7 @@ export function DroppableDay({
   currentDate, 
   events, 
   onClick,
-  isDraggedOver = false,
-  onEventUpdate,
-  onEventEdit
+  isDraggedOver = false
 }: DroppableDayProps) {
   const {
     isOver,
@@ -58,8 +54,6 @@ export function DroppableDay({
           <CalendarEventDot
             key={event.id}
             event={event}
-            onEventUpdate={onEventUpdate}
-            onEventEdit={onEventEdit}
           />
         ))}
         {events.length > 6 && (

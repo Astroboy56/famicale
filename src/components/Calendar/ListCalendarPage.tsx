@@ -6,11 +6,14 @@ import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
+import EventModal from './EventModal';
 
 export default function ListCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -55,6 +58,17 @@ export default function ListCalendarPage() {
       }
       return newDate;
     });
+  };
+
+  // 予定編集開始のコールバック
+  const handleEventEdit = (event: Event) => {
+    setEditingEvent(event);
+    setIsModalOpen(true);
+  };
+
+  // 予定追加・編集後のコールバック
+  const handleEventAdded = () => {
+    loadEvents(); // 予定を再読み込み
   };
 
   return (
@@ -152,8 +166,9 @@ export default function ListCalendarPage() {
                                  memberEvents.map((event) => (
                                    <div
                                      key={event.id}
-                                     className="glass-event text-[10px] p-1 hover:scale-105 transition-all duration-300"
-                                     title={event.description || event.title}
+                                     className="glass-event text-[10px] p-1 hover:scale-105 transition-all duration-300 cursor-pointer"
+                                     onClick={() => handleEventEdit(event)}
+                                     title={`${event.description || event.title} (タップで編集・削除)`}
                                    >
                                      <div className="font-medium truncate text-white">
                                        {event.title}
@@ -183,6 +198,18 @@ export default function ListCalendarPage() {
 
       {/* ボトムナビゲーション用のスペース */}
       <div className="h-20" />
+
+      {/* 予定追加・編集モーダル */}
+      <EventModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingEvent(null);
+        }}
+        selectedDate={editingEvent ? editingEvent.date : format(new Date(), 'yyyy-MM-dd')}
+        onEventAdded={handleEventAdded}
+        editingEvent={editingEvent}
+      />
     </div>
   );
 }

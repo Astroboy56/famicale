@@ -224,8 +224,6 @@ export default function CalendarPage() {
                       currentDate={currentDate}
                       events={dayEvents}
                       onClick={handleDayClick}
-                      onEventUpdate={loadEvents}
-                      onEventEdit={handleEventEdit}
                     />
                   );
                 })}
@@ -290,7 +288,9 @@ export default function CalendarPage() {
                     {targetEvents.map((event) => (
                       <div
                         key={event.id}
-                        className="glass-event p-2 hover:scale-[1.02] transition-all duration-300"
+                        className="glass-event p-2 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+                        onClick={() => handleEventEdit(event)}
+                        title="タップまたは長押しで編集・削除"
                       >
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-white">{event.title}</h3>
