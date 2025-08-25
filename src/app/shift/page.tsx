@@ -244,8 +244,7 @@ export default function ShiftPage() {
           <div className="flex items-center">
             <Calendar size={20} className="text-white" />
             <div className="ml-2">
-              <div className="text-sm font-medium text-white">シフト入力</div>
-              <div className="text-xs text-white text-opacity-70">※えりか専用</div>
+              <div className="text-sm font-medium text-white">シフト入力※えりか専用</div>
             </div>
           </div>
           
@@ -312,7 +311,8 @@ export default function ShiftPage() {
                             key={event.id}
                             className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate"
                             style={{
-                              backgroundColor: shiftCommands.find(cmd => cmd.name === event.title)?.bgColor || '#666'
+                              backgroundColor: shiftCommands.find(cmd => cmd.name === event.title)?.bgColor || '#666',
+                              opacity: 0.7
                             }}
                           >
                             {event.title}
@@ -325,9 +325,10 @@ export default function ShiftPage() {
                         .map((shift) => (
                           <div
                             key={shift.id}
-                            className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate opacity-60"
+                            className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate"
                             style={{
-                              backgroundColor: shift.command.bgColor
+                              backgroundColor: shift.command.bgColor,
+                              opacity: 0.5
                             }}
                           >
                             {shift.command.name}
