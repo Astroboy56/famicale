@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
+import "@/styles/themes.css";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
@@ -36,9 +38,11 @@ export default function RootLayout({
       <body
         className={`${notoSansJP.variable} font-sans antialiased text-white min-h-screen`}
       >
-        <div className="flex flex-col min-h-screen">
-          {children}
-        </div>
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

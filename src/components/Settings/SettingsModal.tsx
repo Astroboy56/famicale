@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Trash2, Settings } from 'lucide-react';
+import { X, Trash2, Settings, Palette } from 'lucide-react';
 import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
+import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [isDeletingEvents, setIsDeletingEvents] = useState(false);
   const [isDeletingTodos, setIsDeletingTodos] = useState(false);
   const [message, setMessage] = useState('');
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const handleDeleteAllEvents = async () => {
     if (!confirm('本当に全てのカレンダー予定を削除しますか？この操作は取り消せません。')) {
@@ -127,6 +130,63 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   <span>{isDeletingTodos ? '削除中...' : '削除'}</span>
                 </button>
               </div>
+            </div>
+
+            {/* 画面テーマ */}
+            <div className="glass-card p-4 rounded-xl backdrop-blur-md border border-purple-300 border-opacity-30 hover:border-purple-200 hover:border-opacity-50 transition-all duration-300 bg-purple-500 bg-opacity-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-white font-medium mb-1">画面テーマ</h3>
+                  <p className="text-white text-opacity-70 text-sm">
+                    背景色を選択できます
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowThemeSelector(!showThemeSelector)}
+                  className="glass-button px-4 py-2 text-white font-medium flex items-center space-x-2 hover:scale-105 transition-transform duration-200"
+                >
+                  <Palette size={16} />
+                  <span>選択</span>
+                </button>
+              </div>
+              
+              {/* テーマ選択エリア */}
+              {showThemeSelector && (
+                <div className="mt-4 space-y-2">
+                  {[
+                    { id: 'default' as ThemeMode, name: 'デフォルト', description: '現在の仕様' },
+                    { id: 'ocean' as ThemeMode, name: '海', description: '青色と水色っぽい色グラデーション' },
+                    { id: 'forest' as ThemeMode, name: '森', description: '緑と黄緑っぽい色のグラデーション' },
+                    { id: 'love' as ThemeMode, name: 'ラブ', description: 'ピンクと赤っぽい色のグラデーション' },
+                    { id: 'programmer' as ThemeMode, name: 'プログラマー', description: 'SEっぽい配色' }
+                  ].map((themeOption) => (
+                    <button
+                      key={themeOption.id}
+                      onClick={() => {
+                        setTheme(themeOption.id);
+                        setShowThemeSelector(false);
+                        setMessage(`${themeOption.name}テーマに変更しました`);
+                        setTimeout(() => setMessage(''), 3000);
+                      }}
+                      className={`w-full p-3 rounded-lg text-left transition-all duration-200 ${
+                        theme === themeOption.id
+                          ? 'glass-button border-2 border-white border-opacity-50'
+                          : 'glass-card hover:bg-white hover:bg-opacity-10'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-white font-medium">{themeOption.name}</div>
+                          <div className="text-white text-opacity-70 text-sm">{themeOption.description}</div>
+                        </div>
+                        {theme === themeOption.id && (
+                          <div className="text-white text-opacity-80">✓</div>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 今後の開発予定 */}
