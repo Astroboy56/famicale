@@ -25,7 +25,25 @@ export default function ListCalendarPage() {
     return { monthStart, monthEnd, calendarStart, calendarEnd, days };
   }, [currentDate]);
 
-  // 予定データの読み込み
+  // リアルタイムで予定データを監視
+  useEffect(() => {
+    setLoading(true);
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    
+    // リアルタイムリスナーを設定
+    const unsubscribe = eventService.subscribeToEvents(year, month, (fetchedEvents) => {
+      setEvents(fetchedEvents);
+      setLoading(false);
+    });
+
+    // クリーンアップ関数
+    return () => {
+      unsubscribe();
+    };
+  }, [currentDate]);
+
+  // 予定データの読み込み（フォールバック用）
   const loadEvents = useCallback(async () => {
     setLoading(true);
     try {
@@ -38,11 +56,6 @@ export default function ListCalendarPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentDate]);
-
-  // 月が変わったときに予定を再読み込み
-  useEffect(() => {
-    loadEvents();
   }, [currentDate]);
 
   // 特定の日付と家族メンバーの予定を取得

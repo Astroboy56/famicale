@@ -48,7 +48,25 @@ export default function ShiftPage() {
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
-  // 予定データの読み込み
+  // リアルタイムで予定データを監視
+  useEffect(() => {
+    setLoading(true);
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    
+    // リアルタイムリスナーを設定
+    const unsubscribe = eventService.subscribeToEvents(year, month, (fetchedEvents) => {
+      setEvents(fetchedEvents);
+      setLoading(false);
+    });
+
+    // クリーンアップ関数
+    return () => {
+      unsubscribe();
+    };
+  }, [currentDate]);
+
+  // 予定データの読み込み（フォールバック用）
   const loadEvents = useCallback(async () => {
     setLoading(true);
     try {
@@ -91,9 +109,8 @@ export default function ShiftPage() {
   };
 
   useEffect(() => {
-    loadEvents();
     loadShiftCommands();
-  }, [currentDate, loadEvents]);
+  }, []);
 
   // 特定の日付の予定を取得
   const getEventsForDay = (day: Date) => {
