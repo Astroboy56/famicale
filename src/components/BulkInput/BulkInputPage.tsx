@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Clock, User, Tag } from 'lucide-react';
+import { Plus, Clock, User, Tag, Calendar } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, EventType } from '@/types';
 import { eventService } from '@/lib/firestore';
 import { format, addDays, addWeeks, addMonths, isWeekend } from 'date-fns';
+import CalendarSelectorModal from './CalendarSelectorModal';
 
 interface BulkInputForm {
   title: string;
@@ -13,10 +14,11 @@ interface BulkInputForm {
   type: EventType;
   time: string;
   isAllDay: boolean;
-  pattern: 'daily' | 'weekdays' | 'weekly' | 'biweekly' | 'monthly';
+  pattern: 'daily' | 'weekdays' | 'weekly' | 'biweekly' | 'monthly' | 'custom';
   startDate: string;
   endDate: string;
   selectedDays: number[]; // 曜日選択用
+  customDates: string[]; // カスタム日付選択用
 }
 
 export default function BulkInputPage() {
@@ -31,7 +33,10 @@ export default function BulkInputPage() {
     startDate: '',
     endDate: '',
     selectedDays: [],
+    customDates: [],
   });
+
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -72,6 +77,7 @@ export default function BulkInputPage() {
         startDate: '',
         endDate: '',
         selectedDays: [],
+        customDates: [],
       });
     } catch (error) {
       console.error('一括登録に失敗しました:', error);
@@ -84,6 +90,21 @@ export default function BulkInputPage() {
   // イベント生成関数
   const generateEvents = () => {
     const events = [];
+
+    if (form.pattern === 'custom') {
+      // カスタム日付選択の場合
+      return form.customDates.map(dateStr => ({
+        title: form.title,
+        description: form.description,
+        date: dateStr,
+        familyMemberId: form.familyMemberId,
+        type: form.type,
+        time: form.isAllDay ? undefined : form.time,
+        isAllDay: form.isAllDay,
+      }));
+    }
+
+    // 通常のパターンの場合
     let currentDate = new Date(form.startDate);
     const endDate = new Date(form.endDate);
 
@@ -139,6 +160,17 @@ export default function BulkInputPage() {
     return events;
   };
 
+  // カレンダーから日付選択時の処理
+  const handleDateSelect = (selectedDates: string[]) => {
+    setForm(prev => ({
+      ...prev,
+      pattern: 'custom',
+      customDates: selectedDates,
+      startDate: selectedDates.length > 0 ? selectedDates[0] : '',
+      endDate: selectedDates.length > 0 ? selectedDates[selectedDates.length - 1] : '',
+    }));
+  };
+
   const toggleDay = (day: number) => {
     setForm(prev => ({
       ...prev,
@@ -154,9 +186,18 @@ export default function BulkInputPage() {
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
-        <div className="flex items-center">
-          <Plus size={20} className="text-white mr-3" />
-          <h1 className="text-lg font-semibold text-glass">一括入力</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Plus size={20} className="text-white mr-3" />
+            <h1 className="text-lg font-semibold text-glass">一括入力</h1>
+          </div>
+          <button
+            onClick={() => setIsCalendarModalOpen(true)}
+            className="glass-button px-4 py-2 text-white font-medium flex items-center space-x-2 hover:scale-105 transition-transform duration-200"
+          >
+            <Calendar size={16} />
+            <span>カレンダーから選択</span>
+          </button>
         </div>
       </header>
 
@@ -275,7 +316,7 @@ export default function BulkInputPage() {
             </label>
             <select
               value={form.pattern}
-              onChange={(e) => setForm(prev => ({ ...prev, pattern: e.target.value as 'daily' | 'weekdays' | 'weekly' | 'biweekly' | 'monthly' }))}
+              onChange={(e) => setForm(prev => ({ ...prev, pattern: e.target.value as 'daily' | 'weekdays' | 'weekly' | 'biweekly' | 'monthly' | 'custom' }))}
               className="w-full px-4 py-3 glass-input text-white"
             >
               <option value="daily" className="text-gray-800">毎日</option>
@@ -283,8 +324,30 @@ export default function BulkInputPage() {
               <option value="weekly" className="text-gray-800">毎週</option>
               <option value="biweekly" className="text-gray-800">隔週</option>
               <option value="monthly" className="text-gray-800">毎月</option>
+              <option value="custom" className="text-gray-800">カスタム選択</option>
             </select>
           </div>
+
+          {/* カスタム選択された日付の表示 */}
+          {form.pattern === 'custom' && form.customDates.length > 0 && (
+            <div>
+              <label className="block text-sm font-semibold text-white mb-3">
+                選択された日付 ({form.customDates.length}件)
+              </label>
+              <div className="max-h-32 overflow-y-auto p-3 glass-area rounded-lg">
+                <div className="flex flex-wrap gap-2">
+                  {form.customDates.map((dateStr) => (
+                    <div
+                      key={dateStr}
+                      className="glass-area px-3 py-1 text-xs text-white"
+                    >
+                      {format(new Date(dateStr + 'T00:00:00'), 'M/d(E)', { locale: ja })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 曜日選択（毎週・隔週の場合） */}
           {(form.pattern === 'weekly' || form.pattern === 'biweekly') && (
@@ -352,6 +415,13 @@ export default function BulkInputPage() {
 
       {/* ボトムナビゲーション用のスペース */}
       <div className="h-20" />
+
+      {/* カレンダー選択モーダル */}
+      <CalendarSelectorModal
+        isOpen={isCalendarModalOpen}
+        onClose={() => setIsCalendarModalOpen(false)}
+        onDateSelect={handleDateSelect}
+      />
     </div>
   );
 }
