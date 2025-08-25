@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { X, Calendar, Clock, User, Tag } from 'lucide-react';
+import { X, Calendar, Clock, User, Tag, Trash2 } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, EVENT_TYPE_ICONS, EventType, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 
@@ -39,6 +39,7 @@ export default function EventModal({
     isAllDay: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // 編集モードの場合、フォームに既存データを設定
   useEffect(() => {
@@ -105,6 +106,25 @@ export default function EventModal({
       alert('予定の保存に失敗しました。もう一度お試しください。');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // 削除処理
+  const handleDelete = async () => {
+    if (!editingEvent) return;
+    
+    if (!confirm('この予定を削除しますか？')) return;
+    
+    setIsDeleting(true);
+    try {
+      await eventService.deleteEvent(editingEvent.id);
+      onEventAdded?.();
+      onClose();
+    } catch (error) {
+      console.error('予定の削除に失敗しました:', error);
+      alert('予定の削除に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -264,13 +284,31 @@ export default function EventModal({
               type="button"
               onClick={onClose}
               className="flex-1 py-3 px-6 glass-button text-white font-medium"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isDeleting}
             >
               キャンセル
             </button>
+            
+            {/* 編集モードの場合のみ削除ボタンを表示 */}
+            {isEditMode && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isSubmitting || isDeleting}
+                className="flex-1 py-3 px-6 glass-button bg-red-500 hover:bg-red-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? '削除中...' : (
+                  <>
+                    <Trash2 size={16} className="inline mr-2" />
+                    削除
+                  </>
+                )}
+              </button>
+            )}
+            
             <button
               type="submit"
-              disabled={!form.title.trim() || isSubmitting}
+              disabled={!form.title.trim() || isSubmitting || isDeleting}
               className="flex-1 py-3 px-6 glass-button text-white font-semibold hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (isEditMode ? '更新中...' : '追加中...') : (isEditMode ? '予定を更新' : '予定を追加')}
