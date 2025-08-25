@@ -65,9 +65,9 @@ export interface NavigationItem {
 
 // 家族データ
 export const FAMILY_MEMBERS: FamilyMember[] = [
-  { id: 'atom', name: 'あとむ', color: 'blue' },
+  { id: 'atomu', name: 'あとむ', color: 'blue' },
   { id: 'erika', name: 'えりか', color: 'red' },
-  { id: 'cosmo', name: 'こすも', color: 'green' },
+  { id: 'kosumo', name: 'こすも', color: 'green' },
   { id: 'alice', name: 'ありす', color: 'pink' },
 ];
 
