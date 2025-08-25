@@ -125,9 +125,9 @@ export default function ListCalendarPage() {
               <div key={member.id} className="flex items-center justify-center flex-1">
                 <div className={`text-xs font-semibold p-1 rounded-lg ${
                   member.id === 'atomu' ? 'text-blue-300 bg-blue-500 bg-opacity-10' :
-                  member.id === 'erika' ? 'text-pink-300 bg-pink-500 bg-opacity-10' :
+                  member.id === 'erika' ? 'text-red-300 bg-red-500 bg-opacity-10' :
                   member.id === 'kosumo' ? 'text-green-300 bg-green-500 bg-opacity-10' :
-                  member.id === 'alice' ? 'text-purple-300 bg-purple-500 bg-opacity-10' :
+                  member.id === 'alice' ? 'text-pink-300 bg-pink-500 bg-opacity-10' :
                   'text-white bg-gray-500 bg-opacity-10'
                 }`}>
                   {member.name}
@@ -174,9 +174,9 @@ export default function ListCalendarPage() {
                            <div key={member.id} className="flex items-center justify-center flex-1">
                              <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${
                                member.id === 'atomu' ? 'bg-blue-500 bg-opacity-10' :
-                               member.id === 'erika' ? 'bg-pink-500 bg-opacity-10' :
+                               member.id === 'erika' ? 'bg-red-500 bg-opacity-10' :
                                member.id === 'kosumo' ? 'bg-green-500 bg-opacity-10' :
-                               member.id === 'alice' ? 'bg-purple-500 bg-opacity-10' :
+                               member.id === 'alice' ? 'bg-pink-500 bg-opacity-10' :
                                'bg-gray-500 bg-opacity-10'
                              }`}>
                                {loading ? (
