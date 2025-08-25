@@ -13,7 +13,7 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Event, TodoItem } from '@/types';
+import { Event, TodoItem, PoiTask, PoiWish, PoiRecord } from '@/types';
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {

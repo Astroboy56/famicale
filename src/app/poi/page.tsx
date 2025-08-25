@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Coins, Plus, Target, Calendar, Star } from 'lucide-react';
+import { useState } from 'react';
+import { Coins, Plus, Target, Star } from 'lucide-react';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 
 // ポイ活関連の型定義
@@ -49,10 +49,9 @@ const CHILDREN: PoiChild[] = [
 
 export default function PoiPage() {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
-  const [children, setChildren] = useState<PoiChild[]>(CHILDREN);
-  const [tasks, setTasks] = useState<PoiTask[]>(DEFAULT_TASKS);
-  const [wishes, setWishes] = useState<PoiWish[]>([]);
-  const [records, setRecords] = useState<PoiRecord[]>([]);
+  const [children] = useState<PoiChild[]>(CHILDREN);
+  const [tasks] = useState<PoiTask[]>(DEFAULT_TASKS);
+  const [wishes] = useState<PoiWish[]>([]);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showWishModal, setShowWishModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
