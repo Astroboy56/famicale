@@ -261,7 +261,8 @@ export default function ShiftPage() {
           <div className="flex items-center">
             <Calendar size={20} className="text-white" />
             <div className="ml-2">
-              <div className="text-sm font-medium text-white">シフト入力※えりか専用</div>
+              <div className="text-sm font-medium text-white">シフト入力</div>
+              <div className="text-xs text-white text-opacity-70">※えりか専用</div>
             </div>
           </div>
           
