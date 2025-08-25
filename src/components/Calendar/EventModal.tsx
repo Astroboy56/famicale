@@ -279,11 +279,11 @@ export default function EventModal({
           </div>
 
           {/* 送信ボタン */}
-          <div className="flex space-x-4 pt-6">
+          <div className="flex space-x-2 pt-6">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-6 glass-button text-white font-medium"
+              className="flex-1 py-2 px-3 glass-button text-white font-medium text-xs"
               disabled={isSubmitting || isDeleting}
             >
               キャンセル
@@ -295,11 +295,11 @@ export default function EventModal({
                 type="button"
                 onClick={handleDelete}
                 disabled={isSubmitting || isDeleting}
-                className="flex-1 py-3 px-6 glass-button bg-red-500 hover:bg-red-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2 px-3 glass-button bg-red-500 hover:bg-red-600 text-white font-medium text-xs disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isDeleting ? '削除中...' : (
                   <>
-                    <Trash2 size={16} className="inline mr-2" />
+                    <Trash2 size={12} className="inline mr-1" />
                     削除
                   </>
                 )}
@@ -309,9 +309,9 @@ export default function EventModal({
             <button
               type="submit"
               disabled={!form.title.trim() || isSubmitting || isDeleting}
-              className="flex-1 py-3 px-6 glass-button text-white font-semibold hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="flex-1 py-2 px-3 glass-button text-white font-semibold text-xs hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {isSubmitting ? (isEditMode ? '更新中...' : '追加中...') : (isEditMode ? '予定を更新' : '予定を追加')}
+              {isSubmitting ? (isEditMode ? '更新中...' : '追加中...') : (isEditMode ? '更新' : '追加')}
             </button>
           </div>
         </form>

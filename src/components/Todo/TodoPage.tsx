@@ -135,7 +135,7 @@ export default function TodoPage() {
           </div>
 
           {/* TODO入力 */}
-          <div className="flex space-x-3">
+          <div className="flex space-x-2">
             <input
               type="text"
               value={newTodo}
@@ -148,7 +148,7 @@ export default function TodoPage() {
             <button
               onClick={addTodo}
               disabled={!newTodo.trim() || isSubmitting}
-              className="glass-button p-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="glass-button p-2 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
