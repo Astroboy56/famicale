@@ -55,6 +55,7 @@ export default function PoiPage() {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showWishModal, setShowWishModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
+  const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange'>('select');
 
   return (
     <div className="flex flex-col h-screen">
@@ -95,32 +96,194 @@ export default function PoiPage() {
           </div>
         </div>
 
-        {/* アクションボタン */}
-        <div className="space-y-3">
-          <button
-            onClick={() => setShowTaskModal(true)}
-            className="w-full p-4 glass-button text-left"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Plus size={20} className="text-white mr-3" />
-                <span className="text-white font-medium">＋ポイ活登録</span>
-              </div>
-            </div>
-          </button>
+                 {/* アクションボタン */}
+         {currentView === 'select' && (
+           <div className="space-y-3">
+             <button
+               onClick={() => {
+                 if (selectedChild) {
+                   setCurrentView('taskList');
+                 }
+               }}
+               disabled={!selectedChild}
+               className={`w-full p-4 glass-button text-left ${
+                 !selectedChild ? 'opacity-50' : ''
+               }`}
+             >
+               <div className="flex items-center justify-between">
+                 <div className="flex items-center">
+                   <Plus size={20} className="text-white mr-3" />
+                   <span className="text-white font-medium">ポイ活登録をする</span>
+                 </div>
+               </div>
+             </button>
 
-          <button
-            onClick={() => setShowWishModal(true)}
-            className="w-full p-4 glass-button text-left"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Target size={20} className="text-white mr-3" />
-                <span className="text-white font-medium">ポイントを交換する</span>
-              </div>
-            </div>
-          </button>
-        </div>
+             <button
+               onClick={() => {
+                 if (selectedChild) {
+                   setCurrentView('exchange');
+                 }
+               }}
+               disabled={!selectedChild}
+               className={`w-full p-4 glass-button text-left ${
+                 !selectedChild ? 'opacity-50' : ''
+               }`}
+             >
+               <div className="flex items-center justify-between">
+                 <div className="flex items-center">
+                   <Target size={20} className="text-white mr-3" />
+                   <span className="text-white font-medium">ポイントを交換する</span>
+                 </div>
+               </div>
+             </button>
+           </div>
+         )}
+
+         {/* 頑張るリスト画面 */}
+         {currentView === 'taskList' && selectedChild && (
+           <div className="space-y-4">
+             {/* ヘッダー */}
+             <div className="flex items-center justify-between">
+               <h3 className="text-lg font-semibold text-white">
+                 {children.find(c => c.id === selectedChild)?.name}の頑張るリスト
+               </h3>
+               <button
+                 onClick={() => setCurrentView('select')}
+                 className="text-sm text-white text-opacity-70"
+               >
+                 戻る
+               </button>
+             </div>
+
+             {/* デフォルトタスク */}
+             <div className="glass-card p-4">
+               <h4 className="text-sm font-semibold text-white mb-3">デフォルトタスク</h4>
+               <div className="space-y-2">
+                 {selectedChild === 'alice' ? (
+                   <>
+                     <div className="p-3 glass-area">
+                       <div className="flex items-center justify-between">
+                         <div>
+                           <div className="text-white font-medium">お勉強</div>
+                           <div className="text-xs text-white text-opacity-70">10 ポイント</div>
+                         </div>
+                         <Star size={16} className="text-yellow-400" />
+                       </div>
+                     </div>
+                     <div className="p-3 glass-area">
+                       <div className="flex items-center justify-between">
+                         <div>
+                           <div className="text-white font-medium">お手伝い</div>
+                           <div className="text-xs text-white text-opacity-70">5 ポイント</div>
+                         </div>
+                         <Star size={16} className="text-yellow-400" />
+                       </div>
+                     </div>
+                     <div className="p-3 glass-area">
+                       <div className="flex items-center justify-between">
+                         <div>
+                           <div className="text-white font-medium">筋トレ</div>
+                           <div className="text-xs text-white text-opacity-70">15 ポイント</div>
+                         </div>
+                         <Star size={16} className="text-yellow-400" />
+                       </div>
+                     </div>
+                   </>
+                 ) : (
+                   <>
+                     <div className="p-3 glass-area">
+                       <div className="flex items-center justify-between">
+                         <div>
+                           <div className="text-white font-medium">勉強</div>
+                           <div className="text-xs text-white text-opacity-70">10 ポイント</div>
+                         </div>
+                         <Star size={16} className="text-yellow-400" />
+                       </div>
+                     </div>
+                     <div className="p-3 glass-area">
+                       <div className="flex items-center justify-between">
+                         <div>
+                           <div className="text-white font-medium">家バイト</div>
+                           <div className="text-xs text-white text-opacity-70">20 ポイント</div>
+                         </div>
+                         <Star size={16} className="text-yellow-400" />
+                       </div>
+                     </div>
+                   </>
+                 )}
+               </div>
+             </div>
+
+             {/* カスタムタスク追加ボタン */}
+             <button
+               onClick={() => setShowTaskModal(true)}
+               className="w-full p-4 glass-button text-center"
+             >
+               <div className="flex items-center justify-center">
+                 <Plus size={20} className="text-white mr-2" />
+                 <span className="text-white font-medium">カスタムタスクを追加</span>
+               </div>
+             </button>
+           </div>
+         )}
+
+         {/* ポイント交換画面 */}
+         {currentView === 'exchange' && selectedChild && (
+           <div className="space-y-4">
+             {/* ヘッダー */}
+             <div className="flex items-center justify-between">
+               <h3 className="text-lg font-semibold text-white">
+                 {children.find(c => c.id === selectedChild)?.name}のポイント交換
+               </h3>
+               <button
+                 onClick={() => setCurrentView('select')}
+                 className="text-sm text-white text-opacity-70"
+               >
+                 戻る
+               </button>
+             </div>
+
+             {/* 現在のポイント */}
+             <div className="glass-card p-4 text-center">
+               <div className="text-2xl font-bold text-white mb-2">
+                 {children.find(c => c.id === selectedChild)?.totalPoints} ポイント
+               </div>
+               <div className="text-sm text-white text-opacity-70">
+                 現在のポイント
+               </div>
+             </div>
+
+             {/* 交換オプション */}
+             <div className="space-y-3">
+               <button
+                 onClick={() => setShowWishModal(true)}
+                 className="w-full p-4 glass-button text-left"
+               >
+                 <div className="flex items-center justify-between">
+                   <div className="flex items-center">
+                     <Target size={20} className="text-white mr-3" />
+                     <span className="text-white font-medium">欲しいものと交換</span>
+                   </div>
+                 </div>
+               </button>
+
+               <button
+                 onClick={() => {
+                   // 現金交換のロジックを実装
+                   alert('現金交換機能は今後実装予定です');
+                 }}
+                 className="w-full p-4 glass-button text-left"
+               >
+                 <div className="flex items-center justify-between">
+                   <div className="flex items-center">
+                     <Coins size={20} className="text-white mr-3" />
+                     <span className="text-white font-medium">現金に交換</span>
+                   </div>
+                 </div>
+               </button>
+             </div>
+           </div>
+         )}
       </div>
 
       {/* ボトムナビゲーション */}
