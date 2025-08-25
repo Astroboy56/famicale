@@ -73,7 +73,13 @@ export default function CalendarPage() {
   // 特定の日の予定を取得
   const getEventsForDay = (day: Date) => {
     const dateStr = format(day, 'yyyy-MM-dd');
-    return events.filter(event => event.date === dateStr);
+    return events.filter(event => {
+      // シフト入力の「休み」イベントはカレンダーで非表示
+      if (event.type === 'shift' && event.title === '休み') {
+        return false;
+      }
+      return event.date === dateStr;
+    });
   };
 
   // 日付クリック時の処理
@@ -256,7 +262,13 @@ export default function CalendarPage() {
                 onClick={() => {
                   const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
                   setSelectedDate(targetDate);
-                  setSelectedDayEvents(events.filter(e => e.date === targetDate));
+                  setSelectedDayEvents(events.filter(e => {
+                    // シフト入力の「休み」イベントは非表示
+                    if (e.type === 'shift' && e.title === '休み') {
+                      return false;
+                    }
+                    return e.date === targetDate;
+                  }));
                   setIsModalOpen(true);
                 }}
                 className="glass-button flex items-center space-x-2 px-3 py-2 text-xs"
@@ -282,7 +294,13 @@ export default function CalendarPage() {
             <>
               {(() => {
                 const targetDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
-                const targetEvents = events.filter(e => e.date === targetDate);
+                const targetEvents = events.filter(e => {
+                  // シフト入力の「休み」イベントは今日の予定欄でも非表示
+                  if (e.type === 'shift' && e.title === '休み') {
+                    return false;
+                  }
+                  return e.date === targetDate;
+                });
                 return targetEvents.length > 0 ? (
                   <div className="space-y-2">
                     {targetEvents.map((event) => (
