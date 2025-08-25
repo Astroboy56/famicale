@@ -55,7 +55,7 @@ export default function PoiPage() {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showWishModal, setShowWishModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
-  const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange'>('select');
+  const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange' | 'wishRegister' | 'cashExchange'>('select');
 
   return (
     <div className="flex flex-col h-screen">
@@ -256,7 +256,13 @@ export default function PoiPage() {
              {/* 交換オプション */}
              <div className="space-y-3">
                <button
-                 onClick={() => setShowWishModal(true)}
+                 onClick={() => {
+                   if (wishes.length === 0) {
+                     setCurrentView('wishRegister');
+                   } else {
+                     setShowWishModal(true);
+                   }
+                 }}
                  className="w-full p-4 glass-button text-left"
                >
                  <div className="flex items-center justify-between">
@@ -268,10 +274,7 @@ export default function PoiPage() {
                </button>
 
                <button
-                 onClick={() => {
-                   // 現金交換のロジックを実装
-                   alert('現金交換機能は今後実装予定です');
-                 }}
+                 onClick={() => setCurrentView('cashExchange')}
                  className="w-full p-4 glass-button text-left"
                >
                  <div className="flex items-center justify-between">
@@ -283,11 +286,134 @@ export default function PoiPage() {
                </button>
              </div>
            </div>
-         )}
-      </div>
+                   )}
 
-      {/* ボトムナビゲーション */}
-      <BottomNavigation />
-    </div>
-  );
-}
+          {/* 欲しいもの登録画面 */}
+          {currentView === 'wishRegister' && selectedChild && (
+            <div className="space-y-4">
+              {/* ヘッダー */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">
+                  {children.find(c => c.id === selectedChild)?.name}の欲しいものを登録
+                </h3>
+                <button
+                  onClick={() => setCurrentView('exchange')}
+                  className="text-sm text-white text-opacity-70"
+                >
+                  戻る
+                </button>
+              </div>
+
+              {/* 登録フォーム */}
+              <div className="glass-card p-4">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      欲しいもの
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="例：おもちゃ、本など"
+                      className="w-full p-3 glass-input text-white placeholder-white placeholder-opacity-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      ポイント設定
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="例：100"
+                      className="w-full p-3 glass-input text-white placeholder-white placeholder-opacity-50"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      // 登録処理を実装
+                      alert('登録機能は今後実装予定です');
+                      setCurrentView('exchange');
+                    }}
+                    className="w-full p-4 glass-button text-center"
+                  >
+                    <span className="text-white font-medium">登録する</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 現金交換画面 */}
+          {currentView === 'cashExchange' && selectedChild && (
+            <div className="space-y-4">
+              {/* ヘッダー */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">
+                  {children.find(c => c.id === selectedChild)?.name}の現金交換
+                </h3>
+                <button
+                  onClick={() => setCurrentView('exchange')}
+                  className="text-sm text-white text-opacity-70"
+                >
+                  戻る
+                </button>
+              </div>
+
+              {/* 現在のポイント */}
+              <div className="glass-card p-4 text-center">
+                <div className="text-2xl font-bold text-white mb-2">
+                  {children.find(c => c.id === selectedChild)?.totalPoints} ポイント
+                </div>
+                <div className="text-sm text-white text-opacity-70">
+                  現在のポイント
+                </div>
+              </div>
+
+              {/* 交換レート */}
+              <div className="glass-card p-4 text-center">
+                <div className="text-lg font-semibold text-white mb-2">
+                  1 ポイント = 1 円
+                </div>
+                <div className="text-sm text-white text-opacity-70">
+                  交換レート
+                </div>
+              </div>
+
+              {/* 交換フォーム */}
+              <div className="glass-card p-4">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      交換するポイント数
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="例：50"
+                      className="w-full p-3 glass-input text-white placeholder-white placeholder-opacity-50"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm text-white text-opacity-70">
+                      交換金額: <span className="text-white font-semibold">0 円</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      // 交換処理を実装
+                      alert('交換機能は今後実装予定です');
+                      setCurrentView('exchange');
+                    }}
+                    className="w-full p-4 glass-button text-center"
+                  >
+                    <span className="text-white font-medium">交換する</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ボトムナビゲーション */}
+        <BottomNavigation />
+      </div>
+    );
+  }
