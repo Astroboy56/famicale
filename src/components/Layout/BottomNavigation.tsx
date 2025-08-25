@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Calendar, List, Plus, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface NavigationItem {
@@ -24,7 +24,7 @@ const navigationItemsPage1: NavigationItem[] = [
 // 2ページ目のナビゲーションアイテム
 const navigationItemsPage2: NavigationItem[] = [
   { id: 'prev', name: '戻る', icon: ChevronLeft, path: '', onClick: () => {} },
-  { id: 'bulk', name: '一括入力', icon: Plus, path: '/bulk' },
+  { id: 'poi', name: 'ポイ活', icon: Plus, path: '/poi' },
   { id: 'settings', name: '設定', icon: Settings, path: '/settings' },
 ];
 
@@ -34,12 +34,10 @@ export default function BottomNavigation() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // 現在のページのナビゲーションアイテムを取得
-  const currentNavigationItems = useMemo(() => {
-    return currentPage === 1 ? navigationItemsPage1 : navigationItemsPage2;
-  }, [currentPage]);
+  const currentNavigationItems = currentPage === 1 ? navigationItemsPage1 : navigationItemsPage2;
 
-  // クリックハンドラーをメモ化
-  const handleNavigationClick = useCallback((item: NavigationItem) => {
+  // クリックハンドラー
+  const handleNavigationClick = (item: NavigationItem) => {
     if (item.id === 'next') {
       setCurrentPage(2);
     } else if (item.id === 'prev') {
@@ -49,7 +47,7 @@ export default function BottomNavigation() {
     } else {
       router.push(item.path);
     }
-  }, [router]);
+  };
 
   return (
     <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
