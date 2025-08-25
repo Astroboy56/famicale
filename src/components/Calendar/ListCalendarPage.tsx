@@ -123,9 +123,15 @@ export default function ListCalendarPage() {
           <div className="flex items-center space-x-3 flex-1">
             {FAMILY_MEMBERS.map((member, index) => (
               <div key={member.id} className="flex items-center justify-center flex-1">
-                <span className="text-xs font-semibold text-white">
+                <div className={`text-xs font-semibold p-1 rounded-lg ${
+                  member.id === 'atomu' ? 'text-blue-300 bg-blue-500 bg-opacity-10' :
+                  member.id === 'erika' ? 'text-pink-300 bg-pink-500 bg-opacity-10' :
+                  member.id === 'kosumo' ? 'text-green-300 bg-green-500 bg-opacity-10' :
+                  member.id === 'alice' ? 'text-purple-300 bg-purple-500 bg-opacity-10' :
+                  'text-white bg-gray-500 bg-opacity-10'
+                }`}>
                   {member.name}
-                </span>
+                </div>
                 {/* 最後のメンバー以外に縦線を追加 */}
                 {index < FAMILY_MEMBERS.length - 1 && (
                   <div className="w-px h-4 bg-white bg-opacity-30 mx-3"></div>
@@ -166,7 +172,13 @@ export default function ListCalendarPage() {
                          const memberEvents = getEventsForDayAndMember(day, member.id);
                          return (
                            <div key={member.id} className="flex items-center justify-center flex-1">
-                             <div className="min-w-[60px] space-y-0.5">
+                             <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${
+                               member.id === 'atomu' ? 'bg-blue-500 bg-opacity-10' :
+                               member.id === 'erika' ? 'bg-pink-500 bg-opacity-10' :
+                               member.id === 'kosumo' ? 'bg-green-500 bg-opacity-10' :
+                               member.id === 'alice' ? 'bg-purple-500 bg-opacity-10' :
+                               'bg-gray-500 bg-opacity-10'
+                             }`}>
                                {loading ? (
                                  <div className="text-[10px] text-white text-opacity-60 text-center py-1">
                                    <div className="animate-pulse">...</div>
