@@ -332,7 +332,7 @@ export default function CalendarPage() {
           setIsModalOpen(false);
           setEditingEvent(null);
         }}
-        selectedDate={selectedDate}
+        selectedDate={selectedDate || format(new Date(), 'yyyy-MM-dd')}
         onEventAdded={handleEventAdded}
         editingEvent={editingEvent}
       />

@@ -15,12 +15,26 @@ const firebaseConfig = {
 
 // 環境変数の存在確認
 const isFirebaseConfigValid = () => {
-  return firebaseConfig.apiKey && 
+  const isValid = firebaseConfig.apiKey && 
          firebaseConfig.authDomain && 
          firebaseConfig.projectId && 
          firebaseConfig.storageBucket && 
          firebaseConfig.messagingSenderId && 
          firebaseConfig.appId;
+  
+  // デバッグ情報を出力
+  if (!isValid) {
+    console.error('Firebase設定が不完全です:', {
+      apiKey: !!firebaseConfig.apiKey,
+      authDomain: !!firebaseConfig.authDomain,
+      projectId: !!firebaseConfig.projectId,
+      storageBucket: !!firebaseConfig.storageBucket,
+      messagingSenderId: !!firebaseConfig.messagingSenderId,
+      appId: !!firebaseConfig.appId,
+    });
+  }
+  
+  return isValid;
 };
 
 // Firebase初期化（環境変数が設定されている場合のみ）
@@ -31,13 +45,17 @@ let analytics: Analytics | null = null;
 
 if (isFirebaseConfigValid()) {
   try {
+    console.log('Firebase初期化を開始します...');
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
     analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+    console.log('Firebase初期化が完了しました');
   } catch (error) {
-    console.warn('Firebase initialization failed:', error);
+    console.error('Firebase初期化に失敗しました:', error);
   }
+} else {
+  console.error('Firebase設定が無効です。.env.localファイルを確認してください。');
 }
 
 // エクスポート

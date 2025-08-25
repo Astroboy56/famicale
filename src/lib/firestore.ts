@@ -17,7 +17,11 @@ import { Event, TodoItem } from '@/types';
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {
-  return db !== null && db !== undefined;
+  const initialized = db !== null && db !== undefined;
+  if (!initialized) {
+    console.error('Firebaseが初期化されていません。環境変数を確認してください。');
+  }
+  return initialized;
 };
 
 // コレクション参照
@@ -28,6 +32,8 @@ const TODOS_COLLECTION = 'todos';
 export const eventService = {
   // 予定を追加
   async addEvent(event: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>) {
+    console.log('予定追加を開始:', event);
+    
     if (!isFirebaseInitialized()) {
       throw new Error('Firebase is not initialized');
     }
@@ -38,11 +44,15 @@ export const eventService = {
         Object.entries(event).filter(([_, value]) => value !== undefined)
       );
 
+      console.log('Firestoreに保存するデータ:', cleanEvent);
+
       const docRef = await addDoc(collection(db!, EVENTS_COLLECTION), {
         ...cleanEvent,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       });
+      
+      console.log('予定追加が完了しました。ID:', docRef.id);
       return docRef.id;
     } catch (error) {
       console.error('予定の追加に失敗しました:', error);

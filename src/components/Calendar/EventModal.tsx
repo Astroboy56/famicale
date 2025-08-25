@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import { X, Calendar, Clock, User, Tag } from 'lucide-react';
 import { FAMILY_MEMBERS, COLOR_MAP, EVENT_TYPE_ICONS, EventType, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
