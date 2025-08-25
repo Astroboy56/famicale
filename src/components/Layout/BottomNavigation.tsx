@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Calendar, List, Plus, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Calendar, List, Plus, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft, Coins } from 'lucide-react';
 
 interface NavigationItem {
   id: string;
@@ -24,7 +24,7 @@ const navigationItemsPage1: NavigationItem[] = [
 // 2ページ目のナビゲーションアイテム
 const navigationItemsPage2: NavigationItem[] = [
   { id: 'prev', name: '戻る', icon: ChevronLeft, path: '', onClick: () => {} },
-  { id: 'poi', name: 'ポイ活', icon: Plus, path: '/poi' },
+  { id: 'poi', name: 'ポイ活', icon: Coins, path: '/poi' },
   { id: 'settings', name: '設定', icon: Settings, path: '/settings' },
 ];
 
