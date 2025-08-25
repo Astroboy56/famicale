@@ -27,6 +27,7 @@ const isFirebaseInitialized = () => {
 // コレクション参照
 const EVENTS_COLLECTION = 'events';
 const TODOS_COLLECTION = 'todos';
+const POI_CHILDREN_COLLECTION = 'poi_children';
 
 // 予定関連の関数
 export const eventService = {
@@ -543,6 +544,117 @@ export const poiService = {
     } catch (error) {
       console.error('記録の取得に失敗しました:', error);
       throw error;
+    }
+  },
+};
+
+// ポイ活子供関連の関数
+export const poiChildService = {
+  // 子供のポイントを更新
+  async updateChildPoints(childId: string, points: number) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const childRef = doc(db!, POI_CHILDREN_COLLECTION, childId);
+      await updateDoc(childRef, {
+        totalPoints: points,
+        updatedAt: Timestamp.now(),
+      });
+      console.log(`子供 ${childId} のポイントを ${points} に更新しました`);
+    } catch (error) {
+      console.error('ポイントの更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 子供の情報を取得
+  async getChild(childId: string) {
+    if (!isFirebaseInitialized()) {
+      return null;
+    }
+    
+    try {
+      const childRef = doc(db!, POI_CHILDREN_COLLECTION, childId);
+      const childDoc = await getDoc(childRef);
+      
+      if (childDoc.exists()) {
+        const data = childDoc.data();
+        return {
+          id: childDoc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate(),
+          updatedAt: data.updatedAt?.toDate(),
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('子供の情報取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 全ての子供の情報を取得
+  async getAllChildren() {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, POI_CHILDREN_COLLECTION),
+        orderBy('createdAt', 'asc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const children: any[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        children.push({
+          id: doc.id,
+          name: data.name,
+          totalPoints: data.totalPoints || 0,
+        });
+      });
+      
+      return children;
+    } catch (error) {
+      console.error('子供の情報取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 子供の情報をリアルタイムで監視
+  subscribeToChildren(callback: (children: any[]) => void) {
+    if (!isFirebaseInitialized()) {
+      return () => {};
+    }
+    
+    try {
+      const q = query(
+        collection(db!, POI_CHILDREN_COLLECTION),
+        orderBy('createdAt', 'asc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const children: any[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          children.push({
+            id: doc.id,
+            name: data.name,
+            totalPoints: data.totalPoints || 0,
+          });
+        });
+        callback(children);
+      });
+      
+      return unsubscribe;
+    } catch (error) {
+      console.error('子供の情報監視に失敗しました:', error);
+      return () => {};
     }
   },
 };

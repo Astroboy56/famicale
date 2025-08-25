@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Coins, Plus, Target, Star, Calendar } from 'lucide-react';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
+import { poiChildService } from '@/lib/firestore';
 
 // ポイ活関連の型定義
 interface PoiTask {
@@ -73,27 +74,58 @@ export default function PoiPage() {
   const [showPraiseMessage, setShowPraiseMessage] = useState(false);
   const [praiseMessage, setPraiseMessage] = useState('');
 
+  // Firebaseから子供のデータをリアルタイムで取得
+  useEffect(() => {
+    const unsubscribe = poiChildService.subscribeToChildren((firebaseChildren) => {
+      if (firebaseChildren.length > 0) {
+        // Firebaseのデータを優先し、ない場合はデフォルト値を使用
+        const updatedChildren = CHILDREN.map(defaultChild => {
+          const firebaseChild = firebaseChildren.find(fc => fc.id === defaultChild.id);
+          return firebaseChild || defaultChild;
+        });
+        setChildren(updatedChildren);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // タスク登録とポイント加算の関数
-  const handleTaskRegistration = (taskName: string, points: number) => {
+  const handleTaskRegistration = async (taskName: string, points: number) => {
     if (confirm(`${taskName}を登録しますか？`)) {
-      // ポイント加算
-      setChildren(prevChildren => 
-        prevChildren.map(child => 
-          child.id === selectedChild 
-            ? { ...child, totalPoints: child.totalPoints + points }
-            : child
-        )
-      );
-      
-      // ランダムな褒める言葉を選択
-      const randomPraise = PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
-      setPraiseMessage(randomPraise);
-      setShowPraiseMessage(true);
-      
-      // 3秒後に褒めるメッセージを非表示
-      setTimeout(() => {
-        setShowPraiseMessage(false);
-      }, 3000);
+      try {
+        // 現在の子供の情報を取得
+        const currentChild = children.find(child => child.id === selectedChild);
+        if (!currentChild) return;
+
+        // 新しいポイントを計算
+        const newPoints = currentChild.totalPoints + points;
+
+        // Firebaseにポイントを更新
+        await poiChildService.updateChildPoints(selectedChild!, newPoints);
+
+        // ローカル状態も更新
+        setChildren(prevChildren => 
+          prevChildren.map(child => 
+            child.id === selectedChild 
+              ? { ...child, totalPoints: newPoints }
+              : child
+          )
+        );
+        
+        // ランダムな褒める言葉を選択
+        const randomPraise = PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
+        setPraiseMessage(randomPraise);
+        setShowPraiseMessage(true);
+        
+        // 3秒後に褒めるメッセージを非表示
+        setTimeout(() => {
+          setShowPraiseMessage(false);
+        }, 3000);
+      } catch (error) {
+        console.error('ポイントの更新に失敗しました:', error);
+        alert('ポイントの更新に失敗しました。もう一度お試しください。');
+      }
     }
   };
 
