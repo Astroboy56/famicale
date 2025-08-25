@@ -105,3 +105,51 @@ export const COLOR_MAP: Record<string, { bg: string; text: string; border: strin
   },
 };
 
+// ポイ活関連の型定義
+export interface PoiTask {
+  id: string;
+  name: string;
+  points: number;
+  isDefault: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PoiWish {
+  id: string;
+  name: string;
+  targetPoints: number;
+  isCompleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PoiRecord {
+  id: string;
+  childId: string;
+  taskId: string;
+  date: string;
+  points: number;
+  note?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PoiChild {
+  id: string;
+  name: string;
+  totalPoints: number;
+}
+
+// ポイ活のデフォルト設定
+export const DEFAULT_POI_TASKS: PoiTask[] = [
+  { id: 'study', name: '勉強', points: 10, isDefault: true, createdAt: new Date(), updatedAt: new Date() },
+  { id: 'exercise', name: '筋トレ', points: 15, isDefault: true, createdAt: new Date(), updatedAt: new Date() },
+  { id: 'help', name: 'お手伝い', points: 5, isDefault: true, createdAt: new Date(), updatedAt: new Date() },
+];
+
+export const POI_CHILDREN: PoiChild[] = [
+  { id: 'alice', name: 'ありす', totalPoints: 0 },
+  { id: 'kosumo', name: 'こすも', totalPoints: 0 },
+];
+

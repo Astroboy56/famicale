@@ -389,3 +389,160 @@ export const testFirebaseConnection = async () => {
     return false;
   }
 };
+
+// ポイ活関連の関数
+export const poiService = {
+  // タスクを追加
+  async addTask(task: Omit<PoiTask, 'id' | 'createdAt' | 'updatedAt'>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const docRef = await addDoc(collection(db!, 'poi_tasks'), {
+        ...task,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('タスクの追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 全てのタスクを取得
+  async getAllTasks() {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, 'poi_tasks'),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const tasks: PoiTask[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        tasks.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as PoiTask);
+      });
+      
+      return tasks;
+    } catch (error) {
+      console.error('タスクの取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 欲しいものを追加
+  async addWish(wish: Omit<PoiWish, 'id' | 'createdAt' | 'updatedAt'>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const docRef = await addDoc(collection(db!, 'poi_wishes'), {
+        ...wish,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('欲しいものの追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 全ての欲しいものを取得
+  async getAllWishes() {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, 'poi_wishes'),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const wishes: PoiWish[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        wishes.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as PoiWish);
+      });
+      
+      return wishes;
+    } catch (error) {
+      console.error('欲しいものの取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 記録を追加
+  async addRecord(record: Omit<PoiRecord, 'id' | 'createdAt' | 'updatedAt'>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const docRef = await addDoc(collection(db!, 'poi_records'), {
+        ...record,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('記録の追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 子供の記録を取得
+  async getChildRecords(childId: string) {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, 'poi_records'),
+        where('childId', '==', childId),
+        orderBy('date', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const records: PoiRecord[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        records.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as PoiRecord);
+      });
+      
+      return records;
+    } catch (error) {
+      console.error('記録の取得に失敗しました:', error);
+      throw error;
+    }
+  },
+};

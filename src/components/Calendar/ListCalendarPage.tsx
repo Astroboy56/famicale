@@ -135,10 +135,10 @@ export default function ListCalendarPage() {
             {FAMILY_MEMBERS.map((member) => (
               <div key={member.id} className="flex items-center justify-center flex-1">
                 <div className={`text-xs font-semibold p-1 rounded-lg ${
-                  member.id === 'atomu' ? 'text-blue-300 bg-blue-500 bg-opacity-5' :
-                  member.id === 'erika' ? 'text-red-300 bg-red-500 bg-opacity-5' :
-                  member.id === 'kosumo' ? 'text-green-300 bg-green-500 bg-opacity-5' :
-                  member.id === 'alice' ? 'text-pink-300 bg-pink-500 bg-opacity-5' :
+                  member.id === 'atomu' ? 'text-blue-300 bg-blue-500 bg-opacity-20' :
+                  member.id === 'erika' ? 'text-red-300 bg-red-500 bg-opacity-20' :
+                  member.id === 'kosumo' ? 'text-green-300 bg-green-500 bg-opacity-20' :
+                  member.id === 'alice' ? 'text-pink-300 bg-pink-500 bg-opacity-20' :
                   'text-white bg-gray-500 bg-opacity-5'
                 }`}>
                   {member.name}

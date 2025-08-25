@@ -228,7 +228,25 @@ export default function EventModal({
             </div>
           </div>
 
-
+          {/* 予定種類 */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-3">
+              <Tag size={16} className="inline mr-2 text-white" />
+              予定種類
+            </label>
+            <select
+              value={form.type}
+              onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as EventType }))}
+              className="w-full px-4 py-3 glass-input text-white"
+              disabled={isSubmitting}
+            >
+              <option value="work" className="text-gray-800">仕事</option>
+              <option value="school" className="text-gray-800">学校</option>
+              <option value="hospital" className="text-gray-800">病院</option>
+              <option value="travel" className="text-gray-800">旅行</option>
+              <option value="other" className="text-gray-800">その他</option>
+            </select>
+          </div>
 
           {/* 時間設定 */}
           <div>
