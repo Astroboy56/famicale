@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { eventService, deleteAllEvents } from '@/lib/firestore';
+import { deleteAllEvents } from '@/lib/firestore';
 import ConnectionTest from '@/components/Firebase/ConnectionTest';
 
 export default function FirebaseTestPage() {

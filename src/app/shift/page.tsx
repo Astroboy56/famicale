@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Calendar, Plus, Edit3, X } from 'lucide-react';
-import { FAMILY_MEMBERS, COLOR_MAP, Event } from '@/types';
+import { ChevronLeft, ChevronRight, Calendar, Edit3, X } from 'lucide-react';
+import { Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 
@@ -36,7 +36,7 @@ export default function ShiftPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(false);
+
   const [shiftCommands, setShiftCommands] = useState<ShiftCommand[]>([]);
   const [showCustomEdit, setShowCustomEdit] = useState(false);
   const [pendingShifts, setPendingShifts] = useState<PendingShift[]>([]);
@@ -166,10 +166,7 @@ export default function ShiftPage() {
     setSelectedDate(nextDay);
   };
 
-  // 仮登録シフトを削除
-  const removePendingShift = (dateStr: string) => {
-    setPendingShifts(prev => prev.filter(shift => shift.date !== dateStr));
-  };
+
 
   // 全ての仮登録シフトを保存
   const saveAllPendingShifts = async () => {

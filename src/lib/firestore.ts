@@ -608,7 +608,7 @@ export const poiChildService = {
       );
       
       const querySnapshot = await getDocs(q);
-      const children: any[] = [];
+      const children: { id: string; name: string; totalPoints: number }[] = [];
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -627,7 +627,7 @@ export const poiChildService = {
   },
 
   // 子供の情報をリアルタイムで監視
-  subscribeToChildren(callback: (children: any[]) => void) {
+  subscribeToChildren(callback: (children: { id: string; name: string; totalPoints: number }[]) => void) {
     if (!isFirebaseInitialized()) {
       return () => {};
     }
@@ -639,7 +639,7 @@ export const poiChildService = {
       );
       
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const children: any[] = [];
+        const children: { id: string; name: string; totalPoints: number }[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           children.push({

@@ -20,14 +20,7 @@ interface PoiWish {
   isCompleted: boolean;
 }
 
-interface PoiRecord {
-  id: string;
-  childId: string;
-  taskId: string;
-  date: string;
-  points: number;
-  note?: string;
-}
+
 
 interface PoiChild {
   id: string;
@@ -65,11 +58,7 @@ const PRAISE_MESSAGES = [
 export default function PoiPage() {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [children, setChildren] = useState<PoiChild[]>(CHILDREN);
-  const [tasks] = useState<PoiTask[]>(DEFAULT_TASKS);
   const [wishes] = useState<PoiWish[]>([]);
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showWishModal, setShowWishModal] = useState(false);
-  const [showRecordModal, setShowRecordModal] = useState(false);
   const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange' | 'wishRegister' | 'cashExchange' | 'calendar'>('select');
   const [showPraiseMessage, setShowPraiseMessage] = useState(false);
   const [praiseMessage, setPraiseMessage] = useState('');
@@ -307,16 +296,19 @@ export default function PoiPage() {
                </div>
              </div>
 
-             {/* カスタムタスク追加ボタン */}
-             <button
-               onClick={() => setShowTaskModal(true)}
-               className="w-full p-4 glass-button text-center"
-             >
-               <div className="flex items-center justify-center">
-                 <Plus size={20} className="text-white mr-2" />
-                 <span className="text-white font-medium">カスタムタスクを追加</span>
-               </div>
-             </button>
+                           {/* カスタムタスク追加ボタン */}
+              <button
+                onClick={() => {
+                  // カスタムタスク追加機能は今後実装予定
+                  alert('カスタムタスク追加機能は今後実装予定です');
+                }}
+                className="w-full p-4 glass-button text-center"
+              >
+                <div className="flex items-center justify-center">
+                  <Plus size={20} className="text-white mr-2" />
+                  <span className="text-white font-medium">カスタムタスクを追加</span>
+                </div>
+              </button>
            </div>
          )}
 
@@ -348,16 +340,17 @@ export default function PoiPage() {
 
              {/* 交換オプション */}
              <div className="space-y-3">
-               <button
-                 onClick={() => {
-                   if (wishes.length === 0) {
-                     setCurrentView('wishRegister');
-                   } else {
-                     setShowWishModal(true);
-                   }
-                 }}
-                 className="w-full p-4 glass-button text-left"
-               >
+                               <button
+                  onClick={() => {
+                    if (wishes.length === 0) {
+                      setCurrentView('wishRegister');
+                    } else {
+                      // 欲しいものリスト表示機能は今後実装予定
+                      alert('欲しいものリスト表示機能は今後実装予定です');
+                    }
+                  }}
+                  className="w-full p-4 glass-button text-left"
+                >
                  <div className="flex items-center justify-between">
                    <div className="flex items-center">
                      <Target size={20} className="text-white mr-3" />
