@@ -169,6 +169,8 @@ export const eventService = {
     const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
     
     console.log(`🔍 監視範囲: ${startDate} ～ ${endDate}`);
+    console.log(`🔍 使用するdb:`, db);
+    console.log(`🔍 使用するコレクション:`, EVENTS_COLLECTION);
     
     const q = query(
       collection(db!, EVENTS_COLLECTION),
@@ -190,7 +192,10 @@ export const eventService = {
           updatedAt: data.updatedAt.toDate(),
         } as Event);
       });
+      console.log(`✅ ${events.length}件の予定をリアルタイム更新で取得`);
       callback(events);
+    }, (error) => {
+      console.error('❌ リアルタイム監視でエラーが発生:', error);
     });
   },
 };
@@ -416,9 +421,13 @@ export const testFirebaseConnection = async () => {
   try {
     console.log('📝 テストドキュメントを作成中...');
     console.log('📊 Firestore接続確認中...');
+    console.log('🔍 使用するdb:', db);
+    console.log('🔍 使用するapp:', app);
     
     // テスト用のドキュメントを作成して削除
     const testCollection = collection(db!, 'test');
+    console.log('📝 テストコレクション参照作成完了');
+    
     const docRef = await addDoc(testCollection, {
       test: true,
       timestamp: Timestamp.now(),
