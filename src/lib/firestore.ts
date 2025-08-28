@@ -13,18 +13,22 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
+import app from './firebase';
 import { Event, TodoItem, PoiTask, PoiWish, PoiRecord } from '@/types';
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {
   console.log('🔍 Firebase初期化状態を確認中...');
   console.log('db:', db ? '初期化済み' : '未初期化');
+  console.log('app:', app ? '初期化済み' : '未初期化');
   
-  const initialized = db !== null && db !== undefined;
+  const initialized = db !== null && db !== undefined && app !== null && app !== undefined;
   if (!initialized) {
     console.warn('⚠️ Firebaseが初期化されていません');
     console.warn('環境変数の設定を確認してください');
     console.warn('アプリはオフラインモードで動作します');
+    console.warn('db:', db);
+    console.warn('app:', app);
   } else {
     console.log('✅ Firebaseが正常に初期化されています');
   }
@@ -391,6 +395,11 @@ export const deleteAllTodos = async (): Promise<void> => {
 // 接続テスト用の関数
 export const testFirebaseConnection = async () => {
   console.log('🔍 Firebase接続テスト開始...');
+  console.log('📊 現在の状態:', {
+    app: app ? '初期化済み' : '未初期化',
+    db: db ? '初期化済み' : '未初期化',
+    isInitialized: isFirebaseInitialized()
+  });
   
   if (!isFirebaseInitialized()) {
     console.error('❌ Firebaseが初期化されていません');

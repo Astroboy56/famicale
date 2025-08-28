@@ -67,15 +67,28 @@ if (isFirebaseConfigValid()) {
     });
     
     app = initializeApp(firebaseConfig);
+    console.log('✅ Firebase App初期化完了');
+    
     db = getFirestore(app);
+    console.log('✅ Firestore初期化完了');
+    
     auth = getAuth(app);
+    console.log('✅ Auth初期化完了');
+    
     analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+    console.log('✅ Analytics初期化完了');
+    
     console.log('✅ Firebase初期化が完了しました');
     console.log('📊 Firestore:', db ? '初期化済み' : '未初期化');
     console.log('🔐 Auth:', auth ? '初期化済み' : '未初期化');
+    console.log('📈 Analytics:', analytics ? '初期化済み' : '未初期化');
   } catch (error) {
     console.error('❌ Firebase初期化に失敗しました:', error);
-    console.error('エラー詳細:', error);
+    if (error instanceof Error) {
+      console.error('エラー詳細:', error.message);
+      console.error('エラータイプ:', error.name);
+      console.error('エラースタック:', error.stack);
+    }
   }
 } else {
   console.warn('⚠️ Firebase設定が無効です。.env.localファイルを確認してください。');
