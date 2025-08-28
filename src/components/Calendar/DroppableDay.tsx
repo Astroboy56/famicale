@@ -11,15 +11,13 @@ interface DroppableDayProps {
   currentDate: Date;
   events: Event[];
   onClick: (day: Date) => void;
-  isDraggedOver?: boolean;
 }
 
 export function DroppableDay({ 
   day, 
   currentDate, 
   events, 
-  onClick,
-  isDraggedOver = false
+  onClick
 }: DroppableDayProps) {
   const {
     setNodeRef,

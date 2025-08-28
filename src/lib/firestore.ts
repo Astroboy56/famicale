@@ -15,7 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import app from './firebase';
-import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification, NotificationType } from '@/types';
+import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification } from '@/types';
 import { createEventAddedNotification, createEventUpdatedNotification, createTodoAddedNotification, createTodoUpdatedNotification, createPoiAddedNotification } from './notificationUtils';
 
 // Firebase初期化チェック

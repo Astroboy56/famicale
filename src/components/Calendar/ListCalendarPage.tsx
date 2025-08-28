@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
-import { FAMILY_MEMBERS, Event, COLOR_MAP } from '@/types';
+import { FAMILY_MEMBERS, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 import EventModal from './EventModal';
 

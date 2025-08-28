@@ -2,7 +2,7 @@
 
 import { useDraggable } from '@dnd-kit/core';
 import { Event } from '@/types';
-import { FAMILY_MEMBERS, COLOR_MAP } from '@/types';
+import { FAMILY_MEMBERS } from '@/types';
 
 interface DraggableEventProps {
   event: Event;

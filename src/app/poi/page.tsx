@@ -3,15 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Coins, Plus, Target, Star, Calendar } from 'lucide-react';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
-import { poiChildService } from '@/lib/firestore';
+import { poiChildService, poiService } from '@/lib/firestore';
+import { PoiRecord } from '@/types';
 
 // ポイ活関連の型定義
-interface PoiTask {
-  id: string;
-  name: string;
-  points: number;
-  isDefault: boolean;
-}
 
 interface PoiWish {
   id: string;
@@ -57,7 +52,7 @@ export default function PoiPage() {
   const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange' | 'wishRegister' | 'cashExchange' | 'calendar' | 'history'>('select');
   const [showPraiseMessage, setShowPraiseMessage] = useState(false);
   const [praiseMessage, setPraiseMessage] = useState('');
-  const [taskHistory, setTaskHistory] = useState<any[]>([]);
+  const [taskHistory, setTaskHistory] = useState<PoiRecord[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
   // Firebaseから子供のデータをリアルタイムで取得
@@ -120,7 +115,7 @@ export default function PoiPage() {
         try {
           await poiService.addRecord({
             childId: selectedChild,
-            taskName: taskName,
+            taskId: taskName, // taskNameをtaskIdとして使用
             points: points,
             date: new Date().toISOString().split('T')[0], // YYYY-MM-DD形式
           });
@@ -641,7 +636,7 @@ export default function PoiPage() {
                     {taskHistory.map((record, index) => (
                       <div key={index} className="flex items-center justify-between p-3 glass-area">
                         <div>
-                          <div className="text-white font-medium">{record.taskName}</div>
+                          <div className="text-white font-medium">{record.taskId}</div>
                           <div className="text-xs text-white text-opacity-70">
                             {record.date}
                           </div>

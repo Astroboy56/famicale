@@ -6,7 +6,7 @@ import { Notification } from '@/types';
 import { Bell } from 'lucide-react';
 
 interface NotificationBadgeProps {
-  // 必要に応じてプロパティを追加
+  // 現在はプロパティなし
 }
 
 export const NotificationBadge: React.FC<NotificationBadgeProps> = () => {

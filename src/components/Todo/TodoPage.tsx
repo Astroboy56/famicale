@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Check, Trash2, AlertCircle, CheckSquare } from 'lucide-react';
-import { FAMILY_MEMBERS, COLOR_MAP, TodoItem } from '@/types';
+import { FAMILY_MEMBERS, TodoItem } from '@/types';
 import { todoService } from '@/lib/firestore';
 
 export default function TodoPage() {
