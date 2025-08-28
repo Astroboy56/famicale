@@ -49,8 +49,10 @@ export function DraggableEvent({ event }: DraggableEventProps) {
     >
       <div className="flex items-center space-x-1">
         <div 
-          className={`w-2 h-2 rounded-full ${COLOR_MAP[getMemberColor(event.familyMemberId)].bg} flex-shrink-0`}
-        />
+          className={`px-1 py-0.5 rounded text-xs font-medium text-white ${COLOR_MAP[getMemberColor(event.familyMemberId)].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30 flex-shrink-0`}
+        >
+          {getMemberName(event.familyMemberId)}
+        </div>
         <span className="truncate text-white font-medium">{event.title}</span>
       </div>
     </div>

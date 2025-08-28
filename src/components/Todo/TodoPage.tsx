@@ -124,10 +124,11 @@ export default function TodoPage() {
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-1">
-                                  <div
-                className={`w-4 h-4 rounded-full ${COLOR_MAP[member.color].bg} shadow-lg`}
-              />
-                    <span className="text-xs font-semibold text-white">{member.name}</span>
+                    <div
+                      className={`px-2 py-1 rounded-lg text-xs font-medium text-white ${COLOR_MAP[member.color].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30`}
+                    >
+                      {member.name}
+                    </div>
                   </div>
                 </button>
               ))}
@@ -237,10 +238,12 @@ export default function TodoPage() {
                       
                       <div className="flex items-center mt-1 space-x-1">
                         <div
-                          className={`w-3 h-3 rounded-full ${COLOR_MAP[getMemberColor(todo.createdBy)].bg} shadow-sm`}
-                        />
+                          className={`px-1.5 py-0.5 rounded text-xs font-medium text-white ${COLOR_MAP[getMemberColor(todo.createdBy)].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30`}
+                        >
+                          {getMemberName(todo.createdBy)}
+                        </div>
                         <span className="text-xs text-white text-opacity-70">
-                          {getMemberName(todo.createdBy)} • {todo.createdAt.toLocaleDateString('ja-JP')}
+                          • {todo.createdAt.toLocaleDateString('ja-JP')}
                         </span>
                       </div>
                     </div>
