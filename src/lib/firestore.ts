@@ -15,7 +15,8 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import app from './firebase';
-import { Event, TodoItem, PoiTask, PoiWish, PoiRecord } from '@/types';
+import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification, NotificationType } from '@/types';
+import { createEventAddedNotification, createEventUpdatedNotification, createTodoAddedNotification, createTodoUpdatedNotification, createPoiAddedNotification } from './notificationUtils';
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {
@@ -40,6 +41,7 @@ const isFirebaseInitialized = () => {
 const EVENTS_COLLECTION = 'events';
 const TODOS_COLLECTION = 'todos';
 const POI_CHILDREN_COLLECTION = 'poi_children';
+const NOTIFICATIONS_COLLECTION = 'notifications';
 
 // 予定関連の関数
 export const eventService = {
@@ -66,6 +68,16 @@ export const eventService = {
       });
       
       console.log('予定追加が完了しました。ID:', docRef.id);
+      
+      // 通知を作成
+      const createdEvent = {
+        id: docRef.id,
+        ...cleanEvent,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as Event;
+      await createEventAddedNotification(createdEvent, event.familyMemberId);
+      
       return docRef.id;
     } catch (error) {
       console.error('予定の追加に失敗しました:', error);
@@ -136,6 +148,14 @@ export const eventService = {
         ...cleanUpdates,
         updatedAt: Timestamp.now(),
       });
+      
+      // 通知を作成
+      const updatedEvent = {
+        id: eventId,
+        ...updates,
+        updatedAt: new Date(),
+      } as Event;
+      await createEventUpdatedNotification(updatedEvent, updates.familyMemberId || 'unknown');
     } catch (error) {
       console.error('予定の更新に失敗しました:', error);
       throw error;
@@ -215,6 +235,16 @@ export const todoService = {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       });
+      
+      // 通知を作成
+      const createdTodo = {
+        id: docRef.id,
+        ...todo,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as TodoItem;
+      await createTodoAddedNotification(createdTodo, todo.createdBy);
+      
       return docRef.id;
     } catch (error) {
       console.error('TODOの追加に失敗しました:', error);
@@ -266,6 +296,14 @@ export const todoService = {
         ...updates,
         updatedAt: Timestamp.now(),
       });
+      
+      // 通知を作成
+      const updatedTodo = {
+        id: todoId,
+        ...updates,
+        updatedAt: new Date(),
+      } as TodoItem;
+      await createTodoUpdatedNotification(updatedTodo, updates.createdBy || 'unknown');
     } catch (error) {
       console.error('TODOの更新に失敗しました:', error);
       throw error;
@@ -572,6 +610,16 @@ export const poiService = {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       });
+      
+      // 通知を作成
+      const createdRecord = {
+        id: docRef.id,
+        ...record,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as PoiRecord;
+      await createPoiAddedNotification(createdRecord, record.childId);
+      
       return docRef.id;
     } catch (error) {
       console.error('記録の追加に失敗しました:', error);
@@ -762,6 +810,241 @@ export const poiChildService = {
       return unsubscribe;
     } catch (error) {
       console.error('子供の情報監視に失敗しました:', error);
+      return () => {};
+    }
+  },
+};
+
+// 通知関連の関数
+export const notificationService = {
+  // 通知を追加
+  async addNotification(notification: Omit<Notification, 'id' | 'createdAt'>) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const docRef = await addDoc(collection(db!, NOTIFICATIONS_COLLECTION), {
+        ...notification,
+        createdAt: Timestamp.now(),
+      });
+      console.log('通知を追加しました:', notification.title);
+      return docRef.id;
+    } catch (error) {
+      console.error('通知の追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 全ての通知を取得
+  async getAllNotifications() {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, NOTIFICATIONS_COLLECTION),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const notifications: Notification[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        notifications.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+        } as Notification);
+      });
+      
+      return notifications;
+    } catch (error) {
+      console.error('通知の取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 未読通知を取得
+  async getUnreadNotifications() {
+    if (!isFirebaseInitialized()) {
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, NOTIFICATIONS_COLLECTION),
+        where('isRead', '==', false),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const notifications: Notification[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        notifications.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+        } as Notification);
+      });
+      
+      return notifications;
+    } catch (error) {
+      console.error('未読通知の取得に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 通知を既読にする
+  async markAsRead(notificationId: string) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const notificationRef = doc(db!, NOTIFICATIONS_COLLECTION, notificationId);
+      await updateDoc(notificationRef, {
+        isRead: true,
+      });
+      console.log('通知を既読にしました:', notificationId);
+    } catch (error) {
+      console.error('通知の既読化に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 全ての通知を既読にする
+  async markAllAsRead() {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const q = query(
+        collection(db!, NOTIFICATIONS_COLLECTION),
+        where('isRead', '==', false)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const updatePromises = querySnapshot.docs.map(doc => 
+        updateDoc(doc.ref, { isRead: true })
+      );
+      
+      await Promise.all(updatePromises);
+      console.log(`${querySnapshot.docs.length}件の通知を既読にしました`);
+    } catch (error) {
+      console.error('通知の一括既読化に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 通知を削除
+  async deleteNotification(notificationId: string) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      await deleteDoc(doc(db!, NOTIFICATIONS_COLLECTION, notificationId));
+      console.log('通知を削除しました:', notificationId);
+    } catch (error) {
+      console.error('通知の削除に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // 古い通知を削除（30日以上前）
+  async deleteOldNotifications() {
+    if (!isFirebaseInitialized()) {
+      return;
+    }
+    
+    try {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const q = query(
+        collection(db!, NOTIFICATIONS_COLLECTION),
+        where('createdAt', '<', Timestamp.fromDate(thirtyDaysAgo))
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+      
+      await Promise.all(deletePromises);
+      console.log(`${querySnapshot.docs.length}件の古い通知を削除しました`);
+    } catch (error) {
+      console.error('古い通知の削除に失敗しました:', error);
+    }
+  },
+
+  // リアルタイムで通知を監視
+  subscribeToNotifications(callback: (notifications: Notification[]) => void) {
+    if (!isFirebaseInitialized()) {
+      callback([]);
+      return () => {};
+    }
+    
+    try {
+      const q = query(
+        collection(db!, NOTIFICATIONS_COLLECTION),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const notifications: Notification[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          notifications.push({
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt.toDate(),
+          } as Notification);
+        });
+        callback(notifications);
+      });
+      
+      return unsubscribe;
+    } catch (error) {
+      console.error('通知の監視に失敗しました:', error);
+      return () => {};
+    }
+  },
+
+  // 未読通知をリアルタイムで監視
+  subscribeToUnreadNotifications(callback: (notifications: Notification[]) => void) {
+    if (!isFirebaseInitialized()) {
+      callback([]);
+      return () => {};
+    }
+    
+    try {
+      const q = query(
+        collection(db!, NOTIFICATIONS_COLLECTION),
+        where('isRead', '==', false),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const notifications: Notification[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          notifications.push({
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt.toDate(),
+          } as Notification);
+        });
+        callback(notifications);
+      });
+      
+      return unsubscribe;
+    } catch (error) {
+      console.error('未読通知の監視に失敗しました:', error);
       return () => {};
     }
   },

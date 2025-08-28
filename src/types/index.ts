@@ -153,3 +153,37 @@ export const POI_CHILDREN: PoiChild[] = [
   { id: 'kosumo', name: 'こすも', totalPoints: 0 },
 ];
 
+// 通知関連の型定義
+export type NotificationType = 'event_added' | 'event_updated' | 'todo_added' | 'todo_updated' | 'poi_added' | 'poi_updated';
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  targetId: string; // 関連するデータのID
+  targetType: 'event' | 'todo' | 'poi';
+  createdBy: string; // 作成者の家族メンバーID
+  createdAt: Date;
+  isRead: boolean;
+  userId?: string; // 特定のユーザー向けの場合
+}
+
+// 通知設定
+export interface NotificationSettings {
+  events: boolean;
+  todos: boolean;
+  poi: boolean;
+  sound: boolean;
+  vibration: boolean;
+}
+
+// デフォルト通知設定
+export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
+  events: true,
+  todos: true,
+  poi: true,
+  sound: false,
+  vibration: false,
+};
+

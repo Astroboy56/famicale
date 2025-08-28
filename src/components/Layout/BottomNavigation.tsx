@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Calendar, List, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft, Coins } from 'lucide-react';
+import { NotificationBadge } from '@/components/Notification/NotificationBadge';
 
 interface NavigationItem {
   id: string;
@@ -18,7 +19,7 @@ const navigationItemsPage1: NavigationItem[] = [
   { id: 'list', name: 'リスト', icon: List, path: '/list' },
   { id: 'shift', name: 'シフト', icon: Clock, path: '/shift' },
   { id: 'todo', name: 'TODO', icon: CheckSquare, path: '/todo' },
-  { id: 'next', name: '次へ', icon: ChevronRight, path: '', onClick: () => {} },
+  { id: 'notifications', name: '通知', icon: () => null, path: '', onClick: () => {} },
 ];
 
 // 2ページ目のナビゲーションアイテム
@@ -26,6 +27,7 @@ const navigationItemsPage2: NavigationItem[] = [
   { id: 'prev', name: '戻る', icon: ChevronLeft, path: '', onClick: () => {} },
   { id: 'poi', name: 'ポイ活', icon: Coins, path: '/poi' },
   { id: 'settings', name: '設定', icon: Settings, path: '/settings' },
+  { id: 'next', name: '次へ', icon: ChevronRight, path: '', onClick: () => {} },
 ];
 
 export default function BottomNavigation() {
@@ -66,7 +68,13 @@ export default function BottomNavigation() {
                   : 'text-white text-opacity-70 hover:text-white'
               }`}
             >
-              <Icon size={20} />
+              {item.id === 'notifications' ? (
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <NotificationBadge />
+                </div>
+              ) : (
+                <Icon size={20} />
+              )}
               <span className="text-xs font-medium">{item.name}</span>
             </button>
           );
