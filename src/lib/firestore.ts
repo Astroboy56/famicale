@@ -73,22 +73,8 @@ export const eventService = {
     console.log(`📅 ${year}年${month}月の予定を取得中...`);
     
     if (!isFirebaseInitialized()) {
-      console.warn('⚠️ Firebaseが初期化されていないため、開発用ダミーデータを返します');
-      // 開発用のダミーデータを返す
-      const dummyEvents: Event[] = [
-        {
-          id: 'dummy-1',
-          title: 'サンプル予定',
-          description: 'Firebase設定前のサンプルデータ',
-          date: `${year}-${String(month).padStart(2, '0')}-15`,
-          familyMemberId: 'atomu',
-          type: 'other',
-          isAllDay: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-      ];
-      return dummyEvents;
+      console.error('❌ Firebaseが初期化されていません。実際のデータを取得できません。');
+      throw new Error('Firebase is not initialized');
     }
     
     try {
@@ -170,22 +156,8 @@ export const eventService = {
     console.log(`📡 ${year}年${month}月のリアルタイム監視を開始...`);
     
     if (!isFirebaseInitialized()) {
-      console.warn('⚠️ Firebaseが初期化されていないため、開発用ダミーデータを返します');
-      // 開発用のダミーデータを返す
-      const dummyEvents: Event[] = [
-        {
-          id: 'dummy-1',
-          title: 'サンプル予定',
-          description: 'Firebase設定前のサンプルデータ',
-          date: `${year}-${String(month).padStart(2, '0')}-15`,
-          familyMemberId: 'atomu',
-          type: 'other',
-          isAllDay: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-      ];
-      callback(dummyEvents);
+      console.error('❌ Firebaseが初期化されていません。実際のデータを取得できません。');
+      callback([]);
       return () => {};
     }
     
@@ -434,23 +406,32 @@ export const testFirebaseConnection = async () => {
   
   try {
     console.log('📝 テストドキュメントを作成中...');
+    console.log('📊 Firestore接続確認中...');
+    
     // テスト用のドキュメントを作成して削除
     const testCollection = collection(db!, 'test');
     const docRef = await addDoc(testCollection, {
       test: true,
       timestamp: Timestamp.now(),
+      message: 'Firebase接続テスト',
+      createdAt: Timestamp.now(),
     });
     
+    console.log('✅ テストドキュメント作成成功:', docRef.id);
     console.log('🗑️ テストドキュメントを削除中...');
+    
     // 作成したテストドキュメントを削除
     await deleteDoc(docRef);
     
+    console.log('✅ テストドキュメント削除成功');
     console.log('✅ Firebase接続テスト成功');
     return true;
   } catch (error) {
     console.error('❌ Firebase接続テスト失敗:', error);
     if (error instanceof Error) {
       console.error('エラー詳細:', error.message);
+      console.error('エラータイプ:', error.name);
+      console.error('エラースタック:', error.stack);
     }
     return false;
   }

@@ -56,17 +56,29 @@ let analytics: Analytics | null = null;
 
 if (isFirebaseConfigValid()) {
   try {
-    console.log('Firebase初期化を開始します...');
+    console.log('🚀 Firebase初期化を開始します...');
+    console.log('設定内容:', {
+      apiKey: firebaseConfig.apiKey ? '設定済み' : '未設定',
+      authDomain: firebaseConfig.authDomain,
+      projectId: firebaseConfig.projectId,
+      storageBucket: firebaseConfig.storageBucket,
+      messagingSenderId: firebaseConfig.messagingSenderId,
+      appId: firebaseConfig.appId
+    });
+    
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
     analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
-    console.log('Firebase初期化が完了しました');
+    console.log('✅ Firebase初期化が完了しました');
+    console.log('📊 Firestore:', db ? '初期化済み' : '未初期化');
+    console.log('🔐 Auth:', auth ? '初期化済み' : '未初期化');
   } catch (error) {
-    console.error('Firebase初期化に失敗しました:', error);
+    console.error('❌ Firebase初期化に失敗しました:', error);
+    console.error('エラー詳細:', error);
   }
 } else {
-  console.warn('Firebase設定が無効です。.env.localファイルを確認してください。');
+  console.warn('⚠️ Firebase設定が無効です。.env.localファイルを確認してください。');
   console.warn('アプリはオフラインモードで動作します。');
 }
 
