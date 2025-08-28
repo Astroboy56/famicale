@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Calendar, List, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft, Coins } from 'lucide-react';
 import { notificationService } from '@/lib/firestore';
+import { Notification } from '@/types';
 
 interface NavigationItem {
   id: string;
@@ -34,7 +35,7 @@ export default function BottomNavigation() {
   const pathname = usePathname();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // 未読通知を監視
   useEffect(() => {
