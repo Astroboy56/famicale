@@ -8,7 +8,7 @@ import { NotificationBadge } from '@/components/Notification/NotificationBadge';
 interface NavigationItem {
   id: string;
   name: string;
-  icon: typeof Calendar;
+  icon: typeof Calendar | (() => null);
   path: string;
   onClick?: () => void;
 }
