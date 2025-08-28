@@ -19,7 +19,8 @@ import { Event, TodoItem, PoiTask, PoiWish, PoiRecord } from '@/types';
 const isFirebaseInitialized = () => {
   const initialized = db !== null && db !== undefined;
   if (!initialized) {
-    console.error('Firebaseが初期化されていません。環境変数を確認してください。');
+    console.warn('Firebaseが初期化されていません。環境変数を確認してください。');
+    console.warn('アプリはオフラインモードで動作します。');
   }
   return initialized;
 };
@@ -367,12 +368,22 @@ export const deleteAllTodos = async (): Promise<void> => {
 
 // 接続テスト用の関数
 export const testFirebaseConnection = async () => {
+  console.log('🔍 Firebase接続テスト開始...');
+  
   if (!isFirebaseInitialized()) {
     console.error('❌ Firebaseが初期化されていません');
+    console.error('環境変数の設定を確認してください:');
+    console.error('- NEXT_PUBLIC_FIREBASE_API_KEY');
+    console.error('- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN');
+    console.error('- NEXT_PUBLIC_FIREBASE_PROJECT_ID');
+    console.error('- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET');
+    console.error('- NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID');
+    console.error('- NEXT_PUBLIC_FIREBASE_APP_ID');
     return false;
   }
   
   try {
+    console.log('📝 テストドキュメントを作成中...');
     // テスト用のドキュメントを作成して削除
     const testCollection = collection(db!, 'test');
     const docRef = await addDoc(testCollection, {
@@ -380,6 +391,7 @@ export const testFirebaseConnection = async () => {
       timestamp: Timestamp.now(),
     });
     
+    console.log('🗑️ テストドキュメントを削除中...');
     // 作成したテストドキュメントを削除
     await deleteDoc(docRef);
     
@@ -387,6 +399,9 @@ export const testFirebaseConnection = async () => {
     return true;
   } catch (error) {
     console.error('❌ Firebase接続テスト失敗:', error);
+    if (error instanceof Error) {
+      console.error('エラー詳細:', error.message);
+    }
     return false;
   }
 };

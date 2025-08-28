@@ -55,7 +55,8 @@ if (isFirebaseConfigValid()) {
     console.error('Firebase初期化に失敗しました:', error);
   }
 } else {
-  console.error('Firebase設定が無効です。.env.localファイルを確認してください。');
+  console.warn('Firebase設定が無効です。.env.localファイルを確認してください。');
+  console.warn('アプリはオフラインモードで動作します。');
 }
 
 // エクスポート

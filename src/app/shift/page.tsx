@@ -85,10 +85,12 @@ export default function ShiftPage() {
       if (savedCommands) {
         const parsedCommands = JSON.parse(savedCommands);
         setShiftCommands(parsedCommands);
+        console.log('シフトコマンドを読み込みました:', parsedCommands);
       } else {
         // 初回はデフォルトコマンドを設定
         setShiftCommands(DEFAULT_SHIFT_COMMANDS);
         localStorage.setItem('shiftCommands', JSON.stringify(DEFAULT_SHIFT_COMMANDS));
+        console.log('デフォルトシフトコマンドを設定しました:', DEFAULT_SHIFT_COMMANDS);
       }
     } catch (error) {
       console.error('シフトコマンドの読み込みに失敗しました:', error);
@@ -365,18 +367,23 @@ export default function ShiftPage() {
                       {/* 実際のシフト */}
                       {dayEvents
                         .filter(event => event.type === 'shift')
-                        .map((event) => (
-                          <div
-                            key={event.id}
-                            className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate"
-                            style={{
-                              backgroundColor: shiftCommands.find(cmd => cmd.name === event.title)?.bgColor || '#666',
-                              opacity: 0.7
-                            }}
-                          >
-                            {event.title}
-                          </div>
-                        ))}
+                        .map((event) => {
+                          const command = shiftCommands.find(cmd => cmd.name === event.title);
+                          console.log(`シフト表示: ${event.title}, コマンド:`, command);
+                          return (
+                            <div
+                              key={event.id}
+                              className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate"
+                              style={{
+                                backgroundColor: command?.bgColor || '#666',
+                                color: command?.color || '#ffffff',
+                                opacity: 0.8
+                              }}
+                            >
+                              {event.title}
+                            </div>
+                          );
+                        })}
                       
                       {/* 仮登録シフト */}
                       {pendingShifts
@@ -387,7 +394,8 @@ export default function ShiftPage() {
                             className="text-[8px] px-1 py-0.5 rounded text-white font-medium truncate"
                             style={{
                               backgroundColor: shift.command.bgColor,
-                              opacity: 0.5
+                              color: shift.command.color,
+                              opacity: 0.6
                             }}
                           >
                             {shift.command.name}
