@@ -5,6 +5,7 @@ import { notificationService } from '@/lib/firestore';
 import { Notification } from '@/types';
 import { Bell } from 'lucide-react';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface NotificationBadgeProps {
   // 現在はプロパティなし
 }
