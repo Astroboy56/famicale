@@ -95,46 +95,53 @@ export default function PoiPage() {
 
     if (confirm(`${taskName}を登録しますか？`)) {
       try {
-        console.log(`タスク登録開始: ${taskName}, ポイント: ${points}, 子供: ${selectedChild}`);
+        console.log(`🎯 タスク登録開始: ${taskName}, ポイント: ${points}, 子供: ${selectedChild}`);
         
         // 現在の子供の情報を取得
         const currentChild = children.find(child => child.id === selectedChild);
+        console.log('👶 現在の子供情報:', currentChild);
         if (!currentChild) {
-          console.error('選択された子供の情報が見つかりません');
+          console.error('❌ 選択された子供の情報が見つかりません');
           return;
         }
 
         // 新しいポイントを計算
         const newPoints = currentChild.totalPoints + points;
-        console.log(`新しいポイント: ${newPoints} (現在: ${currentChild.totalPoints} + 追加: ${points})`);
+        console.log(`💰 ポイント計算: ${newPoints} = ${currentChild.totalPoints} + ${points}`);
 
         // Firebaseにポイントを更新（データが存在しない場合は初期化される）
+        console.log('🔥 Firebaseにポイント更新を開始...');
         await poiChildService.updateChildPoints(selectedChild, newPoints);
+        console.log('✅ Firebaseポイント更新完了');
 
         // タスク記録を追加
         try {
+          console.log('📝 タスク記録を追加中...');
           await poiService.addRecord({
             childId: selectedChild,
             taskId: taskName, // taskNameをtaskIdとして使用
             points: points,
             date: new Date().toISOString().split('T')[0], // YYYY-MM-DD形式
           });
-          console.log(`タスク記録を追加しました: ${taskName}`);
+          console.log(`✅ タスク記録を追加しました: ${taskName}`);
         } catch (recordError) {
-          console.error('タスク記録の追加に失敗しました:', recordError);
+          console.error('❌ タスク記録の追加に失敗しました:', recordError);
           // 記録の失敗はポイント更新を妨げない
         }
 
         // ローカル状態も更新
-        setChildren(prevChildren => 
-          prevChildren.map(child => 
+        console.log('🔄 ローカル状態を更新中...');
+        setChildren(prevChildren => {
+          const updatedChildren = prevChildren.map(child => 
             child.id === selectedChild 
               ? { ...child, totalPoints: newPoints }
               : child
-          )
-        );
+          );
+          console.log('📊 更新後のローカル状態:', updatedChildren);
+          return updatedChildren;
+        });
         
-        console.log(`ポイント更新完了: ${selectedChild} のポイントが ${newPoints} になりました`);
+        console.log(`🎉 ポイント更新完了: ${selectedChild} のポイントが ${newPoints} になりました`);
         
         // ランダムな褒める言葉を選択
         const randomPraise = PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
@@ -146,7 +153,7 @@ export default function PoiPage() {
           setShowPraiseMessage(false);
         }, 3000);
       } catch (error) {
-        console.error('ポイントの更新に失敗しました:', error);
+        console.error('❌ ポイントの更新に失敗しました:', error);
         alert('ポイントの更新に失敗しました。もう一度お試しください。');
       }
     }

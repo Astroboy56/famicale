@@ -784,7 +784,10 @@ export const poiChildService = {
 
   // 子供の情報をリアルタイムで監視
   subscribeToChildren(callback: (children: { id: string; name: string; totalPoints: number }[]) => void) {
+    console.log('👀 poiChildService.subscribeToChildren 開始');
+    
     if (!isFirebaseInitialized()) {
+      console.warn('⚠️ Firebaseが初期化されていないため、リアルタイム監視を開始できません');
       return () => {};
     }
     
@@ -793,23 +796,30 @@ export const poiChildService = {
         collection(db!, POI_CHILDREN_COLLECTION),
         orderBy('createdAt', 'asc')
       );
+      console.log('📡 Firestoreリアルタイム監視を開始');
       
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        console.log(`📊 Firestoreから ${querySnapshot.size} 件の子供データを受信`);
         const children: { id: string; name: string; totalPoints: number }[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          children.push({
+          const child = {
             id: doc.id,
             name: data.name,
             totalPoints: data.totalPoints || 0,
-          });
+          };
+          children.push(child);
+          console.log(`👶 子供データ: ${child.id} - ${child.name} - ${child.totalPoints}ポイント`);
         });
+        console.log('🔄 コールバックを実行:', children);
         callback(children);
+      }, (error) => {
+        console.error('❌ Firestoreリアルタイム監視エラー:', error);
       });
       
       return unsubscribe;
     } catch (error) {
-      console.error('子供の情報監視に失敗しました:', error);
+      console.error('❌ 子供の情報監視に失敗しました:', error);
       return () => {};
     }
   },
