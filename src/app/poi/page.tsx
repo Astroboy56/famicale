@@ -54,9 +54,11 @@ export default function PoiPage() {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [children, setChildren] = useState<PoiChild[]>(CHILDREN);
   const [wishes] = useState<PoiWish[]>([]);
-  const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange' | 'wishRegister' | 'cashExchange' | 'calendar'>('select');
+  const [currentView, setCurrentView] = useState<'select' | 'taskList' | 'exchange' | 'wishRegister' | 'cashExchange' | 'calendar' | 'history'>('select');
   const [showPraiseMessage, setShowPraiseMessage] = useState(false);
   const [praiseMessage, setPraiseMessage] = useState('');
+  const [taskHistory, setTaskHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   // Firebaseから子供のデータをリアルタイムで取得
   useEffect(() => {
@@ -74,19 +76,59 @@ export default function PoiPage() {
     return () => unsubscribe();
   }, []);
 
+  // タスク履歴を読み込む関数
+  const loadTaskHistory = async (childId: string) => {
+    setLoadingHistory(true);
+    try {
+      const history = await poiService.getChildRecords(childId);
+      setTaskHistory(history);
+      console.log(`タスク履歴を読み込みました: ${history.length}件`);
+    } catch (error) {
+      console.error('タスク履歴の読み込みに失敗しました:', error);
+      setTaskHistory([]);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
   // タスク登録とポイント加算の関数
   const handleTaskRegistration = async (taskName: string, points: number) => {
+    if (!selectedChild) {
+      alert('子供を選択してください');
+      return;
+    }
+
     if (confirm(`${taskName}を登録しますか？`)) {
       try {
+        console.log(`タスク登録開始: ${taskName}, ポイント: ${points}, 子供: ${selectedChild}`);
+        
         // 現在の子供の情報を取得
         const currentChild = children.find(child => child.id === selectedChild);
-        if (!currentChild) return;
+        if (!currentChild) {
+          console.error('選択された子供の情報が見つかりません');
+          return;
+        }
 
         // 新しいポイントを計算
         const newPoints = currentChild.totalPoints + points;
+        console.log(`新しいポイント: ${newPoints} (現在: ${currentChild.totalPoints} + 追加: ${points})`);
 
-        // Firebaseにポイントを更新
-        await poiChildService.updateChildPoints(selectedChild!, newPoints);
+        // Firebaseにポイントを更新（データが存在しない場合は初期化される）
+        await poiChildService.updateChildPoints(selectedChild, newPoints);
+
+        // タスク記録を追加
+        try {
+          await poiService.addRecord({
+            childId: selectedChild,
+            taskName: taskName,
+            points: points,
+            date: new Date().toISOString().split('T')[0], // YYYY-MM-DD形式
+          });
+          console.log(`タスク記録を追加しました: ${taskName}`);
+        } catch (recordError) {
+          console.error('タスク記録の追加に失敗しました:', recordError);
+          // 記録の失敗はポイント更新を妨げない
+        }
 
         // ローカル状態も更新
         setChildren(prevChildren => 
@@ -96,6 +138,8 @@ export default function PoiPage() {
               : child
           )
         );
+        
+        console.log(`ポイント更新完了: ${selectedChild} のポイントが ${newPoints} になりました`);
         
         // ランダムな褒める言葉を選択
         const randomPraise = PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
@@ -195,6 +239,26 @@ export default function PoiPage() {
                  <div className="flex items-center">
                    <Target size={20} className="text-white mr-3" />
                    <span className="text-white font-medium">ポイントを交換する</span>
+                 </div>
+               </div>
+             </button>
+
+             <button
+               onClick={() => {
+                 if (selectedChild) {
+                   loadTaskHistory(selectedChild);
+                   setCurrentView('history');
+                 }
+               }}
+               disabled={!selectedChild}
+               className={`w-full p-4 glass-button text-left ${
+                 !selectedChild ? 'opacity-50' : ''
+               }`}
+             >
+               <div className="flex items-center justify-between">
+                 <div className="flex items-center">
+                   <Calendar size={20} className="text-white mr-3" />
+                   <span className="text-white font-medium">タスク履歴を見る</span>
                  </div>
                </div>
              </button>
@@ -547,6 +611,57 @@ export default function PoiPage() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* タスク履歴画面 */}
+          {currentView === 'history' && selectedChild && (
+            <div className="space-y-4">
+              {/* ヘッダー */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">
+                  {children.find(c => c.id === selectedChild)?.name}のタスク履歴
+                </h3>
+                <button
+                  onClick={() => setCurrentView('select')}
+                  className="text-sm text-white text-opacity-70"
+                >
+                  戻る
+                </button>
+              </div>
+
+              {/* 履歴表示 */}
+              <div className="glass-card p-4">
+                {loadingHistory ? (
+                  <div className="text-center text-white text-opacity-70">
+                    <p>履歴を読み込み中...</p>
+                  </div>
+                ) : taskHistory.length > 0 ? (
+                  <div className="space-y-3">
+                    {taskHistory.map((record, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 glass-area">
+                        <div>
+                          <div className="text-white font-medium">{record.taskName}</div>
+                          <div className="text-xs text-white text-opacity-70">
+                            {record.date}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-white font-semibold">+{record.points}</div>
+                          <div className="text-xs text-white text-opacity-70">ポイント</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center text-white text-opacity-70">
+                    <p>まだタスク履歴がありません</p>
+                    <p className="text-sm mt-2">
+                      タスクを登録すると履歴が表示されます
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

@@ -6,6 +6,7 @@ import {
   deleteDoc, 
   getDocs, 
   getDoc,
+  setDoc,
   query, 
   where, 
   orderBy,
@@ -614,6 +615,40 @@ export const poiService = {
 
 // ポイ活子供関連の関数
 export const poiChildService = {
+  // 子供のデータを初期化または更新
+  async initializeOrUpdateChild(childId: string, name: string, points: number = 0) {
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const childRef = doc(db!, POI_CHILDREN_COLLECTION, childId);
+      const childDoc = await getDoc(childRef);
+      
+      if (childDoc.exists()) {
+        // 既存のデータを更新
+        await updateDoc(childRef, {
+          totalPoints: points,
+          updatedAt: Timestamp.now(),
+        });
+        console.log(`子供 ${childId} のポイントを ${points} に更新しました`);
+      } else {
+        // 新しいデータを作成
+        await setDoc(childRef, {
+          id: childId,
+          name: name,
+          totalPoints: points,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        });
+        console.log(`子供 ${childId} のデータを初期化しました（ポイント: ${points}）`);
+      }
+    } catch (error) {
+      console.error('子供のデータ初期化/更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
   // 子供のポイントを更新
   async updateChildPoints(childId: string, points: number) {
     if (!isFirebaseInitialized()) {
@@ -622,11 +657,20 @@ export const poiChildService = {
     
     try {
       const childRef = doc(db!, POI_CHILDREN_COLLECTION, childId);
-      await updateDoc(childRef, {
-        totalPoints: points,
-        updatedAt: Timestamp.now(),
-      });
-      console.log(`子供 ${childId} のポイントを ${points} に更新しました`);
+      const childDoc = await getDoc(childRef);
+      
+      if (childDoc.exists()) {
+        // 既存のデータを更新
+        await updateDoc(childRef, {
+          totalPoints: points,
+          updatedAt: Timestamp.now(),
+        });
+        console.log(`子供 ${childId} のポイントを ${points} に更新しました`);
+      } else {
+        // データが存在しない場合は初期化
+        const childName = childId === 'alice' ? 'ありす' : childId === 'kosumo' ? 'こすも' : '子供';
+        await this.initializeOrUpdateChild(childId, childName, points);
+      }
     } catch (error) {
       console.error('ポイントの更新に失敗しました:', error);
       throw error;
