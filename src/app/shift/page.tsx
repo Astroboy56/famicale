@@ -392,6 +392,25 @@ export default function ShiftPage() {
           </button>
         </div>
 
+        {/* 保存・キャンセルボタン */}
+        {pendingShifts.length > 0 && (
+          <div className="mb-4 flex space-x-3">
+            <button
+              onClick={cancelAllPendingShifts}
+              className="flex-1 glass-button py-3 text-white font-medium border border-red-300 border-opacity-30 hover:border-red-200 hover:border-opacity-50 transition-all duration-300"
+            >
+              キャンセル ({pendingShifts.length}件)
+            </button>
+            <button
+              onClick={saveAllPendingShifts}
+              disabled={isSaving}
+              className="flex-1 glass-button py-3 text-white font-semibold border border-green-300 border-opacity-30 hover:border-green-200 hover:border-opacity-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? '保存中...' : `保存 (${pendingShifts.length}件)`}
+            </button>
+          </div>
+        )}
+
                           {/* コマンドボタングリッド */}
          <div className="grid grid-cols-6 gap-2">
            {shiftCommands.map((command) => (
@@ -427,25 +446,6 @@ export default function ShiftPage() {
              </div>
            ))}
          </div>
-
-        {/* 保存・キャンセルボタン */}
-        {pendingShifts.length > 0 && (
-          <div className="mt-4 flex space-x-3">
-            <button
-              onClick={cancelAllPendingShifts}
-              className="flex-1 glass-button py-3 text-white font-medium border border-red-300 border-opacity-30 hover:border-red-200 hover:border-opacity-50 transition-all duration-300"
-            >
-              キャンセル ({pendingShifts.length}件)
-            </button>
-            <button
-              onClick={saveAllPendingShifts}
-              disabled={isSaving}
-              className="flex-1 glass-button py-3 text-white font-semibold border border-green-300 border-opacity-30 hover:border-green-200 hover:border-opacity-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSaving ? '保存中...' : `保存 (${pendingShifts.length}件)`}
-            </button>
-          </div>
-        )}
 
         {/* カスタム編集モーダル */}
         {showCustomEdit && (
