@@ -41,6 +41,8 @@ export default function ShiftPage() {
   const [showCustomEdit, setShowCustomEdit] = useState(false);
   const [pendingShifts, setPendingShifts] = useState<PendingShift[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [showOverwriteModal, setShowOverwriteModal] = useState(false);
+  const [overwriteCommand, setOverwriteCommand] = useState<ShiftCommand | null>(null);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -142,7 +144,9 @@ export default function ShiftPage() {
     const hasPendingShift = pendingShifts.some(shift => shift.date === dateStr);
 
     if (hasExistingShift || hasPendingShift) {
-      alert(`${format(selectedDate, 'M月d日')}には既にシフトが登録されています`);
+      // 上書き確認モーダルを表示
+      setOverwriteCommand(command);
+      setShowOverwriteModal(true);
       return;
     }
 
@@ -172,6 +176,18 @@ export default function ShiftPage() {
 
     setIsSaving(true);
     try {
+      // 上書き対象の既存シフトを削除
+      const deletePromises = pendingShifts.map(async shift => {
+        const existingEvents = events.filter(event => 
+          event.date === shift.date && event.type === 'shift'
+        );
+        return Promise.all(
+          existingEvents.map(event => eventService.deleteEvent(event.id))
+        );
+      });
+
+      await Promise.all(deletePromises);
+
       // 全ての仮登録シフトを一括で保存
       const savePromises = pendingShifts.map(shift => 
         eventService.addEvent({
@@ -212,6 +228,39 @@ export default function ShiftPage() {
       setPendingShifts([]);
       alert('仮登録をキャンセルしました');
     }
+  };
+
+  // 上書き確認モーダルの処理
+  const handleOverwriteConfirm = () => {
+    if (!overwriteCommand || !selectedDate) return;
+
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    
+    // 既存の仮登録を削除
+    setPendingShifts(prev => prev.filter(shift => shift.date !== dateStr));
+    
+    // 新しい仮登録を追加
+    const newPendingShift: PendingShift = {
+      id: `pending-${Date.now()}`,
+      date: dateStr,
+      command: overwriteCommand,
+    };
+
+    setPendingShifts(prev => [...prev, newPendingShift]);
+    console.log(`上書き仮登録: ${overwriteCommand.name}を${format(selectedDate, 'M月d日')}に追加`);
+    
+    // 次の日に移動
+    const nextDay = addDays(selectedDate, 1);
+    setSelectedDate(nextDay);
+    
+    // モーダルを閉じる
+    setShowOverwriteModal(false);
+    setOverwriteCommand(null);
+  };
+
+  const handleOverwriteCancel = () => {
+    setShowOverwriteModal(false);
+    setOverwriteCommand(null);
   };
 
   // カスタムコマンドを削除
@@ -458,6 +507,41 @@ export default function ShiftPage() {
                   className="flex-1 glass-button py-2"
                 >
                   追加
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 上書き確認モーダル */}
+        {showOverwriteModal && overwriteCommand && selectedDate && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="glass-modal p-6 rounded-2xl max-w-sm w-full mx-4">
+              <h3 className="text-lg font-semibold text-white mb-4">シフト上書き確認</h3>
+              <div className="text-white mb-6">
+                <p className="mb-2">
+                  {format(selectedDate, 'M月d日(E)', { locale: ja })}には既にシフトが登録されています。
+                </p>
+                <p className="mb-4">
+                  上書きして「<span className="font-semibold" style={{ color: overwriteCommand.color, backgroundColor: overwriteCommand.bgColor, padding: '2px 6px', borderRadius: '4px' }}>{overwriteCommand.name}</span>」に変更しますか？
+                </p>
+              </div>
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleOverwriteCancel}
+                  className="flex-1 glass-button py-2"
+                >
+                  キャンセル
+                </button>
+                <button
+                  onClick={handleOverwriteConfirm}
+                  className="flex-1 glass-button py-2"
+                  style={{
+                    backgroundColor: overwriteCommand.bgColor,
+                    color: overwriteCommand.color,
+                  }}
+                >
+                  上書き
                 </button>
               </div>
             </div>

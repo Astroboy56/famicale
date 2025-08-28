@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
-import { FAMILY_MEMBERS, Event } from '@/types';
+import { FAMILY_MEMBERS, Event, COLOR_MAP } from '@/types';
 import { eventService } from '@/lib/firestore';
 import EventModal from './EventModal';
 
@@ -134,13 +134,7 @@ export default function ListCalendarPage() {
           <div className="flex items-center space-x-3 flex-1 ml-3">
             {FAMILY_MEMBERS.map((member) => (
               <div key={member.id} className="flex items-center justify-center flex-1">
-                <div className={`text-xs font-semibold p-1 rounded-lg ${
-                  member.id === 'atomu' ? 'text-blue-300 bg-blue-500 bg-opacity-20' :
-                  member.id === 'erika' ? 'text-red-300 bg-red-500 bg-opacity-20' :
-                  member.id === 'kosumo' ? 'text-green-300 bg-green-500 bg-opacity-20' :
-                  member.id === 'alice' ? 'text-pink-300 bg-pink-500 bg-opacity-20' :
-                  'text-white bg-gray-500 bg-opacity-5'
-                }`}>
+                <div className={`text-xs font-semibold p-1 rounded-lg ${COLOR_MAP[member.color].text} ${COLOR_MAP[member.color].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-20`}>
                   {member.name}
                 </div>
               </div>
@@ -179,13 +173,7 @@ export default function ListCalendarPage() {
                          const memberEvents = getEventsForDayAndMember(day, member.id);
                          return (
                            <div key={member.id} className="flex items-center justify-center flex-1">
-                             <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${
-                               member.id === 'atomu' ? 'bg-blue-500 bg-opacity-50' :
-                               member.id === 'erika' ? 'bg-red-500 bg-opacity-50' :
-                               member.id === 'kosumo' ? 'bg-green-500 bg-opacity-50' :
-                               member.id === 'alice' ? 'bg-pink-500 bg-opacity-50' :
-                               'bg-gray-500 bg-opacity-50'
-                             }`}>
+                             <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${COLOR_MAP[member.color].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-50`}>
                                {loading ? (
                                  <div className="text-[10px] text-white text-opacity-60 text-center py-1">
                                    <div className="animate-pulse">...</div>

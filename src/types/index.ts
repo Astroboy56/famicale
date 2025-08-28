@@ -66,7 +66,7 @@ export interface NavigationItem {
 // 家族データ
 export const FAMILY_MEMBERS: FamilyMember[] = [
   { id: 'atomu', name: 'あとむ', color: 'blue' },
-  { id: 'erika', name: 'えりか', color: 'red' },
+  { id: 'erika', name: 'えりか', color: 'orange' },
   { id: 'kosumo', name: 'こすも', color: 'green' },
   { id: 'alice', name: 'ありす', color: 'pink' },
 ];
@@ -88,10 +88,10 @@ export const COLOR_MAP: Record<string, { bg: string; text: string; border: strin
     text: 'text-blue-900',
     border: 'border-blue-300',
   },
-  red: {
-    bg: 'bg-red-400',
-    text: 'text-red-900',
-    border: 'border-red-300',
+  orange: {
+    bg: 'bg-orange-400',
+    text: 'text-orange-900',
+    border: 'border-orange-300',
   },
   green: {
     bg: 'bg-green-400',
