@@ -15,6 +15,16 @@ const firebaseConfig = {
 
 // 環境変数の存在確認
 const isFirebaseConfigValid = () => {
+  console.log('🔍 Firebase設定を確認中...');
+  console.log('環境変数の値:', {
+    apiKey: firebaseConfig.apiKey ? '設定済み' : '未設定',
+    authDomain: firebaseConfig.authDomain ? '設定済み' : '未設定',
+    projectId: firebaseConfig.projectId ? '設定済み' : '未設定',
+    storageBucket: firebaseConfig.storageBucket ? '設定済み' : '未設定',
+    messagingSenderId: firebaseConfig.messagingSenderId ? '設定済み' : '未設定',
+    appId: firebaseConfig.appId ? '設定済み' : '未設定',
+  });
+  
   const isValid = firebaseConfig.apiKey && 
          firebaseConfig.authDomain && 
          firebaseConfig.projectId && 
@@ -22,16 +32,17 @@ const isFirebaseConfigValid = () => {
          firebaseConfig.messagingSenderId && 
          firebaseConfig.appId;
   
-  // デバッグ情報を出力
   if (!isValid) {
-    console.error('Firebase設定が不完全です:', {
-      apiKey: !!firebaseConfig.apiKey,
-      authDomain: !!firebaseConfig.authDomain,
-      projectId: !!firebaseConfig.projectId,
-      storageBucket: !!firebaseConfig.storageBucket,
-      messagingSenderId: !!firebaseConfig.messagingSenderId,
-      appId: !!firebaseConfig.appId,
-    });
+    console.error('❌ Firebase設定が不完全です');
+    console.error('以下の環境変数を設定してください:');
+    console.error('- NEXT_PUBLIC_FIREBASE_API_KEY');
+    console.error('- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN');
+    console.error('- NEXT_PUBLIC_FIREBASE_PROJECT_ID');
+    console.error('- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET');
+    console.error('- NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID');
+    console.error('- NEXT_PUBLIC_FIREBASE_APP_ID');
+  } else {
+    console.log('✅ Firebase設定が有効です');
   }
   
   return isValid;

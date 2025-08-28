@@ -17,10 +17,16 @@ import { Event, TodoItem, PoiTask, PoiWish, PoiRecord } from '@/types';
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {
+  console.log('🔍 Firebase初期化状態を確認中...');
+  console.log('db:', db ? '初期化済み' : '未初期化');
+  
   const initialized = db !== null && db !== undefined;
   if (!initialized) {
-    console.warn('Firebaseが初期化されていません。環境変数を確認してください。');
-    console.warn('アプリはオフラインモードで動作します。');
+    console.warn('⚠️ Firebaseが初期化されていません');
+    console.warn('環境変数の設定を確認してください');
+    console.warn('アプリはオフラインモードで動作します');
+  } else {
+    console.log('✅ Firebaseが正常に初期化されています');
   }
   return initialized;
 };
@@ -64,13 +70,32 @@ export const eventService = {
 
   // 特定の月の予定を取得
   async getEventsByMonth(year: number, month: number) {
+    console.log(`📅 ${year}年${month}月の予定を取得中...`);
+    
     if (!isFirebaseInitialized()) {
-      return [];
+      console.warn('⚠️ Firebaseが初期化されていないため、開発用ダミーデータを返します');
+      // 開発用のダミーデータを返す
+      const dummyEvents: Event[] = [
+        {
+          id: 'dummy-1',
+          title: 'サンプル予定',
+          description: 'Firebase設定前のサンプルデータ',
+          date: `${year}-${String(month).padStart(2, '0')}-15`,
+          familyMemberId: 'atomu',
+          type: 'other',
+          isAllDay: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      ];
+      return dummyEvents;
     }
     
     try {
       const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
       const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+      
+      console.log(`🔍 検索範囲: ${startDate} ～ ${endDate}`);
       
       const q = query(
         collection(db!, EVENTS_COLLECTION),
@@ -79,7 +104,10 @@ export const eventService = {
         orderBy('date', 'asc')
       );
       
+      console.log('📡 Firestoreにクエリを送信中...');
       const querySnapshot = await getDocs(q);
+      console.log(`📊 取得したドキュメント数: ${querySnapshot.size}`);
+      
       const events: Event[] = [];
       
       querySnapshot.forEach((doc) => {
@@ -92,9 +120,10 @@ export const eventService = {
         } as Event);
       });
       
+      console.log(`✅ ${events.length}件の予定を取得しました`);
       return events;
     } catch (error) {
-      console.error('予定の取得に失敗しました:', error);
+      console.error('❌ 予定の取得に失敗しました:', error);
       throw error;
     }
   },
@@ -138,13 +167,32 @@ export const eventService = {
 
   // リアルタイムで予定を監視
   subscribeToEvents(year: number, month: number, callback: (events: Event[]) => void) {
+    console.log(`📡 ${year}年${month}月のリアルタイム監視を開始...`);
+    
     if (!isFirebaseInitialized()) {
-      callback([]);
+      console.warn('⚠️ Firebaseが初期化されていないため、開発用ダミーデータを返します');
+      // 開発用のダミーデータを返す
+      const dummyEvents: Event[] = [
+        {
+          id: 'dummy-1',
+          title: 'サンプル予定',
+          description: 'Firebase設定前のサンプルデータ',
+          date: `${year}-${String(month).padStart(2, '0')}-15`,
+          familyMemberId: 'atomu',
+          type: 'other',
+          isAllDay: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      ];
+      callback(dummyEvents);
       return () => {};
     }
     
     const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
     const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+    
+    console.log(`🔍 監視範囲: ${startDate} ～ ${endDate}`);
     
     const q = query(
       collection(db!, EVENTS_COLLECTION),
@@ -153,7 +201,9 @@ export const eventService = {
       orderBy('date', 'asc')
     );
 
+    console.log('📡 リアルタイムリスナーを設定中...');
     return onSnapshot(q, (querySnapshot) => {
+      console.log(`📊 リアルタイム更新: ${querySnapshot.size}件のドキュメント`);
       const events: Event[] = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();

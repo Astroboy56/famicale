@@ -72,6 +72,16 @@ export default function ConnectionTest() {
             <li>Firestoreへの書き込み権限</li>
             <li>ネットワーク接続</li>
           </ul>
+          <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded">
+            <p className="text-blue-800 text-xs">
+              <strong>設定が必要な場合:</strong><br/>
+              1. Firebase Consoleでプロジェクトを作成<br/>
+              2. ウェブアプリを登録<br/>
+              3. 設定情報を.env.localに追加<br/>
+              4. Firestoreデータベースを作成<br/>
+              5. セキュリティルールを設定
+            </p>
+          </div>
         </div>
       </div>
     </div>
