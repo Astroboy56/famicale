@@ -49,7 +49,13 @@ export function DraggableEvent({ event }: DraggableEventProps) {
     >
       <div className="flex items-center space-x-1">
         <div 
-          className={`px-1 py-0.5 rounded text-xs font-medium text-white ${COLOR_MAP[getMemberColor(event.familyMemberId)].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30 flex-shrink-0`}
+          className={`px-1 py-0.5 rounded text-xs font-medium text-white ${
+            getMemberColor(event.familyMemberId) === 'blue' ? 'bg-blue-500' :
+            getMemberColor(event.familyMemberId) === 'orange' ? 'bg-orange-500' :
+            getMemberColor(event.familyMemberId) === 'green' ? 'bg-green-500' :
+            getMemberColor(event.familyMemberId) === 'pink' ? 'bg-pink-500' :
+            'bg-gray-500'
+          } bg-opacity-30 flex-shrink-0`}
         >
           {getMemberName(event.familyMemberId)}
         </div>

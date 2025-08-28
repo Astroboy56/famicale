@@ -125,7 +125,13 @@ export default function TodoPage() {
                 >
                   <div className="flex flex-col items-center space-y-1">
                     <div
-                      className={`px-2 py-1 rounded-lg text-xs font-medium text-white ${COLOR_MAP[member.color].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30`}
+                      className={`px-2 py-1 rounded-lg text-xs font-medium text-white ${
+                        member.color === 'blue' ? 'bg-blue-500' :
+                        member.color === 'orange' ? 'bg-orange-500' :
+                        member.color === 'green' ? 'bg-green-500' :
+                        member.color === 'pink' ? 'bg-pink-500' :
+                        'bg-gray-500'
+                      } bg-opacity-30`}
                     >
                       {member.name}
                     </div>
@@ -238,7 +244,13 @@ export default function TodoPage() {
                       
                       <div className="flex items-center mt-1 space-x-1">
                         <div
-                          className={`px-1.5 py-0.5 rounded text-xs font-medium text-white ${COLOR_MAP[getMemberColor(todo.createdBy)].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30`}
+                          className={`px-1.5 py-0.5 rounded text-xs font-medium text-white ${
+                            getMemberColor(todo.createdBy) === 'blue' ? 'bg-blue-500' :
+                            getMemberColor(todo.createdBy) === 'orange' ? 'bg-orange-500' :
+                            getMemberColor(todo.createdBy) === 'green' ? 'bg-green-500' :
+                            getMemberColor(todo.createdBy) === 'pink' ? 'bg-pink-500' :
+                            'bg-gray-500'
+                          } bg-opacity-30`}
                         >
                           {getMemberName(todo.createdBy)}
                         </div>

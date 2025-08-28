@@ -134,7 +134,13 @@ export default function ListCalendarPage() {
           <div className="flex items-center space-x-3 flex-1 ml-3">
             {FAMILY_MEMBERS.map((member) => (
               <div key={member.id} className="flex items-center justify-center flex-1">
-                <div className={`text-xs font-semibold p-1 rounded-lg text-white ${COLOR_MAP[member.color].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30`}>
+                <div className={`text-xs font-semibold p-1 rounded-lg text-white ${
+                  member.color === 'blue' ? 'bg-blue-500' :
+                  member.color === 'orange' ? 'bg-orange-500' :
+                  member.color === 'green' ? 'bg-green-500' :
+                  member.color === 'pink' ? 'bg-pink-500' :
+                  'bg-gray-500'
+                } bg-opacity-30`}>
                   {member.name}
                 </div>
               </div>
@@ -173,7 +179,13 @@ export default function ListCalendarPage() {
                          const memberEvents = getEventsForDayAndMember(day, member.id);
                          return (
                            <div key={member.id} className="flex items-center justify-center flex-1">
-                             <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${COLOR_MAP[member.color].bg.replace('bg-', 'bg-').replace('-400', '-500')} bg-opacity-30`}>
+                             <div className={`min-w-[60px] space-y-0.5 p-1 rounded-lg ${
+                               member.color === 'blue' ? 'bg-blue-500' :
+                               member.color === 'orange' ? 'bg-orange-500' :
+                               member.color === 'green' ? 'bg-green-500' :
+                               member.color === 'pink' ? 'bg-pink-500' :
+                               'bg-gray-500'
+                             } bg-opacity-30`}>
                                {loading ? (
                                  <div className="text-[10px] text-white text-opacity-60 text-center py-1">
                                    <div className="animate-pulse">...</div>
