@@ -6,6 +6,8 @@ import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { FAMILY_MEMBERS, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
+import { getWeatherByZipcode, getWeatherForDate, WeatherData } from '@/lib/weatherService';
+import WeatherIcon from '@/components/WeatherIcon';
 import EventModal from './EventModal';
 
 export default function ListCalendarPage() {
@@ -14,6 +16,10 @@ export default function ListCalendarPage() {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherEnabled, setWeatherEnabled] = useState(false);
+  const [weatherZipcode, setWeatherZipcode] = useState('');
 
   // カレンダー日付をメモ化
   const { days } = useMemo(() => {
@@ -24,6 +30,40 @@ export default function ListCalendarPage() {
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
     return { days };
   }, [currentDate]);
+
+  // 天気設定を読み込み
+  useEffect(() => {
+    const savedWeatherEnabled = localStorage.getItem('weatherEnabled');
+    const savedWeatherZipcode = localStorage.getItem('weatherZipcode');
+    
+    if (savedWeatherEnabled) {
+      setWeatherEnabled(JSON.parse(savedWeatherEnabled));
+    }
+    if (savedWeatherZipcode) {
+      setWeatherZipcode(savedWeatherZipcode);
+    }
+  }, []);
+
+  // 天気データを取得
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      if (!weatherEnabled || !weatherZipcode || weatherZipcode.length !== 7) {
+        return;
+      }
+
+      setWeatherLoading(true);
+      try {
+        const data = await getWeatherByZipcode(weatherZipcode);
+        setWeatherData(data);
+      } catch (error) {
+        console.error('天気データの取得に失敗:', error);
+      } finally {
+        setWeatherLoading(false);
+      }
+    };
+
+    fetchWeatherData();
+  }, [weatherEnabled, weatherZipcode, currentDate]);
 
   // リアルタイムで予定データを監視
   useEffect(() => {
@@ -170,6 +210,25 @@ export default function ListCalendarPage() {
                          }`}>
                            {format(day, '(E)', { locale: ja })}
                          </div>
+                         {/* 天気アイコン */}
+                         {weatherEnabled && (
+                           <div className="mt-1">
+                             {weatherLoading ? (
+                               <div className="animate-pulse w-4 h-4 bg-white bg-opacity-20 rounded mx-auto" />
+                             ) : (
+                               (() => {
+                                 const dayWeather = getWeatherForDate(weatherData, format(day, 'yyyy-MM-dd'));
+                                 return dayWeather ? (
+                                   <WeatherIcon 
+                                     iconCode={dayWeather.icon} 
+                                     size={16} 
+                                     className="mx-auto"
+                                   />
+                                 ) : null;
+                               })()
+                             )}
+                           </div>
+                         )}
                        </div>
                      </div>
 

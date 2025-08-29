@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { ArrowLeft, Trash2, CheckSquare, Palette } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Trash2, CheckSquare, Palette, Cloud } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
@@ -13,7 +13,39 @@ export default function SettingsPage() {
   const [isDeletingTodos, setIsDeletingTodos] = useState(false);
   const [message, setMessage] = useState('');
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [weatherEnabled, setWeatherEnabled] = useState(false);
+  const [weatherZipcode, setWeatherZipcode] = useState('');
+  const [isSavingWeather, setIsSavingWeather] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  // 天気設定をローカルストレージから読み込み
+  useEffect(() => {
+    const savedWeatherEnabled = localStorage.getItem('weatherEnabled');
+    const savedWeatherZipcode = localStorage.getItem('weatherZipcode');
+    
+    if (savedWeatherEnabled) {
+      setWeatherEnabled(JSON.parse(savedWeatherEnabled));
+    }
+    if (savedWeatherZipcode) {
+      setWeatherZipcode(savedWeatherZipcode);
+    }
+  }, []);
+
+  // 天気設定を保存
+  const handleSaveWeatherSettings = () => {
+    setIsSavingWeather(true);
+    try {
+      localStorage.setItem('weatherEnabled', JSON.stringify(weatherEnabled));
+      localStorage.setItem('weatherZipcode', weatherZipcode);
+      setMessage('天気設定を保存しました');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('天気設定の保存に失敗:', error);
+      setMessage('天気設定の保存に失敗しました');
+    } finally {
+      setIsSavingWeather(false);
+    }
+  };
 
   const handleDeleteAllEvents = async () => {
     if (!confirm('本当に全てのカレンダー予定を削除しますか？この操作は取り消せません。')) {
@@ -112,6 +144,61 @@ export default function SettingsPage() {
                 <p className="text-white text-sm text-center">{message}</p>
               </div>
             )}
+          </div>
+
+          {/* 天気予報設定 */}
+          <div className="glass-card p-4 fade-in">
+            <h2 className="text-lg font-semibold text-white mb-4">天気予報設定</h2>
+            
+            {/* 天気表示の有効/無効 */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between p-4 glass-button text-white font-medium border border-blue-300 border-opacity-30 bg-blue-500 bg-opacity-5">
+                <div className="flex items-center space-x-3">
+                  <Cloud size={20} className="text-blue-300" />
+                  <span>天気予報を表示</span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={weatherEnabled}
+                    onChange={(e) => setWeatherEnabled(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+            </div>
+
+            {/* 郵便番号設定 */}
+            {weatherEnabled && (
+              <div className="mb-4">
+                <div className="p-4 glass-card">
+                  <label className="block text-white text-sm font-medium mb-2">
+                    郵便番号（7桁）
+                  </label>
+                  <input
+                    type="text"
+                    value={weatherZipcode}
+                    onChange={(e) => setWeatherZipcode(e.target.value)}
+                    placeholder="例: 1000001"
+                    maxLength={7}
+                    className="w-full px-3 py-2 glass-input text-white placeholder-white placeholder-opacity-60 mb-3"
+                  />
+                  <button
+                    onClick={handleSaveWeatherSettings}
+                    disabled={isSavingWeather || !weatherZipcode || weatherZipcode.length !== 7}
+                    className="w-full glass-button py-2 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSavingWeather ? '保存中...' : '設定を保存'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 設定説明 */}
+            <div className="text-white text-opacity-70 text-sm">
+              天気予報を有効にすると、リストビューの日付の隣に天気アイコンが表示されます。
+            </div>
           </div>
 
           {/* 画面テーマ設定 */}
