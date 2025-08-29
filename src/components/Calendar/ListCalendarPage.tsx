@@ -38,8 +38,8 @@ export default function ListCalendarPage() {
     
     console.log('天気設定読み込み:', { savedWeatherEnabled, savedWeatherZipcode });
     console.log('環境変数確認:', {
-      apiKey: process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ? '設定済み' : '未設定',
-      apiKeyLength: process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY?.length
+      apiKey: process.env.NEXT_PUBLIC_WEATHERAPI_KEY ? '設定済み' : '未設定',
+      apiKeyLength: process.env.NEXT_PUBLIC_WEATHERAPI_KEY?.length
     });
     
     if (savedWeatherEnabled) {
@@ -154,7 +154,7 @@ export default function ListCalendarPage() {
         <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-20 rounded text-xs text-white">
           天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'} | 表示: アイコン+気温
           <br />
-          最新データ: {weatherData.length > 0 ? `${weatherData[0]?.date} (${weatherData[0]?.temp}°C)` : 'なし'} | APIキー: {process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ? '設定済み' : '未設定'} ({process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY?.length || 0}文字)
+          最新データ: {weatherData.length > 0 ? `${weatherData[0]?.date} (${weatherData[0]?.temp}°C)` : 'なし'} | APIキー: {process.env.NEXT_PUBLIC_WEATHERAPI_KEY ? '設定済み' : '未設定'} ({process.env.NEXT_PUBLIC_WEATHERAPI_KEY?.length || 0}文字)
         </div>
       )}
       
