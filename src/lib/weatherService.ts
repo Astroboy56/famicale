@@ -11,6 +11,13 @@ export interface WeatherData {
 const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
+// APIキーの読み込み確認
+console.log('weatherService初期化:', {
+  apiKey: OPENWEATHER_API_KEY ? '設定済み' : '未設定',
+  apiKeyLength: OPENWEATHER_API_KEY?.length,
+  envVar: process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ? '存在' : '不存在'
+});
+
 // 天気アイコンマッピング
 const WEATHER_ICONS: { [key: string]: string } = {
   '01d': 'Sun',        // 晴れ
