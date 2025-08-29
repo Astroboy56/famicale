@@ -18,6 +18,7 @@ export interface Event {
   familyMemberId: string;
   type: EventType;
   isAllDay?: boolean;
+  googleCalendarId?: string; // Google CalendarのイベントID
   createdAt: Date;
   updatedAt: Date;
 }

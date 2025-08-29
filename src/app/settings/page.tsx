@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Trash2, CheckSquare, Palette, Cloud } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { ArrowLeft, Trash2, CheckSquare, Palette, Cloud, Calendar } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 import { getWeatherByZipcode, WeatherData } from '@/lib/weatherService';
+import { googleCalendarService } from '@/lib/googleCalendar';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -19,7 +20,10 @@ export default function SettingsPage() {
   const [isSavingWeather, setIsSavingWeather] = useState(false);
   const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
   const [weatherLoading, setWeatherLoading] = useState(false);
+  const [googleAuthStatus, setGoogleAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
+  const [googleAuthLoading, setGoogleAuthLoading] = useState(false);
   const { theme, setTheme } = useTheme();
+  const searchParams = useSearchParams();
 
   // 天気設定をローカルストレージから読み込み
   useEffect(() => {
@@ -56,6 +60,53 @@ export default function SettingsPage() {
 
     fetchWeatherData();
   }, [weatherEnabled, weatherZipcode]);
+
+  // Google Calendar認証状態をチェック
+  useEffect(() => {
+    const checkGoogleAuth = async () => {
+      try {
+        const isAuthenticated = await googleCalendarService.checkAuth();
+        setGoogleAuthStatus(isAuthenticated ? 'authenticated' : 'unauthenticated');
+      } catch (error) {
+        console.error('Google認証チェックエラー:', error);
+        setGoogleAuthStatus('unauthenticated');
+      }
+    };
+
+    checkGoogleAuth();
+  }, []);
+
+  // URLパラメータからメッセージを処理
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const success = searchParams.get('success');
+
+    if (error) {
+      switch (error) {
+        case 'auth_failed':
+          setMessage('Google Calendar認証に失敗しました');
+          break;
+        case 'no_code':
+          setMessage('認証コードが取得できませんでした');
+          break;
+        case 'token_failed':
+          setMessage('トークンの取得に失敗しました');
+          break;
+        case 'callback_failed':
+          setMessage('認証コールバックに失敗しました');
+          break;
+        default:
+          setMessage('認証エラーが発生しました');
+      }
+      setTimeout(() => setMessage(''), 5000);
+    }
+
+    if (success === 'google_auth') {
+      setMessage('Google Calendar連携が完了しました');
+      setGoogleAuthStatus('authenticated');
+      setTimeout(() => setMessage(''), 3000);
+    }
+  }, [searchParams]);
 
   // 天気設定を保存
   const handleSaveWeatherSettings = () => {
@@ -104,6 +155,35 @@ export default function SettingsPage() {
       setMessage('削除に失敗しました');
     } finally {
       setIsDeletingTodos(false);
+    }
+  };
+
+  // Google Calendar認証
+  const handleGoogleAuth = async () => {
+    setGoogleAuthLoading(true);
+    try {
+      const response = await fetch('/api/auth/google');
+      const data = await response.json();
+      
+      if (data.authUrl) {
+        window.location.href = data.authUrl;
+      } else {
+        setMessage('認証URLの取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Google認証エラー:', error);
+      setMessage('Google Calendar認証に失敗しました');
+    } finally {
+      setGoogleAuthLoading(false);
+    }
+  };
+
+  // Google Calendar連携解除
+  const handleGoogleLogout = () => {
+    if (confirm('Google Calendar連携を解除しますか？')) {
+      googleCalendarService.logout();
+      setGoogleAuthStatus('unauthenticated');
+      setMessage('Google Calendar連携を解除しました');
     }
   };
 
@@ -170,6 +250,73 @@ export default function SettingsPage() {
                 <p className="text-white text-sm text-center">{message}</p>
               </div>
             )}
+          </div>
+
+          {/* Google Calendar連携 */}
+          <div className="glass-card p-4 fade-in">
+            <h2 className="text-lg font-semibold text-white mb-4">Google Calendar連携</h2>
+            
+            {/* 連携状態表示 */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between p-4 glass-button text-white font-medium border border-green-300 border-opacity-30 bg-green-500 bg-opacity-5">
+                <div className="flex items-center space-x-3">
+                  <Calendar size={20} className="text-green-300" />
+                  <span>Google Calendar連携</span>
+                </div>
+                <div className="text-sm">
+                  {googleAuthStatus === 'checking' && (
+                    <span className="text-white text-opacity-70">確認中...</span>
+                  )}
+                  {googleAuthStatus === 'authenticated' && (
+                    <span className="text-green-300">連携済み</span>
+                  )}
+                  {googleAuthStatus === 'unauthenticated' && (
+                    <span className="text-red-300">未連携</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 連携ボタン */}
+            {googleAuthStatus === 'unauthenticated' && (
+              <div className="mb-4">
+                <button
+                  onClick={handleGoogleAuth}
+                  disabled={googleAuthLoading}
+                  className="w-full flex items-center justify-center p-4 glass-button text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed border border-blue-300 border-opacity-30 hover:border-blue-200 hover:border-opacity-50 transition-all duration-300 bg-blue-500 bg-opacity-5"
+                >
+                  {googleAuthLoading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  ) : (
+                    <div className="flex items-center space-x-3">
+                      <Calendar size={20} className="text-blue-300" />
+                      <span>Google Calendarと連携</span>
+                    </div>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* 連携解除ボタン */}
+            {googleAuthStatus === 'authenticated' && (
+              <div className="mb-4">
+                <button
+                  onClick={handleGoogleLogout}
+                  className="w-full flex items-center justify-center p-4 glass-button text-white font-medium border border-red-300 border-opacity-30 hover:border-red-200 hover:border-opacity-50 transition-all duration-300 bg-red-500 bg-opacity-5"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Calendar size={20} className="text-red-300" />
+                    <span>連携を解除</span>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {/* 連携説明 */}
+            <div className="text-white text-opacity-70 text-sm">
+              Google Calendarと連携すると、アプリで登録した予定が自動的にGoogle Calendarに同期されます。
+              アマゾンアレクサでも予定を確認できます。
+            </div>
           </div>
 
           {/* 天気予報設定 */}

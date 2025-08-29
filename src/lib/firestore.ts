@@ -17,6 +17,7 @@ import { db } from './firebase';
 import app from './firebase';
 import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification } from '@/types';
 import { createEventAddedNotification, createEventUpdatedNotification, createTodoAddedNotification, createTodoUpdatedNotification, createPoiAddedNotification } from './notificationUtils';
+import { googleCalendarService } from './googleCalendar';
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {
@@ -68,6 +69,26 @@ export const eventService = {
       });
       
       console.log('予定追加が完了しました。ID:', docRef.id);
+      
+      // Google Calendarに同期
+      try {
+        const createdEvent = {
+          id: docRef.id,
+          ...cleanEvent,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } as Event;
+        
+        const googleEventId = await googleCalendarService.createEvent(createdEvent);
+        
+        if (googleEventId) {
+          // Google Calendar IDを更新
+          await updateDoc(docRef, { googleCalendarId: googleEventId });
+          console.log('Google Calendarに同期しました:', googleEventId);
+        }
+      } catch (googleError) {
+        console.warn('Google Calendar同期に失敗:', googleError);
+      }
       
       // 通知を作成
       const createdEvent = {
@@ -144,10 +165,32 @@ export const eventService = {
       );
 
       const eventRef = doc(db!, EVENTS_COLLECTION, eventId);
+      
+      // 既存のイベントを取得してGoogle Calendar IDを確認
+      const eventDoc = await getDoc(eventRef);
+      const existingEvent = eventDoc.data() as Event;
+      
       await updateDoc(eventRef, {
         ...cleanUpdates,
         updatedAt: Timestamp.now(),
       });
+      
+      // Google Calendarに同期
+      if (existingEvent?.googleCalendarId) {
+        try {
+          const updatedEvent = {
+            ...existingEvent,
+            ...updates,
+            id: eventId,
+            updatedAt: new Date(),
+          } as Event;
+          
+          await googleCalendarService.updateEvent(updatedEvent, existingEvent.googleCalendarId);
+          console.log('Google Calendarを更新しました:', existingEvent.googleCalendarId);
+        } catch (googleError) {
+          console.warn('Google Calendar更新に失敗:', googleError);
+        }
+      }
       
       // 通知を作成
       const updatedEvent = {
@@ -169,7 +212,22 @@ export const eventService = {
     }
     
     try {
-      await deleteDoc(doc(db!, EVENTS_COLLECTION, eventId));
+      // 既存のイベントを取得してGoogle Calendar IDを確認
+      const eventRef = doc(db!, EVENTS_COLLECTION, eventId);
+      const eventDoc = await getDoc(eventRef);
+      const existingEvent = eventDoc.data() as Event;
+      
+      await deleteDoc(eventRef);
+      
+      // Google Calendarから削除
+      if (existingEvent?.googleCalendarId) {
+        try {
+          await googleCalendarService.deleteEvent(existingEvent.googleCalendarId);
+          console.log('Google Calendarから削除しました:', existingEvent.googleCalendarId);
+        } catch (googleError) {
+          console.warn('Google Calendar削除に失敗:', googleError);
+        }
+      }
     } catch (error) {
       console.error('予定の削除に失敗しました:', error);
       throw error;
