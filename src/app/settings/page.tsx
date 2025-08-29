@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
+import { getWeatherByZipcode, WeatherData } from '@/lib/weatherService';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -16,6 +17,8 @@ export default function SettingsPage() {
   const [weatherEnabled, setWeatherEnabled] = useState(false);
   const [weatherZipcode, setWeatherZipcode] = useState('');
   const [isSavingWeather, setIsSavingWeather] = useState(false);
+  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
+  const [weatherLoading, setWeatherLoading] = useState(false);
   const { theme, setTheme } = useTheme();
 
   // 天気設定をローカルストレージから読み込み
@@ -30,6 +33,29 @@ export default function SettingsPage() {
       setWeatherZipcode(savedWeatherZipcode);
     }
   }, []);
+
+  // 天気データを取得
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      if (!weatherEnabled || !weatherZipcode || weatherZipcode.length !== 7) {
+        setWeatherData([]);
+        return;
+      }
+
+      setWeatherLoading(true);
+      try {
+        const data = await getWeatherByZipcode(weatherZipcode);
+        setWeatherData(data);
+      } catch (error) {
+        console.error('天気データの取得に失敗:', error);
+        setWeatherData([]);
+      } finally {
+        setWeatherLoading(false);
+      }
+    };
+
+    fetchWeatherData();
+  }, [weatherEnabled, weatherZipcode]);
 
   // 天気設定を保存
   const handleSaveWeatherSettings = () => {
@@ -196,9 +222,25 @@ export default function SettingsPage() {
             )}
 
             {/* 設定説明 */}
-            <div className="text-white text-opacity-70 text-sm">
+            <div className="text-white text-opacity-70 text-sm mb-4">
               天気予報を有効にすると、リストビューの日付の隣に天気アイコンが表示されます。
             </div>
+
+            {/* デバッグ情報 */}
+            {weatherEnabled && (
+              <div className="p-3 bg-blue-500 bg-opacity-10 rounded-lg border border-blue-300 border-opacity-30">
+                <h3 className="text-white font-medium text-sm mb-2">天気予報の状態</h3>
+                <div className="text-white text-xs space-y-1">
+                  <div>郵便番号: {weatherZipcode}</div>
+                  <div>データ件数: {weatherData.length}件</div>
+                  <div>ローディング: {weatherLoading ? 'はい' : 'いいえ'}</div>
+                  <div>API: Open-Meteo（無料・制限なし）</div>
+                  {weatherData.length > 0 && (
+                    <div>最新データ: {weatherData[0]?.date} ({weatherData[0]?.temp}°C)</div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 画面テーマ設定 */}

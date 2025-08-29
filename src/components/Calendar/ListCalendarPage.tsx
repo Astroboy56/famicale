@@ -148,14 +148,7 @@ export default function ListCalendarPage() {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* デバッグ情報 */}
-      {weatherEnabled && (
-        <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-20 rounded text-xs text-white">
-          天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'} | 表示: 7日間+アイコン+気温
-          <br />
-          最新データ: {weatherData.length > 0 ? `${weatherData[0]?.date} (${weatherData[0]?.temp}°C)` : 'なし'} | API: Open-Meteo（無料・制限なし）
-        </div>
-      )}
+
       
       {/* ヘッダー */}
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
