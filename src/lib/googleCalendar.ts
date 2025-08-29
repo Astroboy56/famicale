@@ -1,3 +1,6 @@
+// サーバーサイド専用のGoogle Calendar API設定
+// クライアントサイドでは使用しない
+
 import { google } from 'googleapis';
 import { Event } from '@/types';
 
@@ -35,23 +38,14 @@ class TokenManager {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.expiryDate = expiryDate;
-    
-    // ローカルストレージに保存
-    localStorage.setItem('google_access_token', accessToken);
-    localStorage.setItem('google_refresh_token', refreshToken);
-    localStorage.setItem('google_expiry_date', expiryDate.toString());
   }
 
-  // トークンを読み込み
-  loadTokens() {
-    const accessToken = localStorage.getItem('google_access_token');
-    const refreshToken = localStorage.getItem('google_refresh_token');
-    const expiryDate = localStorage.getItem('google_expiry_date');
-
+  // トークンを読み込み（サーバーサイド専用）
+  loadTokens(accessToken?: string, refreshToken?: string, expiryDate?: number) {
     if (accessToken && refreshToken && expiryDate) {
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
-      this.expiryDate = parseInt(expiryDate);
+      this.expiryDate = parseInt(expiryDate.toString());
       return true;
     }
     return false;
@@ -80,10 +74,6 @@ class TokenManager {
     this.accessToken = null;
     this.refreshToken = null;
     this.expiryDate = null;
-    
-    localStorage.removeItem('google_access_token');
-    localStorage.removeItem('google_refresh_token');
-    localStorage.removeItem('google_expiry_date');
   }
 }
 
@@ -106,7 +96,7 @@ class GoogleCalendarService {
   }
 
   // 認証コードからトークンを取得
-  async getTokensFromCode(code: string): Promise<boolean> {
+  async getTokensFromCode(code: string): Promise<{ accessToken: string; refreshToken: string; expiryDate: number } | null> {
     try {
       const { tokens } = await oauth2Client.getToken(code);
       
@@ -119,20 +109,25 @@ class GoogleCalendarService {
         
         // OAuth2クライアントにトークンを設定
         oauth2Client.setCredentials(tokens);
-        return true;
+        
+        return {
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token,
+          expiryDate: tokens.expiry_date
+        };
       }
-      return false;
+      return null;
     } catch (error) {
       console.error('トークン取得エラー:', error);
-      return false;
+      return null;
     }
   }
 
   // 認証状態をチェック
-  async checkAuth(): Promise<boolean> {
-    // ローカルストレージからトークンを読み込み
-    if (!this.tokenManager.loadTokens()) {
-      return false;
+  async checkAuth(accessToken?: string, refreshToken?: string, expiryDate?: number): Promise<boolean> {
+    // トークンを設定
+    if (accessToken && refreshToken && expiryDate) {
+      this.tokenManager.loadTokens(accessToken, refreshToken, expiryDate);
     }
 
     // トークンが有効かチェック
@@ -142,9 +137,9 @@ class GoogleCalendarService {
     }
 
     // OAuth2クライアントにトークンを設定
-    const accessToken = this.tokenManager.getAccessToken();
-    if (accessToken) {
-      oauth2Client.setCredentials({ access_token: accessToken });
+    const currentAccessToken = this.tokenManager.getAccessToken();
+    if (currentAccessToken) {
+      oauth2Client.setCredentials({ access_token: currentAccessToken });
       return true;
     }
 
@@ -181,9 +176,9 @@ class GoogleCalendarService {
   }
 
   // イベントをGoogle Calendarに作成
-  async createEvent(event: Event): Promise<string | null> {
+  async createEvent(event: Event, accessToken?: string, refreshToken?: string, expiryDate?: number): Promise<string | null> {
     try {
-      const isAuthenticated = await this.checkAuth();
+      const isAuthenticated = await this.checkAuth(accessToken, refreshToken, expiryDate);
       if (!isAuthenticated) {
         throw new Error('Google Calendar認証が必要です');
       }
@@ -224,9 +219,9 @@ class GoogleCalendarService {
   }
 
   // イベントをGoogle Calendarで更新
-  async updateEvent(event: Event, googleEventId: string): Promise<boolean> {
+  async updateEvent(event: Event, googleEventId: string, accessToken?: string, refreshToken?: string, expiryDate?: number): Promise<boolean> {
     try {
-      const isAuthenticated = await this.checkAuth();
+      const isAuthenticated = await this.checkAuth(accessToken, refreshToken, expiryDate);
       if (!isAuthenticated) {
         throw new Error('Google Calendar認証が必要です');
       }
@@ -268,9 +263,9 @@ class GoogleCalendarService {
   }
 
   // イベントをGoogle Calendarから削除
-  async deleteEvent(googleEventId: string): Promise<boolean> {
+  async deleteEvent(googleEventId: string, accessToken?: string, refreshToken?: string, expiryDate?: number): Promise<boolean> {
     try {
-      const isAuthenticated = await this.checkAuth();
+      const isAuthenticated = await this.checkAuth(accessToken, refreshToken, expiryDate);
       if (!isAuthenticated) {
         throw new Error('Google Calendar認証が必要です');
       }

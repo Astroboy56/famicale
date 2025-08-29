@@ -16,10 +16,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/settings?error=no_code', request.url));
     }
 
-    const success = await googleCalendarService.getTokensFromCode(code);
+    const tokens = await googleCalendarService.getTokensFromCode(code);
     
-    if (success) {
-      return NextResponse.redirect(new URL('/settings?success=google_auth', request.url));
+    if (tokens) {
+      // トークンをクエリパラメータとして渡す
+      const redirectUrl = new URL('/settings?success=google_auth', request.url);
+      redirectUrl.searchParams.set('access_token', tokens.accessToken);
+      redirectUrl.searchParams.set('refresh_token', tokens.refreshToken);
+      redirectUrl.searchParams.set('expiry_date', tokens.expiryDate.toString());
+      return NextResponse.redirect(redirectUrl);
     } else {
       return NextResponse.redirect(new URL('/settings?error=token_failed', request.url));
     }

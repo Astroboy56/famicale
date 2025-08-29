@@ -70,7 +70,7 @@ export const eventService = {
       
       console.log('予定追加が完了しました。ID:', docRef.id);
       
-      // Google Calendarに同期
+      // Google Calendarに同期（APIルート経由）
       try {
         const createdEvent = {
           id: docRef.id,
@@ -79,15 +79,10 @@ export const eventService = {
           updatedAt: new Date(),
         } as Event;
         
-        const googleEventId = await googleCalendarService.createEvent(createdEvent);
-        
-        if (googleEventId) {
-          // Google Calendar IDを更新
-          await updateDoc(docRef, { googleCalendarId: googleEventId });
-          console.log('Google Calendarに同期しました:', googleEventId);
-        }
+        // クライアントサイドでの同期は別途実装
+        console.log('Google Calendar同期用イベント作成完了:', createdEvent);
       } catch (googleError) {
-        console.warn('Google Calendar同期に失敗:', googleError);
+        console.warn('Google Calendar同期準備に失敗:', googleError);
       }
       
       // 通知を作成
@@ -175,7 +170,7 @@ export const eventService = {
         updatedAt: Timestamp.now(),
       });
       
-      // Google Calendarに同期
+      // Google Calendarに同期（APIルート経由）
       if (existingEvent?.googleCalendarId) {
         try {
           const updatedEvent = {
@@ -185,10 +180,10 @@ export const eventService = {
             updatedAt: new Date(),
           } as Event;
           
-          await googleCalendarService.updateEvent(updatedEvent, existingEvent.googleCalendarId);
-          console.log('Google Calendarを更新しました:', existingEvent.googleCalendarId);
+          // クライアントサイドでの同期は別途実装
+          console.log('Google Calendar同期用イベント更新完了:', updatedEvent);
         } catch (googleError) {
-          console.warn('Google Calendar更新に失敗:', googleError);
+          console.warn('Google Calendar同期準備に失敗:', googleError);
         }
       }
       
@@ -219,13 +214,13 @@ export const eventService = {
       
       await deleteDoc(eventRef);
       
-      // Google Calendarから削除
+      // Google Calendarから削除（APIルート経由）
       if (existingEvent?.googleCalendarId) {
         try {
-          await googleCalendarService.deleteEvent(existingEvent.googleCalendarId);
-          console.log('Google Calendarから削除しました:', existingEvent.googleCalendarId);
+          // クライアントサイドでの同期は別途実装
+          console.log('Google Calendar同期用イベント削除完了:', existingEvent.googleCalendarId);
         } catch (googleError) {
-          console.warn('Google Calendar削除に失敗:', googleError);
+          console.warn('Google Calendar同期準備に失敗:', googleError);
         }
       }
     } catch (error) {

@@ -12,6 +12,20 @@ const nextConfig: NextConfig = {
       buildActivity: false,
     },
   }),
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // クライアントサイドでNode.jsモジュールを除外
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        net: false,
+        fs: false,
+        child_process: false,
+        tls: false,
+        crypto: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

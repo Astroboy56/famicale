@@ -7,7 +7,6 @@ import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 import { getWeatherByZipcode, WeatherData } from '@/lib/weatherService';
-import { googleCalendarService } from '@/lib/googleCalendar';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -63,10 +62,20 @@ export default function SettingsPage() {
 
   // Google Calendar認証状態をチェック
   useEffect(() => {
-    const checkGoogleAuth = async () => {
+    const checkGoogleAuth = () => {
       try {
-        const isAuthenticated = await googleCalendarService.checkAuth();
-        setGoogleAuthStatus(isAuthenticated ? 'authenticated' : 'unauthenticated');
+        const accessToken = localStorage.getItem('google_access_token');
+        const refreshToken = localStorage.getItem('google_refresh_token');
+        const expiryDate = localStorage.getItem('google_expiry_date');
+        
+        if (accessToken && refreshToken && expiryDate) {
+          const expiry = parseInt(expiryDate);
+          if (Date.now() < expiry) {
+            setGoogleAuthStatus('authenticated');
+            return;
+          }
+        }
+        setGoogleAuthStatus('unauthenticated');
       } catch (error) {
         console.error('Google認証チェックエラー:', error);
         setGoogleAuthStatus('unauthenticated');
@@ -102,9 +111,23 @@ export default function SettingsPage() {
     }
 
     if (success === 'google_auth') {
-      setMessage('Google Calendar連携が完了しました');
-      setGoogleAuthStatus('authenticated');
-      setTimeout(() => setMessage(''), 3000);
+      // トークンをローカルストレージに保存
+      const accessToken = searchParams.get('access_token');
+      const refreshToken = searchParams.get('refresh_token');
+      const expiryDate = searchParams.get('expiry_date');
+      
+      if (accessToken && refreshToken && expiryDate) {
+        localStorage.setItem('google_access_token', accessToken);
+        localStorage.setItem('google_refresh_token', refreshToken);
+        localStorage.setItem('google_expiry_date', expiryDate);
+        
+        setMessage('Google Calendar連携が完了しました');
+        setGoogleAuthStatus('authenticated');
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        setMessage('トークンの保存に失敗しました');
+        setTimeout(() => setMessage(''), 5000);
+      }
     }
   }, [searchParams]);
 
@@ -181,7 +204,9 @@ export default function SettingsPage() {
   // Google Calendar連携解除
   const handleGoogleLogout = () => {
     if (confirm('Google Calendar連携を解除しますか？')) {
-      googleCalendarService.logout();
+      localStorage.removeItem('google_access_token');
+      localStorage.removeItem('google_refresh_token');
+      localStorage.removeItem('google_expiry_date');
       setGoogleAuthStatus('unauthenticated');
       setMessage('Google Calendar連携を解除しました');
     }
