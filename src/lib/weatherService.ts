@@ -90,6 +90,8 @@ const setCachedWeather = (cacheKey: string, data: WeatherData[]): void => {
 
 // メイン関数：郵便番号から天気予報を取得
 export const getWeatherByZipcode = async (zipcode: string): Promise<WeatherData[]> => {
+  console.log('getWeatherByZipcode開始:', zipcode, 'APIキー:', OPENWEATHER_API_KEY ? '設定済み' : '未設定');
+  
   if (!OPENWEATHER_API_KEY) {
     console.warn('OpenWeatherMap APIキーが設定されていません');
     return [];
@@ -108,10 +110,14 @@ export const getWeatherByZipcode = async (zipcode: string): Promise<WeatherData[
     console.log('天気データを取得中:', zipcode);
     
     // 座標を取得
+    console.log('座標取得開始:', zipcode);
     const coords = await getCoordinatesFromZipcode(zipcode);
+    console.log('座標取得完了:', coords);
     
     // 天気予報を取得
+    console.log('天気予報取得開始:', coords);
     const weatherData = await getWeatherForecast(coords.lat, coords.lon);
+    console.log('天気予報取得完了:', weatherData.length, '件');
     
     // キャッシュに保存
     setCachedWeather(cacheKey, weatherData);

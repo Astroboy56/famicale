@@ -146,6 +146,8 @@ export default function ListCalendarPage() {
       {weatherEnabled && (
         <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-20 rounded text-xs text-white">
           天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'} | 表示: アイコン+気温
+          <br />
+          最新データ: {weatherData.length > 0 ? `${weatherData[0]?.date} (${weatherData[0]?.temp}°C)` : 'なし'} | APIキー: {process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ? '設定済み' : '未設定'}
         </div>
       )}
       
@@ -232,8 +234,9 @@ export default function ListCalendarPage() {
                              ) : (
                                (() => {
                                  const dayWeather = getWeatherForDate(weatherData, format(day, 'yyyy-MM-dd'));
+                                 console.log('天気データ検索:', format(day, 'yyyy-MM-dd'), '全データ件数:', weatherData.length, '検索結果:', dayWeather);
                                  if (dayWeather) {
-                                   console.log('天気アイコン表示:', format(day, 'yyyy-MM-dd'), dayWeather.icon, dayWeather.temp);
+                                   console.log('天気アイコン表示:', format(day, 'yyyy-MM-dd'), dayWeather.icon, dayWeather.temp, '気温タイプ:', typeof dayWeather.temp);
                                    return (
                                      <div className="flex flex-col items-center space-y-0.5">
                                        <WeatherIcon 
