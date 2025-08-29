@@ -17,7 +17,7 @@ import { db } from './firebase';
 import app from './firebase';
 import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification } from '@/types';
 import { createEventAddedNotification, createEventUpdatedNotification, createTodoAddedNotification, createTodoUpdatedNotification, createPoiAddedNotification } from './notificationUtils';
-import { googleCalendarService } from './googleCalendar';
+// Google Calendar同期はAPIルート経由で実装予定
 
 // Firebase初期化チェック
 const isFirebaseInitialized = () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { ArrowLeft, Trash2, CheckSquare, Palette, Cloud, Calendar } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { deleteAllEvents, deleteAllTodos } from '@/lib/firestore';
@@ -8,7 +8,7 @@ import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
 import { getWeatherByZipcode, WeatherData } from '@/lib/weatherService';
 
-export default function SettingsPage() {
+function SettingsContent() {
   const router = useRouter();
   const [isDeletingEvents, setIsDeletingEvents] = useState(false);
   const [isDeletingTodos, setIsDeletingTodos] = useState(false);
@@ -486,5 +486,13 @@ export default function SettingsPage() {
       {/* ボトムナビゲーション */}
       <BottomNavigation />
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SettingsContent />
+    </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { googleCalendarService } from '@/lib/googleCalendar';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const authUrl = googleCalendarService.generateAuthUrl();
     return NextResponse.json({ authUrl });
