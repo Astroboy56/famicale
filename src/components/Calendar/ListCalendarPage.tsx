@@ -145,7 +145,7 @@ export default function ListCalendarPage() {
       {/* デバッグ情報 */}
       {weatherEnabled && (
         <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-20 rounded text-xs text-white">
-          天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'}
+          天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'} | 表示: アイコン+気温
         </div>
       )}
       
@@ -180,8 +180,8 @@ export default function ListCalendarPage() {
       {/* ヘッダー行 */}
       <div className="glass-card mx-4 mt-2 fade-in">
         <div className="flex items-center p-3">
-          {/* 日付ヘッダー */}
-          <div className="flex items-center justify-center min-w-[40px]">
+                     {/* 日付ヘッダー */}
+           <div className="flex items-center justify-center min-w-[50px]">
             <span className="text-xs font-semibold text-white">日付</span>
           </div>
           {/* 家族メンバーヘッダー */}
@@ -212,7 +212,7 @@ export default function ListCalendarPage() {
              }`}>
                                                                  <div className="flex items-center p-2">
                      {/* 日付列 */}
-                     <div className="flex items-center justify-center min-w-[40px]">
+                     <div className="flex items-center justify-center min-w-[50px]">
                        <div className="text-center">
                          <div className={`text-xs font-bold ${
                            !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
@@ -224,7 +224,7 @@ export default function ListCalendarPage() {
                          }`}>
                            {format(day, '(E)', { locale: ja })}
                          </div>
-                         {/* 天気アイコン */}
+                         {/* 天気アイコンと気温 */}
                          {weatherEnabled && (
                            <div className="mt-1">
                              {weatherLoading ? (
@@ -233,23 +233,33 @@ export default function ListCalendarPage() {
                                (() => {
                                  const dayWeather = getWeatherForDate(weatherData, format(day, 'yyyy-MM-dd'));
                                  if (dayWeather) {
-                                   console.log('天気アイコン表示:', format(day, 'yyyy-MM-dd'), dayWeather.icon);
+                                   console.log('天気アイコン表示:', format(day, 'yyyy-MM-dd'), dayWeather.icon, dayWeather.temp);
                                    return (
-                                     <WeatherIcon 
-                                       iconCode={dayWeather.icon} 
-                                       size={16} 
-                                       className="mx-auto"
-                                     />
+                                     <div className="flex flex-col items-center space-y-0.5">
+                                       <WeatherIcon 
+                                         iconCode={dayWeather.icon} 
+                                         size={14} 
+                                         className="mx-auto"
+                                       />
+                                       <div className="text-[8px] text-white text-opacity-80 font-medium">
+                                         {dayWeather.temp}°C
+                                       </div>
+                                     </div>
                                    );
                                  } else {
                                    // テスト用：天気データがない場合はデフォルトアイコンを表示
                                    console.log('天気データなし、デフォルトアイコン表示:', format(day, 'yyyy-MM-dd'));
                                    return (
-                                     <WeatherIcon 
-                                       iconCode="01d" 
-                                       size={16} 
-                                       className="mx-auto"
-                                     />
+                                     <div className="flex flex-col items-center space-y-0.5">
+                                       <WeatherIcon 
+                                         iconCode="01d" 
+                                         size={14} 
+                                         className="mx-auto"
+                                       />
+                                       <div className="text-[8px] text-white text-opacity-60 font-medium">
+                                         --
+                                       </div>
+                                     </div>
                                    );
                                  }
                                })()
