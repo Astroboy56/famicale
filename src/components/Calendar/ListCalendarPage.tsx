@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
+import { format, eachDayOfInterval, startOfWeek, endOfWeek } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { FAMILY_MEMBERS, Event } from '@/types';
@@ -21,15 +21,14 @@ export default function ListCalendarPage() {
   const [weatherEnabled, setWeatherEnabled] = useState(false);
   const [weatherZipcode, setWeatherZipcode] = useState('');
 
-  // カレンダー日付をメモ化
+  // カレンダー日付をメモ化（7日間のみ表示）
   const { days } = useMemo(() => {
-    const monthStart = startOfMonth(currentDate);
-    const monthEnd = endOfMonth(currentDate);
-    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
-    const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
-    const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+    const today = new Date();
+    const weekStart = startOfWeek(today, { weekStartsOn: 0 });
+    const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+    const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
     return { days };
-  }, [currentDate]);
+  }, []);
 
   // 天気設定を読み込み
   useEffect(() => {
@@ -152,7 +151,7 @@ export default function ListCalendarPage() {
       {/* デバッグ情報 */}
       {weatherEnabled && (
         <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-20 rounded text-xs text-white">
-          天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'} | 表示: アイコン+気温
+          天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'} | 表示: 7日間+アイコン+気温
           <br />
           最新データ: {weatherData.length > 0 ? `${weatherData[0]?.date} (${weatherData[0]?.temp}°C)` : 'なし'} | API: Open-Meteo（無料・制限なし）
         </div>
@@ -211,26 +210,25 @@ export default function ListCalendarPage() {
           </div>
         </div>
       </div>
+      
+      {/* 7日間表示の説明 */}
+      <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-10 rounded text-xs text-white text-center">
+        当日を含む7日間の天気予報を表示しています
+      </div>
 
              {/* リストカレンダー（表形式） */}
        <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
          <div className="glass-card p-2 space-y-1 fade-in">
           {days.map((day) => (
-                                                   <div key={day.toISOString()} className={`glass-day hover:scale-[1.01] transition-all duration-300 ${
-               !isSameMonth(day, currentDate) ? 'opacity-50' : ''
-             }`}>
+            <div key={day.toISOString()} className="glass-day hover:scale-[1.01] transition-all duration-300">
                                                                  <div className="flex items-center p-2">
                      {/* 日付列 */}
                      <div className="flex items-center justify-center min-w-[50px]">
                        <div className="text-center">
-                         <div className={`text-xs font-bold ${
-                           !isSameMonth(day, currentDate) ? 'text-white text-opacity-40' : 'text-white'
-                         }`}>
+                         <div className="text-xs font-bold text-white">
                            {format(day, 'M/d', { locale: ja })}
                          </div>
-                         <div className={`text-[10px] ${
-                           !isSameMonth(day, currentDate) ? 'text-white text-opacity-30' : 'text-white text-opacity-70'
-                         }`}>
+                         <div className="text-[10px] text-white text-opacity-70">
                            {format(day, '(E)', { locale: ja })}
                          </div>
                          {/* 天気アイコンと気温 */}
