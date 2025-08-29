@@ -29,11 +29,11 @@ export default function ListCalendarPage() {
     const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
     
-    // 天気予報用の7日間
+    // 天気予報用の7日間（当日から7日後まで）
     const today = new Date();
-    const weekStart = startOfWeek(today, { weekStartsOn: 0 });
-    const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
-    const weatherDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+    const weatherEnd = new Date(today);
+    weatherEnd.setDate(today.getDate() + 6); // 当日 + 6日 = 7日間
+    const weatherDays = eachDayOfInterval({ start: today, end: weatherEnd });
     
     return { days, weatherDays };
   }, [currentDate]);
@@ -214,7 +214,7 @@ export default function ListCalendarPage() {
       
       {/* 表示説明 */}
       <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-10 rounded text-xs text-white text-center">
-        スケジュールは月全体表示、天気予報は当日を含む7日間のみ表示
+        スケジュールは月全体表示、天気予報は当日から7日後まで表示
       </div>
 
              {/* リストカレンダー（表形式） */}
