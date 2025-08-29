@@ -36,6 +36,8 @@ export default function ListCalendarPage() {
     const savedWeatherEnabled = localStorage.getItem('weatherEnabled');
     const savedWeatherZipcode = localStorage.getItem('weatherZipcode');
     
+    console.log('天気設定読み込み:', { savedWeatherEnabled, savedWeatherZipcode });
+    
     if (savedWeatherEnabled) {
       setWeatherEnabled(JSON.parse(savedWeatherEnabled));
     }
@@ -47,13 +49,18 @@ export default function ListCalendarPage() {
   // 天気データを取得
   useEffect(() => {
     const fetchWeatherData = async () => {
+      console.log('天気データ取得チェック:', { weatherEnabled, weatherZipcode, length: weatherZipcode?.length });
+      
       if (!weatherEnabled || !weatherZipcode || weatherZipcode.length !== 7) {
+        console.log('天気データ取得をスキップ:', { weatherEnabled, weatherZipcode, length: weatherZipcode?.length });
         return;
       }
 
       setWeatherLoading(true);
       try {
+        console.log('天気データを取得中:', weatherZipcode);
         const data = await getWeatherByZipcode(weatherZipcode);
+        console.log('天気データ取得完了:', data.length, '件');
         setWeatherData(data);
       } catch (error) {
         console.error('天気データの取得に失敗:', error);
@@ -135,6 +142,13 @@ export default function ListCalendarPage() {
 
   return (
     <div className="flex flex-col h-screen">
+      {/* デバッグ情報 */}
+      {weatherEnabled && (
+        <div className="mx-4 mt-2 p-2 bg-blue-500 bg-opacity-20 rounded text-xs text-white">
+          天気設定: 有効 | 郵便番号: {weatherZipcode} | データ件数: {weatherData.length} | ローディング: {weatherLoading ? 'はい' : 'いいえ'}
+        </div>
+      )}
+      
       {/* ヘッダー */}
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
         <div className="flex items-center justify-between">
@@ -218,13 +232,26 @@ export default function ListCalendarPage() {
                              ) : (
                                (() => {
                                  const dayWeather = getWeatherForDate(weatherData, format(day, 'yyyy-MM-dd'));
-                                 return dayWeather ? (
-                                   <WeatherIcon 
-                                     iconCode={dayWeather.icon} 
-                                     size={16} 
-                                     className="mx-auto"
-                                   />
-                                 ) : null;
+                                 if (dayWeather) {
+                                   console.log('天気アイコン表示:', format(day, 'yyyy-MM-dd'), dayWeather.icon);
+                                   return (
+                                     <WeatherIcon 
+                                       iconCode={dayWeather.icon} 
+                                       size={16} 
+                                       className="mx-auto"
+                                     />
+                                   );
+                                 } else {
+                                   // テスト用：天気データがない場合はデフォルトアイコンを表示
+                                   console.log('天気データなし、デフォルトアイコン表示:', format(day, 'yyyy-MM-dd'));
+                                   return (
+                                     <WeatherIcon 
+                                       iconCode="01d" 
+                                       size={16} 
+                                       className="mx-auto"
+                                     />
+                                   );
+                                 }
                                })()
                              )}
                            </div>
