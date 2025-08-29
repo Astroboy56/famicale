@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Calendar, Edit3, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Edit3, X, Eraser } from 'lucide-react';
 import { Event } from '@/types';
 import { eventService } from '@/lib/firestore';
 import BottomNavigation from '@/components/Layout/BottomNavigation';
@@ -228,6 +228,44 @@ export default function ShiftPage() {
     }
   };
 
+  // 選択された日付の予定を削除
+  const deleteSelectedDateEvents = async () => {
+    if (!selectedDate) {
+      alert('日付を選択してください');
+      return;
+    }
+
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    const dayEvents = getEventsForDay(selectedDate);
+    const shiftEvents = dayEvents.filter(event => event.type === 'shift');
+
+    if (shiftEvents.length === 0) {
+      alert('削除するシフトがありません');
+      return;
+    }
+
+    if (confirm(`${format(selectedDate, 'M月d日')}のシフトを削除しますか？`)) {
+      setIsSaving(true);
+      try {
+        // 既存のシフトを削除
+        await Promise.all(
+          shiftEvents.map(event => eventService.deleteEvent(event.id))
+        );
+
+        // 仮登録も削除
+        setPendingShifts(prev => prev.filter(shift => shift.date !== dateStr));
+
+        console.log(`${format(selectedDate, 'M月d日')}のシフトを削除しました`);
+        alert('シフトを削除しました');
+      } catch (error) {
+        console.error('シフトの削除に失敗しました:', error);
+        alert('シフトの削除に失敗しました');
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
 
 
   // カスタムコマンドを削除
@@ -378,18 +416,28 @@ export default function ShiftPage() {
              {/* シフトコマンドボタン */}
        <div className="glass-card mx-4 mt-4 mb-25 p-4 fade-in">
         <div className="flex items-center justify-between mb-4">
-                     <h2 className="text-sm font-semibold text-white">
-             {selectedDate 
-               ? `${format(selectedDate, 'M月d日(E)', { locale: ja })}に登録`
-               : '日付を選択してください'
-             }
-           </h2>
-          <button
-            onClick={() => setShowCustomEdit(!showCustomEdit)}
-            className="glass-button p-2"
-          >
-            <Edit3 size={16} className="text-white" />
-          </button>
+          <h2 className="text-sm font-semibold text-white">
+            {selectedDate 
+              ? `${format(selectedDate, 'M月d日(E)', { locale: ja })}に登録`
+              : '日付を選択してください'
+            }
+          </h2>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={deleteSelectedDateEvents}
+              disabled={!selectedDate || isSaving}
+              className="glass-button p-2 hover:bg-red-500 hover:bg-opacity-20 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="選択した日付のシフトを削除"
+            >
+              <Eraser size={16} className="text-white" />
+            </button>
+            <button
+              onClick={() => setShowCustomEdit(!showCustomEdit)}
+              className="glass-button p-2"
+            >
+              <Edit3 size={16} className="text-white" />
+            </button>
+          </div>
         </div>
 
         {/* 保存・キャンセルボタン */}
