@@ -88,6 +88,29 @@ const setCachedWeather = (cacheKey: string, data: WeatherData[]): void => {
   weatherCache.set(cacheKey, { data, timestamp: Date.now() });
 };
 
+// APIキーのテスト関数
+export const testWeatherAPI = async (): Promise<void> => {
+  console.log('=== 天気APIテスト開始 ===');
+  console.log('APIキー:', OPENWEATHER_API_KEY);
+  console.log('APIキー長さ:', OPENWEATHER_API_KEY?.length);
+  
+  if (!OPENWEATHER_API_KEY) {
+    console.error('APIキーが設定されていません');
+    return;
+  }
+  
+  try {
+    // 東京の座標でテスト
+    const testResponse = await fetch(
+      `${OPENWEATHER_BASE_URL}/weather?lat=35.6762&lon=139.6503&appid=${OPENWEATHER_API_KEY}&units=metric&lang=ja`
+    );
+    const testData = await testResponse.json();
+    console.log('APIテスト結果:', testData);
+  } catch (error) {
+    console.error('APIテストエラー:', error);
+  }
+};
+
 // メイン関数：郵便番号から天気予報を取得
 export const getWeatherByZipcode = async (zipcode: string): Promise<WeatherData[]> => {
   console.log('getWeatherByZipcode開始:', zipcode, 'APIキー:', OPENWEATHER_API_KEY ? '設定済み' : '未設定');
@@ -118,6 +141,7 @@ export const getWeatherByZipcode = async (zipcode: string): Promise<WeatherData[
     console.log('天気予報取得開始:', coords);
     const weatherData = await getWeatherForecast(coords.lat, coords.lon);
     console.log('天気予報取得完了:', weatherData.length, '件');
+    console.log('取得したデータの最初の3件:', weatherData.slice(0, 3));
     
     // キャッシュに保存
     setCachedWeather(cacheKey, weatherData);
@@ -137,5 +161,8 @@ export const getWeatherIcon = (iconCode: string): string => {
 
 // 特定の日付の天気データを取得
 export const getWeatherForDate = (weatherData: WeatherData[], date: string): WeatherData | null => {
-  return weatherData.find(weather => weather.date === date) || null;
+  console.log('getWeatherForDate検索:', date, '利用可能な日付:', weatherData.map(w => w.date).slice(0, 5));
+  const result = weatherData.find(weather => weather.date === date) || null;
+  console.log('getWeatherForDate結果:', result);
+  return result;
 };

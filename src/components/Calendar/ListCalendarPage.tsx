@@ -6,7 +6,7 @@ import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { FAMILY_MEMBERS, Event } from '@/types';
 import { eventService } from '@/lib/firestore';
-import { getWeatherByZipcode, getWeatherForDate, WeatherData } from '@/lib/weatherService';
+import { getWeatherByZipcode, getWeatherForDate, WeatherData, testWeatherAPI } from '@/lib/weatherService';
 import WeatherIcon from '@/components/WeatherIcon';
 import EventModal from './EventModal';
 
@@ -44,6 +44,9 @@ export default function ListCalendarPage() {
     if (savedWeatherZipcode) {
       setWeatherZipcode(savedWeatherZipcode);
     }
+    
+    // APIテストを実行
+    testWeatherAPI();
   }, []);
 
   // 天気データを取得
