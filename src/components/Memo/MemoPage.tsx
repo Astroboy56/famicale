@@ -155,7 +155,7 @@ const AddMemoModal: React.FC<AddMemoModalProps> = ({
                type="text"
                value={title}
                onChange={(e) => setTitle(e.target.value)}
-               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-black placeholder-white placeholder-opacity-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                placeholder="メモのタイトルを入力"
                required
              />
@@ -165,7 +165,7 @@ const AddMemoModal: React.FC<AddMemoModalProps> = ({
                          <textarea
                value={content}
                onChange={(e) => setContent(e.target.value)}
-               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-black placeholder-white placeholder-opacity-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                placeholder="メモの内容を入力"
                rows={3}
              />
@@ -175,7 +175,7 @@ const AddMemoModal: React.FC<AddMemoModalProps> = ({
                          <select
                value={priority}
                onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
-               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
              >
               <option value="low">低</option>
               <option value="medium">中</option>
@@ -188,7 +188,7 @@ const AddMemoModal: React.FC<AddMemoModalProps> = ({
                type="date"
                value={dueDate}
                onChange={(e) => setDueDate(e.target.value)}
-               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+               className="w-full p-2 border border-white border-opacity-30 rounded bg-white bg-opacity-20 text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
              />
           </div>
           <div className="flex gap-2">
