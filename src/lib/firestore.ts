@@ -15,7 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import app from './firebase';
-import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification } from '@/types';
+import { Event, TodoItem, PoiTask, PoiWish, PoiRecord, Notification, Memo } from '@/types';
 import { createEventAddedNotification, createEventUpdatedNotification, createTodoAddedNotification, createTodoUpdatedNotification, createPoiAddedNotification } from './notificationUtils';
 // Google Calendar同期はAPIルート経由で実装予定
 
@@ -43,6 +43,7 @@ const EVENTS_COLLECTION = 'events';
 const TODOS_COLLECTION = 'todos';
 const POI_CHILDREN_COLLECTION = 'poi_children';
 const NOTIFICATIONS_COLLECTION = 'notifications';
+const MEMOS_COLLECTION = 'memos';
 
 // 予定関連の関数
 export const eventService = {
@@ -1108,6 +1109,171 @@ export const notificationService = {
       return unsubscribe;
     } catch (error) {
       console.error('未読通知の監視に失敗しました:', error);
+      return () => {};
+    }
+  },
+};
+
+// メモ関連の関数
+export const memoService = {
+  // メモを追加
+  async addMemo(memo: Omit<Memo, 'id' | 'createdAt' | 'updatedAt'>) {
+    console.log('メモ追加を開始:', memo);
+    
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      // 既存のメモの最大orderを取得
+      const existingMemos = await this.getMemos();
+      const maxOrder = existingMemos.length > 0 ? Math.max(...existingMemos.map(m => m.order)) : 0;
+      
+      const docRef = await addDoc(collection(db!, MEMOS_COLLECTION), {
+        ...memo,
+        order: maxOrder + 1,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      
+      console.log('メモ追加が完了しました。ID:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('メモの追加に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // メモを更新
+  async updateMemo(memoId: string, updates: Partial<Memo>) {
+    console.log('メモ更新を開始:', memoId, updates);
+    
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const docRef = doc(db!, MEMOS_COLLECTION, memoId);
+      await updateDoc(docRef, {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      });
+      
+      console.log('メモ更新が完了しました:', memoId);
+    } catch (error) {
+      console.error('メモの更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // メモを削除
+  async deleteMemo(memoId: string) {
+    console.log('メモ削除を開始:', memoId);
+    
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      await deleteDoc(doc(db!, MEMOS_COLLECTION, memoId));
+      console.log('メモ削除が完了しました:', memoId);
+    } catch (error) {
+      console.error('メモの削除に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // メモを取得
+  async getMemos(): Promise<Memo[]> {
+    console.log('メモ取得を開始');
+    
+    if (!isFirebaseInitialized()) {
+      console.warn('Firebaseが初期化されていないため、空の配列を返します');
+      return [];
+    }
+    
+    try {
+      const q = query(
+        collection(db!, MEMOS_COLLECTION),
+        orderBy('order', 'asc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const memos: Memo[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        memos.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+          updatedAt: data.updatedAt.toDate(),
+        } as Memo);
+      });
+      
+      console.log(`${memos.length}件のメモを取得しました`);
+      return memos;
+    } catch (error) {
+      console.error('メモの取得に失敗しました:', error);
+      return [];
+    }
+  },
+
+  // メモの順序を更新（ドラッグ&ドロップ用）
+  async updateMemoOrder(memoIds: string[]) {
+    console.log('メモ順序更新を開始:', memoIds);
+    
+    if (!isFirebaseInitialized()) {
+      throw new Error('Firebase is not initialized');
+    }
+    
+    try {
+      const updatePromises = memoIds.map((memoId, index) => {
+        const docRef = doc(db!, MEMOS_COLLECTION, memoId);
+        return updateDoc(docRef, {
+          order: index + 1,
+          updatedAt: Timestamp.now(),
+        });
+      });
+      
+      await Promise.all(updatePromises);
+      console.log('メモ順序更新が完了しました');
+    } catch (error) {
+      console.error('メモ順序の更新に失敗しました:', error);
+      throw error;
+    }
+  },
+
+  // リアルタイムでメモを監視
+  subscribeToMemos(callback: (memos: Memo[]) => void) {
+    if (!isFirebaseInitialized()) {
+      callback([]);
+      return () => {};
+    }
+    
+    try {
+      const q = query(
+        collection(db!, MEMOS_COLLECTION),
+        orderBy('order', 'asc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const memos: Memo[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          memos.push({
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+          } as Memo);
+        });
+        callback(memos);
+      });
+      
+      return unsubscribe;
+    } catch (error) {
+      console.error('メモの監視に失敗しました:', error);
       return () => {};
     }
   },
