@@ -5,6 +5,23 @@ import { Plus, Check, Trash2, AlertCircle, CheckSquare } from 'lucide-react';
 import { FAMILY_MEMBERS, TodoItem } from '@/types';
 import { todoService } from '@/lib/firestore';
 
+// 付箋の色をランダムに選択する関数
+const getRandomStickyColor = (memberId: string) => {
+  const colors = ['yellow', 'pink', 'blue', 'green', 'orange'];
+  const memberIndex = FAMILY_MEMBERS.findIndex(m => m.id === memberId);
+  return colors[memberIndex % colors.length] || 'yellow';
+};
+
+// ランダムな回転角度を生成する関数
+const getRandomRotation = () => {
+  return Math.random() * 16 - 8; // -8度から+8度
+};
+
+// ランダムなアニメーション遅延を生成する関数
+const getRandomDelay = () => {
+  return Math.random() * 2; // 0秒から2秒
+};
+
 export default function TodoPage() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodo, setNewTodo] = useState('');
@@ -99,7 +116,7 @@ export default function TodoPage() {
       <header className="glass-card mx-4 mt-4 px-4 py-3 fade-in">
         <div className="flex items-center">
           <CheckSquare size={20} className="text-white mr-3" />
-          <h1 className="text-lg font-semibold text-glass">TODO共有</h1>
+          <h1 className="text-lg font-semibold text-glass">TODO付箋ボード</h1>
         </div>
       </header>
 
@@ -149,7 +166,7 @@ export default function TodoPage() {
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTodo()}
               className="flex-1 min-w-0 px-3 py-2 glass-input text-white placeholder-white placeholder-opacity-60"
-              placeholder="TODOを入力"
+              placeholder="新しい付箋を追加"
               disabled={isSubmitting}
             />
             <button
@@ -190,9 +207,9 @@ export default function TodoPage() {
         </div>
       </div>
 
-      {/* TODO一覧 */}
+      {/* 付箋ボード */}
       <div className="flex-1 overflow-y-auto px-4 mt-4 pb-4">
-        <div className="glass-card p-4 fade-in">
+        <div className="sticky-board h-full fade-in">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mb-4" />
@@ -202,74 +219,77 @@ export default function TodoPage() {
             <div className="flex flex-col items-center justify-center py-12">
               <CheckSquare size={48} className="text-white text-opacity-40 mb-4" />
               <p className="text-white text-opacity-70 text-center">
-                {filter === 'all' ? 'TODOがありません' : 
-                 filter === 'active' ? '未完了のTODOがありません' : 
-                 '完了済みのTODOがありません'}
+                {filter === 'all' ? '付箋がありません' : 
+                 filter === 'active' ? '未完了の付箋がありません' : 
+                 '完了済みの付箋がありません'}
               </p>
             </div>
           ) : (
-            <div className="space-y-1.5">
-              {filteredTodos.map((todo) => (
-                <div
-                  key={todo.id}
-                  className="glass-day p-1 hover:scale-[1.02] transition-all duration-300"
-                >
-                  <div className="flex items-center">
-                    {/* チェックボックス */}
-                    <button
+            <div className="sticky-container">
+              <div className="sticky-grid">
+                {filteredTodos.map((todo, index) => {
+                  const stickyColor = getRandomStickyColor(todo.createdBy);
+                  const rotation = getRandomRotation();
+                  const delay = getRandomDelay();
+                  
+                  return (
+                    <div
+                      key={todo.id}
+                      className={`sticky-note ${stickyColor} ${todo.completed ? 'completed' : ''}`}
+                      style={{
+                        '--rotation': `${rotation}deg`,
+                        '--delay': `${delay}s`,
+                      } as React.CSSProperties}
                       onClick={() => toggleTodo(todo.id, todo.completed)}
-                      className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                        todo.completed
-                          ? 'bg-green-500 border-green-400 text-white shadow-lg'
-                          : 'border-white border-opacity-50 hover:border-green-400 hover:bg-green-400 hover:bg-opacity-20'
-                      }`}
                     >
-                      {todo.completed && <Check size={14} />}
-                    </button>
-
-                    {/* TODOコンテンツ */}
-                    <div className="flex-1 ml-3">
-                      <div className="flex items-center space-x-2">
-                        <span
-                          className={`text-sm font-semibold ${
-                            todo.completed ? 'line-through text-white text-opacity-50' : 'text-white'
-                          }`}
+                      {/* アクションボタン */}
+                      <div className="sticky-actions">
+                        <button
+                          className="sticky-action-btn delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteTodo(todo.id);
+                          }}
                         >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+
+                      {/* 付箋コンテンツ */}
+                      <div className="sticky-content">
+                        <div className={`sticky-title ${todo.completed ? 'completed' : ''}`}>
                           {todo.title}
-                        </span>
+                        </div>
+                        
                         {todo.priority === 'high' && (
-                          <AlertCircle size={14} className="text-red-400" />
+                          <div className="flex items-center">
+                            <AlertCircle size={12} className="text-red-500 mr-1" />
+                            <span className="text-xs text-red-600 font-medium">高優先度</span>
+                          </div>
                         )}
                       </div>
-                      
-                      <div className="flex items-center mt-1 space-x-1">
+
+                      {/* メタ情報 */}
+                      <div className="sticky-meta">
                         <div
-                          className={`px-1.5 py-0.5 rounded text-xs font-medium text-white ${
+                          className={`sticky-member ${
                             getMemberColor(todo.createdBy) === 'blue' ? 'bg-blue-500' :
                             getMemberColor(todo.createdBy) === 'orange' ? 'bg-orange-500' :
                             getMemberColor(todo.createdBy) === 'green' ? 'bg-green-500' :
                             getMemberColor(todo.createdBy) === 'pink' ? 'bg-pink-500' :
                             'bg-gray-500'
-                          } bg-opacity-30`}
+                          }`}
                         >
                           {getMemberName(todo.createdBy)}
                         </div>
-                        <span className="text-xs text-white text-opacity-70">
-                          • {todo.createdAt.toLocaleDateString('ja-JP')}
-                        </span>
+                        <div className="sticky-date">
+                          {todo.createdAt.toLocaleDateString('ja-JP')}
+                        </div>
                       </div>
                     </div>
-
-                    {/* 削除ボタン */}
-                    <button
-                      onClick={() => deleteTodo(todo.id)}
-                      className="flex-shrink-0 p-1.5 text-white text-opacity-60 hover:text-red-400 hover:bg-red-400 hover:bg-opacity-20 rounded-lg transition-all duration-300"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
