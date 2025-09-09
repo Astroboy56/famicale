@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Calendar, List, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft, Coins, StickyNote } from 'lucide-react';
+import { Calendar, List, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft, Coins } from 'lucide-react';
 import { notificationService } from '@/lib/firestore';
 import { Notification } from '@/types';
 
@@ -27,7 +27,6 @@ const navigationItemsPage1: NavigationItem[] = [
 // 2ページ目のナビゲーションアイテム
 const navigationItemsPage2: NavigationItem[] = [
   { id: 'prev', name: '戻る', icon: ChevronLeft, path: '', onClick: () => {} },
-  { id: 'memo', name: 'メモ', icon: StickyNote, path: '/memo' },
   { id: 'poi', name: 'ポイ活', icon: Coins, path: '/poi' },
   { id: 'settings', name: '設定', icon: Settings, path: '/settings' },
 ];
@@ -86,7 +85,7 @@ export default function BottomNavigation() {
 
   return (
     <nav className="fixed bottom-4 left-4 right-4 glass-nav safe-area-inset-bottom rounded-2xl">
-      <div className={`grid h-16 ${currentPage === 1 ? 'grid-cols-5' : 'grid-cols-4'}`}>
+      <div className={`grid h-16 ${currentPage === 1 ? 'grid-cols-5' : 'grid-cols-3'}`}>
         {currentNavigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;

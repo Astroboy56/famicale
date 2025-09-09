@@ -170,26 +170,6 @@ export interface Notification {
   userId?: string; // 特定のユーザー向けの場合
 }
 
-// メモ関連の型定義
-export interface Memo {
-  id: string;
-  title: string;
-  content: string;
-  familyMemberId: string;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: string; // YYYY-MM-DD形式
-  isCompleted: boolean;
-  order: number; // ドラッグ&ドロップ用の順序
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// メモの優先度設定
-export const MEMO_PRIORITY_COLORS = {
-  low: 'bg-green-100 border-green-300',
-  medium: 'bg-yellow-100 border-yellow-300',
-  high: 'bg-red-100 border-red-300',
-};
 
 // 通知設定
 export interface NotificationSettings {
