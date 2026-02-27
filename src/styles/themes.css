@@ -1,0 +1,31 @@
+/* デフォルトテーマ */
+.theme-default {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 海テーマ */
+.theme-ocean {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #4facfe 100%);
+}
+
+/* 森テーマ */
+.theme-forest {
+  background: linear-gradient(135deg, #134e5e 0%, #71b280 50%, #a8e6cf 100%);
+}
+
+/* ラブテーマ */
+.theme-love {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff7675 100%);
+}
+
+/* プログラマーテーマ */
+.theme-programmer {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #7f8c8d 100%);
+}
+
+/* テーマ切り替え時のスムーズなトランジション */
+body {
+  transition: background 0.5s ease-in-out;
+  min-height: 100vh;
+  background-attachment: fixed;
+}

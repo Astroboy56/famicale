@@ -6,7 +6,7 @@ export interface FamilyMember {
 }
 
 // 予定の種類
-export type EventType = 'work' | 'school' | 'hospital' | 'travel' | 'other';
+export type EventType = 'work' | 'school' | 'hospital' | 'travel' | 'other' | 'shift';
 
 // 予定
 export interface Event {
@@ -18,6 +18,7 @@ export interface Event {
   familyMemberId: string;
   type: EventType;
   isAllDay?: boolean;
+  googleCalendarId?: string; // Google CalendarのイベントID
   createdAt: Date;
   updatedAt: Date;
 }
@@ -65,9 +66,9 @@ export interface NavigationItem {
 
 // 家族データ
 export const FAMILY_MEMBERS: FamilyMember[] = [
-  { id: 'atom', name: 'あとむ', color: 'blue' },
-  { id: 'erika', name: 'えりか', color: 'red' },
-  { id: 'cosmo', name: 'こすも', color: 'green' },
+  { id: 'atomu', name: 'あとむ', color: 'blue' },
+  { id: 'erika', name: 'えりか', color: 'orange' },
+  { id: 'kosumo', name: 'こすも', color: 'green' },
   { id: 'alice', name: 'ありす', color: 'pink' },
 ];
 
@@ -78,29 +79,61 @@ export const EVENT_TYPE_ICONS: Record<EventType, string> = {
   hospital: 'heart-pulse',
   travel: 'plane',
   other: 'calendar',
+  shift: 'clock',
 };
 
 // カラーマップ
 export const COLOR_MAP: Record<string, { bg: string; text: string; border: string }> = {
   blue: {
-    bg: 'bg-blue-300',
+    bg: 'bg-blue-400',
     text: 'text-blue-900',
     border: 'border-blue-300',
   },
-  red: {
-    bg: 'bg-red-300',
-    text: 'text-red-900',
-    border: 'border-red-300',
+  orange: {
+    bg: 'bg-orange-400',
+    text: 'text-orange-900',
+    border: 'border-orange-300',
   },
   green: {
-    bg: 'bg-green-300',
+    bg: 'bg-green-400',
     text: 'text-green-900',
     border: 'border-green-300',
   },
   pink: {
-    bg: 'bg-pink-300',
+    bg: 'bg-pink-400',
     text: 'text-pink-900',
     border: 'border-pink-300',
   },
 };
 
+// 通知関連の型定義
+export type NotificationType = 'event_added' | 'event_updated' | 'todo_added' | 'todo_updated';
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  targetId: string; // 関連するデータのID
+  targetType: 'event' | 'todo';
+  createdBy: string; // 作成者の家族メンバーID
+  createdAt: Date;
+  isRead: boolean;
+  userId?: string; // 特定のユーザー向けの場合
+}
+
+// 通知設定
+export interface NotificationSettings {
+  events: boolean;
+  todos: boolean;
+  sound: boolean;
+  vibration: boolean;
+}
+
+// デフォルト通知設定
+export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
+  events: true,
+  todos: true,
+  sound: false,
+  vibration: false,
+};
