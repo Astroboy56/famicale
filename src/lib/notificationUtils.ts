@@ -1,20 +1,16 @@
 import { notificationService } from './firestore';
-import { Notification, NotificationType, Event, TodoItem, PoiRecord, FAMILY_MEMBERS } from '@/types';
+import { Notification, NotificationType, Event, TodoItem, FAMILY_MEMBERS } from '@/types';
 
 // 通知メッセージのテンプレート
 const NOTIFICATION_MESSAGES = {
-  event_added: (event: Event, memberName: string) => 
+  event_added: (event: Event, memberName: string) =>
     `${memberName}が新しい予定「${event.title}」を追加しました`,
-  event_updated: (event: Event, memberName: string) => 
+  event_updated: (event: Event, memberName: string) =>
     `${memberName}が予定「${event.title}」を更新しました`,
-  todo_added: (todo: TodoItem, memberName: string) => 
+  todo_added: (todo: TodoItem, memberName: string) =>
     `${memberName}が新しいTODO「${todo.title}」を追加しました`,
-  todo_updated: (todo: TodoItem, memberName: string) => 
+  todo_updated: (todo: TodoItem, memberName: string) =>
     `${memberName}がTODO「${todo.title}」を更新しました`,
-  poi_added: (record: PoiRecord, memberName: string) => 
-    `${memberName}がポイ活タスクを完了しました（${record.points}ポイント獲得）`,
-  poi_updated: (record: PoiRecord, memberName: string) => 
-    `${memberName}のポイ活記録が更新されました`,
 };
 
 // 通知タイトルのテンプレート
@@ -23,8 +19,6 @@ const NOTIFICATION_TITLES = {
   event_updated: '予定が更新されました',
   todo_added: '新しいTODOが追加されました',
   todo_updated: 'TODOが更新されました',
-  poi_added: 'ポイ活タスク完了',
-  poi_updated: 'ポイ活記録更新',
 };
 
 /**
@@ -136,56 +130,6 @@ export const createTodoUpdatedNotification = async (
 };
 
 /**
- * ポイ活追加時の通知を作成
- */
-export const createPoiAddedNotification = async (
-  record: PoiRecord,
-  createdBy: string
-): Promise<void> => {
-  try {
-    const memberName = getMemberName(createdBy);
-    const notification: Omit<Notification, 'id' | 'createdAt'> = {
-      type: 'poi_added',
-      title: NOTIFICATION_TITLES.poi_added,
-      message: NOTIFICATION_MESSAGES.poi_added(record, memberName),
-      targetId: record.id,
-      targetType: 'poi',
-      createdBy: memberName,
-      isRead: false,
-    };
-
-    await notificationService.addNotification(notification);
-  } catch (error) {
-    console.error('ポイ活追加通知の作成に失敗しました:', error);
-  }
-};
-
-/**
- * ポイ活更新時の通知を作成
- */
-export const createPoiUpdatedNotification = async (
-  record: PoiRecord,
-  updatedBy: string
-): Promise<void> => {
-  try {
-    const memberName = getMemberName(updatedBy);
-    const notification: Omit<Notification, 'id' | 'createdAt'> = {
-      type: 'poi_updated',
-      title: NOTIFICATION_TITLES.poi_updated,
-      message: NOTIFICATION_MESSAGES.poi_updated(record, memberName),
-      targetId: record.id,
-      targetType: 'poi',
-      createdBy: memberName,
-      isRead: false,
-    };
-
-    await notificationService.addNotification(notification);
-  } catch (error) {
-    console.error('ポイ活更新通知の作成に失敗しました:', error);
-  }
-};
-
-/**
  * カスタム通知を作成
  */
 export const createCustomNotification = async (
@@ -193,7 +137,7 @@ export const createCustomNotification = async (
   title: string,
   message: string,
   targetId: string,
-  targetType: 'event' | 'todo' | 'poi',
+  targetType: 'event' | 'todo',
   createdBy: string
 ): Promise<void> => {
   try {

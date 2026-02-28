@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Calendar, List, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft, Coins } from 'lucide-react';
+import { Calendar, List, CheckSquare, Clock, Settings, ChevronRight, ChevronLeft } from 'lucide-react';
 import { notificationService } from '@/lib/firestore';
 import { Notification } from '@/types';
 
@@ -27,7 +27,6 @@ const navigationItemsPage1: NavigationItem[] = [
 // 2ページ目のナビゲーションアイテム
 const navigationItemsPage2: NavigationItem[] = [
   { id: 'prev', name: '戻る', icon: ChevronLeft, path: '', onClick: () => {} },
-  { id: 'poi', name: 'ポイ活', icon: Coins, path: '/poi' },
   { id: 'settings', name: '設定', icon: Settings, path: '/settings' },
 ];
 
@@ -49,7 +48,6 @@ export default function BottomNavigation() {
   // 通知の種類ごとに更新があるかチェック
   const hasEventUpdates = notifications.some(n => n.type === 'event_added' || n.type === 'event_updated');
   const hasTodoUpdates = notifications.some(n => n.type === 'todo_added' || n.type === 'todo_updated');
-  const hasPoiUpdates = notifications.some(n => n.type === 'poi_added' || n.type === 'poi_updated');
 
   // 現在のページのナビゲーションアイテムを取得（更新状態を含む）
   const getCurrentNavigationItems = () => {
@@ -63,7 +61,7 @@ export default function BottomNavigation() {
     } else {
       return navigationItemsPage2.map(item => ({
         ...item,
-        hasUpdates: item.id === 'poi' && hasPoiUpdates
+        hasUpdates: false
       }));
     }
   };

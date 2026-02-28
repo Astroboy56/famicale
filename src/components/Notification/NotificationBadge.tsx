@@ -94,9 +94,6 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = () => {
       case 'todo_added':
       case 'todo_updated':
         return '📝';
-      case 'poi_added':
-      case 'poi_updated':
-        return '⭐';
       default:
         return '🔔';
     }
